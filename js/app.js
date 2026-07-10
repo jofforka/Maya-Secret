@@ -1,20 +1,224 @@
-const KEY='mayaProducts';
-const getProducts=()=>{try{return JSON.parse(localStorage.getItem(KEY))||window.MAYA_DEFAULT_PRODUCTS}catch{return window.MAYA_DEFAULT_PRODUCTS}};
-let products=getProducts();let cart=JSON.parse(localStorage.getItem('mayaCart')||'[]');
-const money=n=>'₦'+Number(n).toLocaleString('en-NG');
-const card=p=>`<article class="product-card"><div class="product-art tone-${p.tone}"><span class="product-badge">${p.badge||p.category}</span><div class="product-pack">MS</div></div><div class="product-info"><p>${p.category}</p><h3>${p.name}</h3><small>${p.size||''}</small><strong>${money(p.price)}</strong></div><button class="add-btn" data-add="${p.id}">Add to bag</button></article>`;
-function renderFeatured(){document.querySelectorAll('[data-products="featured"]').forEach(el=>el.innerHTML=products.slice(0,4).map(card).join(''))}
-function renderShop(list=products){const grid=document.querySelector('#shopGrid');if(!grid)return;grid.innerHTML=list.map(card).join('');document.querySelector('.no-results').hidden=!!list.length}
-function saveCart(){localStorage.setItem('mayaCart',JSON.stringify(cart));drawCart()}
-function add(id){const item=cart.find(x=>x.id===id);item?item.qty++:cart.push({id,qty:1});saveCart();toast('Added to your bag')}
-function change(id,d){const item=cart.find(x=>x.id===id);if(!item)return;item.qty+=d;if(item.qty<1)cart=cart.filter(x=>x.id!==id);saveCart()}
-function drawCart(){document.querySelectorAll('.bag-count').forEach(x=>x.textContent=cart.reduce((s,i)=>s+i.qty,0));const lines=document.querySelector('.cart-lines'),empty=document.querySelector('.cart-empty'),foot=document.querySelector('.cart-foot');if(!lines)return;if(!cart.length){lines.innerHTML='';empty.style.display='block';foot.style.display='none';return}empty.style.display='none';foot.style.display='block';lines.innerHTML=cart.map(i=>{const p=products.find(x=>x.id===i.id);if(!p)return'';return `<div class="cart-line"><div class="cart-thumb product-art tone-${p.tone}"><div class="product-pack">MS</div></div><div><p>${p.category}</p><h3>${p.name}</h3><strong>${money(p.price*i.qty)}</strong><div class="qty"><button data-minus="${p.id}">−</button><span>${i.qty}</span><button data-plus="${p.id}">+</button></div></div><button class="remove" data-remove="${p.id}">×</button></div>`}).join('');document.querySelector('.cart-total').textContent=money(cart.reduce((s,i)=>{const p=products.find(x=>x.id===i.id);return s+(p?p.price*i.qty:0)},0))}
-const openCart=()=>{document.querySelector('.cart').classList.add('open');document.querySelector('.overlay').classList.add('open')};const closeCart=()=>{document.querySelector('.cart').classList.remove('open');document.querySelector('.overlay').classList.remove('open')};
-function toast(t){const x=document.querySelector('.toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
-document.addEventListener('click',e=>{const a=e.target.closest('[data-add]');if(a){add(a.dataset.add);openCart()}const p=e.target.closest('[data-plus]');if(p)change(p.dataset.plus,1);const m=e.target.closest('[data-minus]');if(m)change(m.dataset.minus,-1);const r=e.target.closest('[data-remove]');if(r){cart=cart.filter(x=>x.id!==r.dataset.remove);saveCart()}});
-document.querySelector('.bag-toggle')?.addEventListener('click',openCart);document.querySelector('.cart-close')?.addEventListener('click',closeCart);document.querySelector('.overlay')?.addEventListener('click',closeCart);document.querySelector('.menu')?.addEventListener('click',()=>document.querySelector('.header nav').classList.toggle('open'));
-document.querySelector('.checkout')?.addEventListener('click',()=>{if(!cart.length)return;const lines=cart.map(i=>{const p=products.find(x=>x.id===i.id);return `• ${p.name} × ${i.qty} — ${money(p.price*i.qty)}`}).join('\n');const total=cart.reduce((s,i)=>{const p=products.find(x=>x.id===i.id);return s+p.price*i.qty},0);window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(`Hello Maya's Secret, I would like to order:\n\n${lines}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability and delivery.`)}`,'_blank')});
-let filter='All';const apply=()=>{let list=products.filter(p=>filter==='All'||p.category===filter);const q=document.querySelector('#shopSearch')?.value.toLowerCase().trim();if(q)list=list.filter(p=>(p.name+' '+p.category).toLowerCase().includes(q));const s=document.querySelector('#shopSort')?.value;if(s==='low')list.sort((a,b)=>a.price-b.price);if(s==='high')list.sort((a,b)=>b.price-a.price);if(s==='name')list.sort((a,b)=>a.name.localeCompare(b.name));renderShop(list)};
-document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=b.dataset.filter;apply()}));document.querySelector('#shopSearch')?.addEventListener('input',apply);document.querySelector('#shopSort')?.addEventListener('change',apply);
-document.querySelector('#contactForm')?.addEventListener('submit',e=>{e.preventDefault();const text=`Hello Maya's Secret,\n\nName: ${contactName.value}\nContact: ${contactReach.value}\nInterest: ${contactTopic.value}\nMessage: ${contactMessage.value}`;window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(text)}`,'_blank')});
-renderFeatured();renderShop();drawCart();
+const KEY = 'mayaProducts';
+const CART_KEY = 'mayaCart';
+const getProducts = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY));
+    return Array.isArray(saved) && saved.length ? saved : (window.MAYA_DEFAULT_PRODUCTS || []);
+  } catch {
+    return window.MAYA_DEFAULT_PRODUCTS || [];
+  }
+};
+let products = getProducts();
+let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+let activeProduct = null;
+let modalQty = 1;
+const money = n => '₦' + Number(n || 0).toLocaleString('en-NG');
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function productVisual(p, extraClass = '') {
+  if (p.image) {
+    return `<div class="product-art product-photo ${extraClass}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"></div>`;
+  }
+  return `<div class="product-art tone-${esc(p.tone || 'cream')} ${extraClass}"><div class="product-pack">MS</div></div>`;
+}
+
+function card(p) {
+  return `<article class="product-card" data-product-card="${esc(p.id)}">
+    <button class="product-open" data-view="${esc(p.id)}" type="button" aria-label="View ${esc(p.name)} details">
+      ${productVisual(p)}
+      <span class="product-badge">${esc(p.badge || p.category)}</span>
+      <span class="product-view-label">View product</span>
+    </button>
+    <div class="product-info">
+      <p>${esc(p.category)}</p>
+      <h3><button class="product-title-button" data-view="${esc(p.id)}" type="button">${esc(p.name)}</button></h3>
+      <small>${esc(p.size || '')}</small>
+      <strong>${money(p.price)}</strong>
+    </div>
+    <button class="add-btn" data-add="${esc(p.id)}" type="button">Add to bag</button>
+  </article>`;
+}
+
+function renderFeatured() {
+  document.querySelectorAll('[data-products="featured"]').forEach(el => {
+    el.innerHTML = products.slice(0, 4).map(card).join('');
+  });
+}
+function renderShop(list = products) {
+  const grid = document.querySelector('#shopGrid');
+  if (!grid) return;
+  grid.innerHTML = list.map(card).join('');
+  const noResults = document.querySelector('.no-results');
+  if (noResults) noResults.hidden = !!list.length;
+}
+
+function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); drawCart(); }
+function add(id, qty = 1) {
+  const item = cart.find(x => x.id === id);
+  item ? item.qty += qty : cart.push({ id, qty });
+  saveCart();
+  const product = products.find(x => x.id === id);
+  toast(`${product?.name || 'Product'} added to your bag`);
+}
+function change(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty < 1) cart = cart.filter(x => x.id !== id);
+  saveCart();
+}
+function drawCart() {
+  document.querySelectorAll('.bag-count').forEach(x => x.textContent = cart.reduce((s, i) => s + i.qty, 0));
+  const lines = document.querySelector('.cart-lines');
+  const empty = document.querySelector('.cart-empty');
+  const foot = document.querySelector('.cart-foot');
+  if (!lines) return;
+  if (!cart.length) {
+    lines.innerHTML = '';
+    empty.style.display = 'block';
+    foot.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  foot.style.display = 'block';
+  lines.innerHTML = cart.map(i => {
+    const p = products.find(x => x.id === i.id);
+    if (!p) return '';
+    return `<div class="cart-line">${productVisual(p, 'cart-thumb')}<div><p>${esc(p.category)}</p><h3>${esc(p.name)}</h3><strong>${money(p.price * i.qty)}</strong><div class="qty"><button data-minus="${esc(p.id)}" type="button">−</button><span>${i.qty}</span><button data-plus="${esc(p.id)}" type="button">+</button></div></div><button class="remove" data-remove="${esc(p.id)}" type="button" aria-label="Remove ${esc(p.name)}">×</button></div>`;
+  }).join('');
+  document.querySelector('.cart-total').textContent = money(cart.reduce((s, i) => {
+    const p = products.find(x => x.id === i.id);
+    return s + (p ? p.price * i.qty : 0);
+  }, 0));
+}
+const openCart = () => {
+  document.querySelector('.cart')?.classList.add('open');
+  document.querySelector('.overlay')?.classList.add('open');
+  document.body.classList.add('no-scroll');
+};
+const closeCart = () => {
+  document.querySelector('.cart')?.classList.remove('open');
+  if (!document.querySelector('.product-modal.open')) document.querySelector('.overlay')?.classList.remove('open');
+  document.body.classList.remove('no-scroll');
+};
+function toast(text) {
+  const node = document.querySelector('.toast');
+  if (!node) return;
+  node.textContent = text;
+  node.classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => node.classList.remove('show'), 1900);
+}
+
+function modalBenefits(p) {
+  const byCategory = {
+    'Face Care': ['Supports a simple daily skincare routine', 'Designed for a polished, comfortable finish', 'Easy to pair with complementary face-care products'],
+    'Body Care': ['Helps maintain softer, smoother-looking skin', 'Turns everyday body care into a richer ritual', 'Suitable for regular use as directed'],
+    'Gift Sets': ['A coordinated routine in one set', 'Ideal for gifting or beginning a new ritual', 'Better value than purchasing each item separately']
+  };
+  return byCategory[p.category] || ['Thoughtfully selected by Maya’s Secret', 'Simple to include in your beauty routine', 'Personal guidance available on WhatsApp'];
+}
+
+function ensureProductModal() {
+  if (document.getElementById('productModal')) return;
+  document.body.insertAdjacentHTML('beforeend', `<section class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalProductName" aria-hidden="true">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close product details">×</button>
+    <div class="modal-product-visual" id="modalVisual"></div>
+    <div class="modal-product-copy">
+      <p class="eyebrow" id="modalCategory"></p>
+      <h2 id="modalProductName"></h2>
+      <div class="modal-meta"><strong id="modalPrice"></strong><span id="modalSize"></span></div>
+      <p class="modal-description" id="modalDescription"></p>
+      <div class="modal-benefits" id="modalBenefits"></div>
+      <div class="modal-purchase">
+        <div class="modal-qty" aria-label="Quantity selector"><button id="modalMinus" type="button">−</button><span id="modalQty">1</span><button id="modalPlus" type="button">+</button></div>
+        <button class="btn primary" id="modalAdd" type="button">Add to bag</button>
+      </div>
+      <a class="modal-help" id="modalHelp" target="_blank" rel="noopener">Ask about this product on WhatsApp →</a>
+    </div>
+  </section>`);
+  document.getElementById('modalClose').addEventListener('click', closeProductModal);
+  document.getElementById('modalMinus').addEventListener('click', () => { modalQty = Math.max(1, modalQty - 1); document.getElementById('modalQty').textContent = modalQty; });
+  document.getElementById('modalPlus').addEventListener('click', () => { modalQty += 1; document.getElementById('modalQty').textContent = modalQty; });
+  document.getElementById('modalAdd').addEventListener('click', () => { if (activeProduct) { add(activeProduct.id, modalQty); closeProductModal(); openCart(); } });
+}
+function openProductModal(id) {
+  activeProduct = products.find(p => p.id === id);
+  if (!activeProduct) return;
+  ensureProductModal();
+  modalQty = 1;
+  document.getElementById('modalQty').textContent = '1';
+  document.getElementById('modalVisual').innerHTML = productVisual(activeProduct, 'modal-art');
+  document.getElementById('modalCategory').textContent = activeProduct.category;
+  document.getElementById('modalProductName').textContent = activeProduct.name;
+  document.getElementById('modalPrice').textContent = money(activeProduct.price);
+  document.getElementById('modalSize').textContent = activeProduct.size || '';
+  document.getElementById('modalDescription').textContent = activeProduct.desc || 'A thoughtfully selected Maya’s Secret beauty essential created to elevate your everyday routine.';
+  document.getElementById('modalBenefits').innerHTML = modalBenefits(activeProduct).map(item => `<div><span>✓</span><p>${esc(item)}</p></div>`).join('');
+  document.getElementById('modalHelp').href = `https://wa.me/2348109044321?text=${encodeURIComponent(`Hello Maya's Secret, I would like more information about ${activeProduct.name}.`)}`;
+  const modal = document.getElementById('productModal');
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.querySelector('.overlay')?.classList.add('open');
+  document.body.classList.add('no-scroll');
+  document.getElementById('modalClose').focus();
+}
+function closeProductModal() {
+  const modal = document.getElementById('productModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  if (!document.querySelector('.cart.open')) document.querySelector('.overlay')?.classList.remove('open');
+  document.body.classList.remove('no-scroll');
+}
+
+document.addEventListener('click', e => {
+  const view = e.target.closest('[data-view]');
+  if (view) { e.preventDefault(); openProductModal(view.dataset.view); return; }
+  const addButton = e.target.closest('[data-add]');
+  if (addButton) { add(addButton.dataset.add); openCart(); return; }
+  const plus = e.target.closest('[data-plus]'); if (plus) change(plus.dataset.plus, 1);
+  const minus = e.target.closest('[data-minus]'); if (minus) change(minus.dataset.minus, -1);
+  const remove = e.target.closest('[data-remove]'); if (remove) { cart = cart.filter(x => x.id !== remove.dataset.remove); saveCart(); }
+});
+document.querySelector('.bag-toggle')?.addEventListener('click', openCart);
+document.querySelector('.cart-close')?.addEventListener('click', closeCart);
+document.querySelector('.overlay')?.addEventListener('click', () => { closeCart(); closeProductModal(); });
+document.querySelector('.menu')?.addEventListener('click', () => document.querySelector('.header nav')?.classList.toggle('open'));
+document.querySelector('.checkout')?.addEventListener('click', () => {
+  if (!cart.length) return;
+  const lines = cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p.name} × ${i.qty} — ${money(p.price * i.qty)}`; }).join('\n');
+  const total = cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
+  window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(`Hello Maya's Secret, I would like to order:\n\n${lines}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability and delivery.`)}`, '_blank', 'noopener');
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCart(); closeProductModal(); } });
+
+let filter = 'All';
+const apply = () => {
+  let list = products.filter(p => filter === 'All' || p.category === filter);
+  const q = document.querySelector('#shopSearch')?.value.toLowerCase().trim();
+  if (q) list = list.filter(p => (`${p.name} ${p.category} ${p.desc || ''}`).toLowerCase().includes(q));
+  const sort = document.querySelector('#shopSort')?.value;
+  if (sort === 'low') list.sort((a, b) => a.price - b.price);
+  if (sort === 'high') list.sort((a, b) => b.price - a.price);
+  if (sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+  renderShop(list);
+};
+document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
+  document.querySelectorAll('[data-filter]').forEach(x => x.classList.remove('active'));
+  button.classList.add('active');
+  filter = button.dataset.filter;
+  apply();
+}));
+document.querySelector('#shopSearch')?.addEventListener('input', apply);
+document.querySelector('#shopSort')?.addEventListener('change', apply);
+document.querySelector('#contactForm')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const text = `Hello Maya's Secret,\n\nName: ${contactName.value}\nContact: ${contactReach.value}\nInterest: ${contactTopic.value}\nMessage: ${contactMessage.value}`;
+  window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+});
+
+ensureProductModal();
+renderFeatured();
+renderShop();
+drawCart();
