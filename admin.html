@@ -1,1 +1,172 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Admin | Maya's Secret</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"></head><body class="admin-body"><main class="admin-shell"><section class="admin-login" id="adminLogin"><img src="assets/mayas-logo.png" alt=""><p class="eyebrow">PRIVATE ADMIN</p><h1>Manage the collection.</h1><p>This local preview uses the starter passcode <b>maya2026</b>. Replace it with Firebase Authentication before publishing.</p><form id="loginForm"><input id="adminPassword" type="password" placeholder="Passcode" required><button class="btn primary">Continue</button><small id="loginError"></small></form><a href="index.html">← Return to website</a></section><section class="admin-panel" id="adminPanel" hidden><header><div><p class="eyebrow">MAYA’S SECRET ADMIN</p><h1>Products</h1></div><div><a href="shop.html" target="_blank">View shop ↗</a><button id="adminLogout">Log out</button></div></header><div class="admin-grid"><form class="product-form" id="productForm"><input type="hidden" id="productId"><h2 id="formTitle">Add product</h2><label>Product name<input id="productName" required></label><label>Category<select id="productCategory"><option>Face Care</option><option>Body Care</option><option>Gift Sets</option></select></label><div class="form-row"><label>Price (₦)<input id="productPrice" type="number" min="0" required></label><label>Size<input id="productSize" placeholder="e.g. 150 ml"></label></div><label>Badge<input id="productBadge" placeholder="e.g. Bestseller"></label><label>Description<textarea id="productDesc" rows="4"></textarea></label><label>Visual tone<select id="productTone"><option>plum</option><option>cream</option><option>amber</option><option>sage</option><option>rose</option><option>sand</option><option>wine</option><option>bronze</option></select></label><div class="form-buttons"><button class="btn primary" type="submit">Save product</button><button class="btn ghost" id="cancelEdit" type="button">Clear</button></div></form><div class="admin-products"><div class="admin-products-head"><h2>Current products</h2><button id="resetProducts">Restore defaults</button></div><div id="adminProductList"></div></div></div></section></main><script src="js/catalog.js"></script><script src="js/admin.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Admin | Maya's Secret</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="admin-body">
+  <main class="admin-shell">
+    <section class="admin-login" id="adminLogin" aria-labelledby="loginTitle">
+      <div class="admin-login-card">
+        <img src="assets/mayas-logo.png" alt="Maya's Secret">
+        <p class="eyebrow">PRIVATE ADMIN</p>
+        <h1 id="loginTitle">Welcome back.</h1>
+        <p>Sign in to manage the Maya’s Secret product collection. This preview uses local browser storage and should be connected to Firebase before launch.</p>
+        <form id="loginForm" novalidate>
+          <label for="adminPassword">Admin passcode</label>
+          <div class="password-field">
+            <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter passcode" required>
+            <button type="button" id="togglePassword" aria-label="Show passcode">Show</button>
+          </div>
+          <button class="btn primary" type="submit">Sign in</button>
+          <small id="loginError" role="alert"></small>
+        </form>
+        <a class="admin-back-link" href="index.html">← Return to website</a>
+      </div>
+    </section>
+
+    <section class="admin-panel" id="adminPanel" hidden>
+      <header class="admin-topbar">
+        <div>
+          <p class="eyebrow">MAYA’S SECRET ADMIN</p>
+          <h1>Product management</h1>
+          <p class="admin-subtitle">Create, update and organise the collection shown in the shop.</p>
+        </div>
+        <div class="admin-top-actions">
+          <a class="admin-link-button" href="shop.html" target="_blank" rel="noopener">View live shop ↗</a>
+          <button class="admin-outline-button" id="adminLogout" type="button">Log out</button>
+        </div>
+      </header>
+
+      <section class="admin-stats" aria-label="Product overview">
+        <article><span>Total products</span><strong id="statTotal">0</strong></article>
+        <article><span>Face care</span><strong id="statFace">0</strong></article>
+        <article><span>Body care</span><strong id="statBody">0</strong></article>
+        <article><span>Gift sets</span><strong id="statGifts">0</strong></article>
+      </section>
+
+      <div class="admin-grid">
+        <aside class="admin-editor">
+          <form class="product-form" id="productForm" novalidate>
+            <input type="hidden" id="productId">
+            <div class="admin-form-heading">
+              <div>
+                <p class="eyebrow" id="formMode">NEW PRODUCT</p>
+                <h2 id="formTitle">Add product</h2>
+              </div>
+              <button class="admin-icon-button" id="cancelEdit" type="button" hidden aria-label="Cancel editing">×</button>
+            </div>
+
+            <label>Product name
+              <input id="productName" maxlength="80" required placeholder="e.g. Radiance Face Serum">
+              <small class="field-error" id="nameError"></small>
+            </label>
+
+            <label>Category
+              <select id="productCategory" required>
+                <option>Face Care</option>
+                <option>Body Care</option>
+                <option>Gift Sets</option>
+              </select>
+            </label>
+
+            <div class="form-row">
+              <label>Price (₦)
+                <input id="productPrice" type="number" min="1" step="1" inputmode="numeric" required placeholder="0">
+                <small class="field-error" id="priceError"></small>
+              </label>
+              <label>Size
+                <input id="productSize" maxlength="30" placeholder="e.g. 150 ml">
+              </label>
+            </div>
+
+            <label>Badge
+              <input id="productBadge" maxlength="24" placeholder="e.g. Bestseller">
+            </label>
+
+            <label>Description
+              <textarea id="productDesc" rows="5" maxlength="320" placeholder="Briefly describe the product and its key benefit."></textarea>
+              <small class="character-count"><span id="descCount">0</span>/320</small>
+            </label>
+
+            <label>Visual tone
+              <select id="productTone">
+                <option value="plum">Plum</option>
+                <option value="cream">Cream</option>
+                <option value="amber">Amber</option>
+                <option value="sage">Sage</option>
+                <option value="rose">Rose</option>
+                <option value="sand">Sand</option>
+                <option value="wine">Wine</option>
+                <option value="bronze">Bronze</option>
+              </select>
+            </label>
+
+            <div class="admin-product-preview" aria-label="Product preview">
+              <div class="product-art tone-plum" id="previewArt">
+                <span class="product-badge" id="previewBadge">New</span>
+                <div class="product-pack">MS</div>
+              </div>
+              <div>
+                <p id="previewCategory">Face Care</p>
+                <h3 id="previewName">Your product</h3>
+                <small id="previewSize">Size</small>
+                <strong id="previewPrice">₦0</strong>
+              </div>
+            </div>
+
+            <div class="form-buttons">
+              <button class="btn primary" type="submit" id="saveProduct">Save product</button>
+              <button class="btn ghost" id="clearForm" type="button">Clear form</button>
+            </div>
+          </form>
+        </aside>
+
+        <section class="admin-products">
+          <div class="admin-products-head">
+            <div>
+              <p class="eyebrow">CATALOGUE</p>
+              <h2>Current products</h2>
+              <p id="productCountText">0 products</p>
+            </div>
+            <div class="admin-data-actions">
+              <button id="exportProducts" type="button">Export backup</button>
+              <label class="admin-import-button">Import backup<input id="importProducts" type="file" accept="application/json,.json"></label>
+              <button id="resetProducts" class="danger-text" type="button">Restore defaults</button>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <label class="admin-search">Search products
+              <input id="adminSearch" type="search" placeholder="Search by name, category or badge">
+            </label>
+            <label>Filter category
+              <select id="adminCategoryFilter">
+                <option value="All">All categories</option>
+                <option value="Face Care">Face Care</option>
+                <option value="Body Care">Body Care</option>
+                <option value="Gift Sets">Gift Sets</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="adminProductList" class="admin-product-list"></div>
+          <div id="adminEmptyState" class="admin-empty-state" hidden>
+            <h3>No products found</h3>
+            <p>Try a different search or category filter.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="admin-toast" id="adminToast" role="status" aria-live="polite"></div>
+
+  <script src="js/catalog.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
