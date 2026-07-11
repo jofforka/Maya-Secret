@@ -124,7 +124,7 @@ function ensureProductModal() {
   if (document.getElementById('productModal')) return;
   document.body.insertAdjacentHTML('beforeend', `<section class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalProductName" aria-hidden="true">
     <button class="modal-close" id="modalClose" type="button" aria-label="Close product details">×</button>
-    <div class="modal-product-visual" id="modalVisual"></div>
+    <div class="modal-product-media"><div class="modal-product-visual" id="modalVisual"></div><div class="modal-thumbs" id="modalThumbs" aria-label="Additional product images"></div></div>
     <div class="modal-product-copy">
       <p class="eyebrow" id="modalCategory"></p>
       <h2 id="modalProductName"></h2>
@@ -151,7 +151,8 @@ function openProductModal(id) {
   document.getElementById('modalQty').textContent = '1';
   const images = [activeProduct.image, ...(activeProduct.gallery || [])].filter(Boolean);
   document.getElementById('modalVisual').innerHTML = images.length ? `<div class="product-art product-photo modal-art"><img id="modalMainImage" src="${esc(images[0])}" alt="${esc(activeProduct.name)}"></div>` : productVisual(activeProduct, 'modal-art');
-  document.getElementById('modalThumbs').innerHTML = images.length > 1 ? images.map((src,i)=>`<button type="button" class="modal-thumb ${i===0?'active':''}" data-modal-image="${esc(src)}"><img src="${esc(src)}" alt="${esc(activeProduct.name)} view ${i+1}"></button>`).join('') : '';
+  const thumbs = document.getElementById('modalThumbs');
+  if (thumbs) thumbs.innerHTML = images.length > 1 ? images.map((src,i)=>`<button type="button" class="modal-thumb ${i===0?'active':''}" data-modal-image="${esc(src)}"><img src="${esc(src)}" alt="${esc(activeProduct.name)} view ${i+1}"></button>`).join('') : '';
   document.getElementById('modalCategory').textContent = activeProduct.category;
   document.getElementById('modalProductName').textContent = activeProduct.name;
   document.getElementById('modalPrice').textContent = money(activeProduct.price);
