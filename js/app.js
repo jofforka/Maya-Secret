@@ -53,7 +53,7 @@ function renderShop(list = products) {
   if (noResults) noResults.hidden = !!list.length;
 }
 
-function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); drawCart(); }
+function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); drawCart(); renderCheckout(); }
 function add(id, qty = 1) {
   const item = cart.find(x => x.id === id);
   item ? item.qty += qty : cart.push({ id, qty });
@@ -141,7 +141,7 @@ function ensureProductModal() {
   document.getElementById('modalClose').addEventListener('click', closeProductModal);
   document.getElementById('modalMinus').addEventListener('click', () => { modalQty = Math.max(1, modalQty - 1); document.getElementById('modalQty').textContent = modalQty; });
   document.getElementById('modalPlus').addEventListener('click', () => { modalQty += 1; document.getElementById('modalQty').textContent = modalQty; });
-  document.getElementById('modalAdd').addEventListener('click', () => { if (activeProduct) { add(activeProduct.id, modalQty); closeProductModal(); openCart(); } });
+  document.getElementById('modalAdd').addEventListener('click', () => { if (activeProduct) { add(activeProduct.id, modalQty); closeProductModal(); } });
 }
 function openProductModal(id) {
   activeProduct = products.find(p => p.id === id);
@@ -186,21 +186,71 @@ document.addEventListener('click', e => {
   const thumb = e.target.closest('[data-modal-image]');
   if (thumb) { const img=document.getElementById('modalMainImage'); if(img) img.src=thumb.dataset.modalImage; document.querySelectorAll('.modal-thumb').forEach(x=>x.classList.remove('active')); thumb.classList.add('active'); return; }
   const addButton = e.target.closest('[data-add]');
-  if (addButton) { const p=products.find(x=>x.id===addButton.dataset.add); if(p?.status==='soldout'){ toast('This product is currently sold out'); return; } add(addButton.dataset.add); openCart(); return; }
+  if (addButton) { const p=products.find(x=>x.id===addButton.dataset.add); if(p?.status==='soldout'){ toast('This product is currently sold out'); return; } add(addButton.dataset.add); return; }
   const plus = e.target.closest('[data-plus]'); if (plus) change(plus.dataset.plus, 1);
   const minus = e.target.closest('[data-minus]'); if (minus) change(minus.dataset.minus, -1);
   const remove = e.target.closest('[data-remove]'); if (remove) { cart = cart.filter(x => x.id !== remove.dataset.remove); saveCart(); }
 });
 document.querySelector('.bag-toggle')?.addEventListener('click', openCart);
+document.querySelector('.floating-bag')?.addEventListener('click', openCart);
 document.querySelector('.cart-close')?.addEventListener('click', closeCart);
 document.querySelector('.overlay')?.addEventListener('click', () => { closeCart(); closeProductModal(); });
 document.querySelector('.menu')?.addEventListener('click', () => document.querySelector('.header nav')?.classList.toggle('open'));
 document.querySelector('.checkout')?.addEventListener('click', () => {
-  if (!cart.length) return;
-  const lines = cart.map(i => { const p = products.find(x => x.id === i.id); return `• ${p.name} × ${i.qty} — ${money(p.price * i.qty)}`; }).join('\n');
-  const total = cart.reduce((s, i) => { const p = products.find(x => x.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
-  window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(`Hello Maya's Secret, I would like to order:\n\n${lines}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability and delivery.`)}`, '_blank', 'noopener');
+  if (!cart.length) { toast('Your bag is empty'); return; }
+  window.location.href = 'checkout.html';
 });
+
+function renderCheckout() {
+  const list = document.querySelector('#checkoutItems');
+  if (!list) return;
+  const empty = document.querySelector('#checkoutEmpty');
+  const content = document.querySelector('#checkoutContent');
+  const validItems = cart.map(i => ({...i, product: products.find(p => p.id === i.id)})).filter(i => i.product);
+  if (!validItems.length) {
+    if (empty) empty.hidden = false;
+    if (content) content.hidden = true;
+    return;
+  }
+  if (empty) empty.hidden = true;
+  if (content) content.hidden = false;
+  list.innerHTML = validItems.map(i => `<article class="checkout-item">${productVisual(i.product, 'checkout-thumb')}<div><p>${esc(i.product.category)}</p><h3>${esc(i.product.name)}</h3><span>${esc(i.product.size || '')}</span><div class="qty"><button data-minus="${esc(i.product.id)}" type="button">−</button><span>${i.qty}</span><button data-plus="${esc(i.product.id)}" type="button">+</button></div></div><strong>${money(i.product.price * i.qty)}</strong><button class="remove" data-remove="${esc(i.product.id)}" type="button" aria-label="Remove ${esc(i.product.name)}">×</button></article>`).join('');
+  const subtotal = validItems.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+  document.querySelectorAll('[data-checkout-total]').forEach(el => el.textContent = money(subtotal));
+}
+
+const checkoutForm = document.querySelector('#checkoutForm');
+checkoutForm?.addEventListener('submit', e => {
+  e.preventDefault();
+  if (!cart.length) { toast('Your bag is empty'); return; }
+  const form = new FormData(checkoutForm);
+  const lines = cart.map(i => { const p = products.find(x => x.id === i.id); return p ? `• ${p.name} × ${i.qty} — ${money(p.price * i.qty)}` : ''; }).filter(Boolean).join('\n');
+  const total = cart.reduce((sum, i) => { const p = products.find(x => x.id === i.id); return sum + (p ? p.price * i.qty : 0); }, 0);
+  const fulfilment = form.get('fulfilment');
+  const address = fulfilment === 'Delivery' ? `
+Delivery address: ${form.get('address') || 'Not supplied'}` : '';
+  const message = `Hello Maya's Secret, I would like to place this order:
+
+${lines}
+
+Estimated total: ${money(total)}
+
+Customer: ${form.get('name')}
+Phone: ${form.get('phone')}
+Order method: ${fulfilment}${address}
+Notes: ${form.get('notes') || 'None'}
+
+Please confirm availability, final delivery fee and payment details.`;
+  window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+});
+
+document.querySelectorAll('input[name="fulfilment"]').forEach(input => input.addEventListener('change', () => {
+  const wrap = document.querySelector('#addressWrap');
+  const address = document.querySelector('#checkoutAddress');
+  const delivery = input.checked && input.value === 'Delivery';
+  if (wrap) wrap.hidden = !delivery;
+  if (address) address.required = delivery;
+}));
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCart(); closeProductModal(); } });
 
 let filter = 'All';
@@ -232,3 +282,4 @@ ensureProductModal();
 renderFeatured();
 renderShop();
 drawCart();
+renderCheckout();
