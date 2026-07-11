@@ -35,13 +35,14 @@ function card(p) {
       <small>${esc(p.size || '')}</small>
       <strong>${money(p.price)}</strong>
     </div>
-    <button class="add-btn" data-add="${esc(p.id)}" type="button">Add to bag</button>
+    <button class="add-btn" data-add="${esc(p.id)}" type="button" ${p.status==='soldout'?'disabled':''}>${p.status==='soldout'?'Sold out':'Add to bag'}</button>
   </article>`;
 }
 
 function renderFeatured() {
   document.querySelectorAll('[data-products="featured"]').forEach(el => {
-    el.innerHTML = products.slice(0, 4).map(card).join('');
+    const featured = products.filter(p => p.featured && p.status !== 'soldout');
+    el.innerHTML = (featured.length ? featured : products.filter(p => p.status !== 'soldout')).slice(0, 4).map(card).join('');
   });
 }
 function renderShop(list = products) {
@@ -129,7 +130,7 @@ function ensureProductModal() {
       <h2 id="modalProductName"></h2>
       <div class="modal-meta"><strong id="modalPrice"></strong><span id="modalSize"></span></div>
       <p class="modal-description" id="modalDescription"></p>
-      <div class="modal-benefits" id="modalBenefits"></div>
+      <div class="modal-benefits" id="modalBenefits"></div><div class="modal-use" id="modalUseWrap"><strong>How to use</strong><p id="modalUse"></p></div>
       <div class="modal-purchase">
         <div class="modal-qty" aria-label="Quantity selector"><button id="modalMinus" type="button">−</button><span id="modalQty">1</span><button id="modalPlus" type="button">+</button></div>
         <button class="btn primary" id="modalAdd" type="button">Add to bag</button>
@@ -148,13 +149,19 @@ function openProductModal(id) {
   ensureProductModal();
   modalQty = 1;
   document.getElementById('modalQty').textContent = '1';
-  document.getElementById('modalVisual').innerHTML = productVisual(activeProduct, 'modal-art');
+  const images = [activeProduct.image, ...(activeProduct.gallery || [])].filter(Boolean);
+  document.getElementById('modalVisual').innerHTML = images.length ? `<div class="product-art product-photo modal-art"><img id="modalMainImage" src="${esc(images[0])}" alt="${esc(activeProduct.name)}"></div>` : productVisual(activeProduct, 'modal-art');
+  document.getElementById('modalThumbs').innerHTML = images.length > 1 ? images.map((src,i)=>`<button type="button" class="modal-thumb ${i===0?'active':''}" data-modal-image="${esc(src)}"><img src="${esc(src)}" alt="${esc(activeProduct.name)} view ${i+1}"></button>`).join('') : '';
   document.getElementById('modalCategory').textContent = activeProduct.category;
   document.getElementById('modalProductName').textContent = activeProduct.name;
   document.getElementById('modalPrice').textContent = money(activeProduct.price);
   document.getElementById('modalSize').textContent = activeProduct.size || '';
   document.getElementById('modalDescription').textContent = activeProduct.desc || 'A thoughtfully selected Maya’s Secret beauty essential created to elevate your everyday routine.';
-  document.getElementById('modalBenefits').innerHTML = modalBenefits(activeProduct).map(item => `<div><span>✓</span><p>${esc(item)}</p></div>`).join('');
+  const benefits = Array.isArray(activeProduct.benefits) && activeProduct.benefits.length ? activeProduct.benefits : modalBenefits(activeProduct);
+  document.getElementById('modalBenefits').innerHTML = benefits.map(item => `<div><span>✓</span><p>${esc(item)}</p></div>`).join('');
+  document.getElementById('modalUse').textContent = activeProduct.use || 'Use as directed. Contact Maya’s Secret for personalised product guidance.';
+  document.getElementById('modalUseWrap').hidden = false;
+  const addButton=document.getElementById('modalAdd'); addButton.disabled=activeProduct.status==='soldout'; addButton.textContent=activeProduct.status==='soldout'?'Sold out':'Add to bag';
   document.getElementById('modalHelp').href = `https://wa.me/2348109044321?text=${encodeURIComponent(`Hello Maya's Secret, I would like more information about ${activeProduct.name}.`)}`;
   const modal = document.getElementById('productModal');
   modal.classList.add('open');
@@ -175,8 +182,10 @@ function closeProductModal() {
 document.addEventListener('click', e => {
   const view = e.target.closest('[data-view]');
   if (view) { e.preventDefault(); openProductModal(view.dataset.view); return; }
+  const thumb = e.target.closest('[data-modal-image]');
+  if (thumb) { const img=document.getElementById('modalMainImage'); if(img) img.src=thumb.dataset.modalImage; document.querySelectorAll('.modal-thumb').forEach(x=>x.classList.remove('active')); thumb.classList.add('active'); return; }
   const addButton = e.target.closest('[data-add]');
-  if (addButton) { add(addButton.dataset.add); openCart(); return; }
+  if (addButton) { const p=products.find(x=>x.id===addButton.dataset.add); if(p?.status==='soldout'){ toast('This product is currently sold out'); return; } add(addButton.dataset.add); openCart(); return; }
   const plus = e.target.closest('[data-plus]'); if (plus) change(plus.dataset.plus, 1);
   const minus = e.target.closest('[data-minus]'); if (minus) change(minus.dataset.minus, -1);
   const remove = e.target.closest('[data-remove]'); if (remove) { cart = cart.filter(x => x.id !== remove.dataset.remove); saveCart(); }

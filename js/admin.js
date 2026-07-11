@@ -1,290 +1,85 @@
 const PRODUCT_KEY = 'mayaProducts';
 const AUTH_KEY = 'mayaAdminSession';
 const PREVIEW_PASSCODE = 'maya2026';
-
 const $ = id => document.getElementById(id);
-const cloneDefaults = () => (window.MAYA_DEFAULT_PRODUCTS || []).map(item => ({ ...item }));
-const readProducts = () => {
-  try {
-    const saved = JSON.parse(localStorage.getItem(PRODUCT_KEY));
-    return Array.isArray(saved) ? saved : cloneDefaults();
-  } catch {
-    return cloneDefaults();
-  }
-};
-
+const cloneDefaults = () => (window.MAYA_DEFAULT_PRODUCTS || []).map(item => ({ ...item, gallery:[...(item.gallery||[])], benefits:[...(item.benefits||[])] }));
+const readProducts = () => { try { const saved = JSON.parse(localStorage.getItem(PRODUCT_KEY)); return Array.isArray(saved) ? saved : cloneDefaults(); } catch { return cloneDefaults(); } };
 let products = readProducts();
 let query = '';
 let categoryFilter = 'All';
-
 const money = value => `₦${Number(value || 0).toLocaleString('en-NG')}`;
-const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-}[char]));
+const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
-function persist(message = 'Changes saved') {
-  localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
-  render();
-  showToast(message);
+function persist(message='Changes saved'){ localStorage.setItem(PRODUCT_KEY, JSON.stringify(products)); render(); showToast(message); }
+function showToast(message){ const toast=$('adminToast'); toast.textContent=message; toast.classList.add('show'); clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>toast.classList.remove('show'),2300); }
+function showPanel(){ $('adminLogin').hidden=true; $('adminPanel').hidden=false; render(); updatePreview(); }
+if(sessionStorage.getItem(AUTH_KEY)==='yes') showPanel();
+$('togglePassword').addEventListener('click',()=>{ const p=$('adminPassword'); const show=p.type==='password'; p.type=show?'text':'password'; $('togglePassword').textContent=show?'Hide':'Show'; });
+$('loginForm').addEventListener('submit',e=>{ e.preventDefault(); if($('adminPassword').value.trim()===PREVIEW_PASSCODE){ sessionStorage.setItem(AUTH_KEY,'yes'); $('loginError').textContent=''; showPanel(); } else { $('loginError').textContent='Incorrect passcode. Please try again.'; $('adminPassword').focus(); }});
+$('adminLogout').addEventListener('click',()=>{ sessionStorage.removeItem(AUTH_KEY); location.reload(); });
+
+function filteredProducts(){ return products.filter(p=>{ const hay=`${p.name} ${p.category} ${p.badge||''} ${p.status||''}`.toLowerCase(); return (!query||hay.includes(query)) && (categoryFilter==='All'||p.category===categoryFilter); }); }
+function renderStats(){
+  $('statTotal').textContent=products.length;
+  $('statFace').textContent=products.filter(p=>p.category==='Face Care').length;
+  $('statBody').textContent=products.filter(p=>p.category==='Body Care').length;
+  $('statGifts').textContent=products.filter(p=>p.category==='Gift Sets').length;
+  $('statFeatured').textContent=products.filter(p=>p.featured).length;
+  $('statSoldOut').textContent=products.filter(p=>p.status==='soldout').length;
 }
-
-function showToast(message) {
-  const toast = $('adminToast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => toast.classList.remove('show'), 2200);
+function thumb(p){ return p.image ? `<div class="cart-thumb product-art product-photo"><img src="${escapeHtml(p.image)}" alt=""></div>` : `<div class="cart-thumb product-art tone-${escapeHtml(p.tone||'plum')}"><div class="product-pack">MS</div></div>`; }
+function render(){
+  renderStats(); const list=filteredProducts(); $('productCountText').textContent=`${list.length} of ${products.length} product${products.length===1?'':'s'}`; $('adminEmptyState').hidden=list.length>0;
+  $('adminProductList').innerHTML=list.map(p=>`<article class="admin-item">
+    ${thumb(p)}
+    <div class="admin-item-copy"><div class="admin-item-meta"><span>${escapeHtml(p.category)}</span>${p.badge?`<span>${escapeHtml(p.badge)}</span>`:''}${p.featured?'<span>Featured</span>':''}${p.status==='soldout'?'<span class="status-soldout">Sold out</span>':'<span class="status-live">Available</span>'}</div>
+    <h3>${escapeHtml(p.name)}</h3><p>${money(p.price)}${p.size?` · ${escapeHtml(p.size)}`:''}</p>${p.desc?`<small>${escapeHtml(p.desc)}</small>`:''}</div>
+    <div class="admin-item-actions"><button data-edit="${escapeHtml(p.id)}">Edit</button><button data-duplicate="${escapeHtml(p.id)}">Duplicate</button><button class="delete" data-delete="${escapeHtml(p.id)}">Delete</button></div>
+  </article>`).join('');
 }
-
-function showPanel() {
-  $('adminLogin').hidden = true;
-  $('adminPanel').hidden = false;
-  render();
-  updatePreview();
+function setEditMode(p=null){ const editing=!!p; $('formMode').textContent=editing?'EDITING PRODUCT':'NEW PRODUCT'; $('formTitle').textContent=editing?'Update product':'Add product'; $('saveProduct').textContent=editing?'Update product':'Save product'; $('cancelEdit').hidden=!editing; }
+function clearValidation(){ $('nameError').textContent=''; $('priceError').textContent=''; }
+function clearForm(){ $('productForm').reset(); $('productId').value=''; $('productCategory').value='Face Care'; $('productTone').value='plum'; $('productStatus').value='available'; ['productImage','gallery1','gallery2','gallery3'].forEach(id=>$(id).value=''); setEditMode(); clearValidation(); updatePreview(); }
+function updatePreview(){
+  const image=$('productImage').value.trim(); const art=$('previewArt');
+  if(image){ art.className='product-art product-photo'; art.innerHTML=`<span class="product-badge" id="previewBadge">${escapeHtml($('productBadge').value.trim()||'New')}</span><img src="${escapeHtml(image)}" alt="">`; }
+  else { art.className=`product-art tone-${$('productTone').value||'plum'}`; art.innerHTML=`<span class="product-badge" id="previewBadge">${escapeHtml($('productBadge').value.trim()||'New')}</span><div class="product-pack">MS</div>`; }
+  $('previewCategory').textContent=$('productCategory').value||'Face Care'; $('previewName').textContent=$('productName').value.trim()||'Your product'; $('previewSize').textContent=$('productSize').value.trim()||'Size'; $('previewPrice').textContent=money($('productPrice').value); $('descCount').textContent=$('productDesc').value.length;
 }
+['productName','productCategory','productPrice','productSize','productBadge','productDesc','productTone','productImage'].forEach(id=>$(id).addEventListener('input',updatePreview));
 
-if (sessionStorage.getItem(AUTH_KEY) === 'yes') showPanel();
-
-$('togglePassword').addEventListener('click', () => {
-  const password = $('adminPassword');
-  const showing = password.type === 'text';
-  password.type = showing ? 'password' : 'text';
-  $('togglePassword').textContent = showing ? 'Show' : 'Hide';
-  $('togglePassword').setAttribute('aria-label', showing ? 'Show passcode' : 'Hide passcode');
-});
-
-$('loginForm').addEventListener('submit', event => {
-  event.preventDefault();
-  const value = $('adminPassword').value.trim();
-  if (value === PREVIEW_PASSCODE) {
-    sessionStorage.setItem(AUTH_KEY, 'yes');
-    $('loginError').textContent = '';
-    showPanel();
-  } else {
-    $('loginError').textContent = 'Incorrect passcode. Please try again.';
-    $('adminPassword').focus();
-  }
-});
-
-$('adminLogout').addEventListener('click', () => {
-  sessionStorage.removeItem(AUTH_KEY);
-  location.reload();
-});
-
-function filteredProducts() {
-  return products.filter(product => {
-    const haystack = `${product.name} ${product.category} ${product.badge || ''}`.toLowerCase();
-    const matchesSearch = !query || haystack.includes(query);
-    const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+async function compressImage(file){
+  if(!file) return '';
+  if(file.size>8*1024*1024) throw new Error('Image is larger than 8MB');
+  const bitmap=await createImageBitmap(file); const max=1200; const scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height)); const canvas=document.createElement('canvas'); canvas.width=Math.round(bitmap.width*scale); canvas.height=Math.round(bitmap.height*scale); canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height); return canvas.toDataURL('image/jpeg',.82);
 }
-
-function renderStats() {
-  $('statTotal').textContent = products.length;
-  $('statFace').textContent = products.filter(p => p.category === 'Face Care').length;
-  $('statBody').textContent = products.filter(p => p.category === 'Body Care').length;
-  $('statGifts').textContent = products.filter(p => p.category === 'Gift Sets').length;
+async function handleImage(fileInputId,targetId){
+  const file=$(fileInputId).files?.[0]; if(!file) return;
+  try { showToast('Preparing image…'); $(targetId).value=await compressImage(file); updatePreview(); showToast('Image ready'); }
+  catch(err){ alert(err.message||'Unable to process this image.'); }
+  finally { $(fileInputId).value=''; }
 }
+[['productImageFile','productImage'],['galleryFile1','gallery1'],['galleryFile2','gallery2'],['galleryFile3','gallery3']].forEach(([f,t])=>$(f).addEventListener('change',()=>handleImage(f,t)));
+$('clearImages').addEventListener('click',()=>{ ['productImage','gallery1','gallery2','gallery3'].forEach(id=>$(id).value=''); updatePreview(); showToast('Images removed from form'); });
 
-function render() {
-  renderStats();
-  const list = filteredProducts();
-  $('productCountText').textContent = `${list.length} of ${products.length} product${products.length === 1 ? '' : 's'}`;
-  $('adminEmptyState').hidden = list.length > 0;
-
-  $('adminProductList').innerHTML = list.map(product => `
-    <article class="admin-item">
-      <div class="cart-thumb product-art tone-${escapeHtml(product.tone || 'plum')}">
-        <div class="product-pack">MS</div>
-      </div>
-      <div class="admin-item-copy">
-        <div class="admin-item-meta">
-          <span>${escapeHtml(product.category)}</span>
-          ${product.badge ? `<span>${escapeHtml(product.badge)}</span>` : ''}
-        </div>
-        <h3>${escapeHtml(product.name)}</h3>
-        <p>${money(product.price)}${product.size ? ` · ${escapeHtml(product.size)}` : ''}</p>
-        ${product.desc ? `<small>${escapeHtml(product.desc)}</small>` : ''}
-      </div>
-      <div class="admin-item-actions">
-        <button data-edit="${escapeHtml(product.id)}" type="button">Edit</button>
-        <button data-duplicate="${escapeHtml(product.id)}" type="button">Duplicate</button>
-        <button class="delete" data-delete="${escapeHtml(product.id)}" type="button">Delete</button>
-      </div>
-    </article>
-  `).join('');
-}
-
-function setEditMode(product = null) {
-  const editing = Boolean(product);
-  $('formMode').textContent = editing ? 'EDITING PRODUCT' : 'NEW PRODUCT';
-  $('formTitle').textContent = editing ? 'Update product' : 'Add product';
-  $('saveProduct').textContent = editing ? 'Update product' : 'Save product';
-  $('cancelEdit').hidden = !editing;
-}
-
-function clearValidation() {
-  $('nameError').textContent = '';
-  $('priceError').textContent = '';
-}
-
-function clearForm() {
-  $('productForm').reset();
-  $('productId').value = '';
-  $('productCategory').value = 'Face Care';
-  $('productTone').value = 'plum';
-  setEditMode();
-  clearValidation();
-  updatePreview();
-}
-
-function updatePreview() {
-  const tone = $('productTone').value || 'plum';
-  $('previewArt').className = `product-art tone-${tone}`;
-  $('previewBadge').textContent = $('productBadge').value.trim() || 'New';
-  $('previewCategory').textContent = $('productCategory').value || 'Face Care';
-  $('previewName').textContent = $('productName').value.trim() || 'Your product';
-  $('previewSize').textContent = $('productSize').value.trim() || 'Size';
-  $('previewPrice').textContent = money($('productPrice').value);
-  $('descCount').textContent = $('productDesc').value.length;
-}
-
-['productName', 'productCategory', 'productPrice', 'productSize', 'productBadge', 'productDesc', 'productTone']
-  .forEach(id => $(id).addEventListener('input', updatePreview));
-
-$('productForm').addEventListener('submit', event => {
-  event.preventDefault();
-  clearValidation();
-
-  const name = $('productName').value.trim();
-  const price = Number($('productPrice').value);
-  let valid = true;
-
-  if (name.length < 2) {
-    $('nameError').textContent = 'Enter a clear product name.';
-    valid = false;
-  }
-  if (!Number.isFinite(price) || price < 1) {
-    $('priceError').textContent = 'Enter a valid price greater than zero.';
-    valid = false;
-  }
-  if (!valid) return;
-
-  const existingId = $('productId').value;
-  const id = existingId || `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${Date.now().toString().slice(-6)}`;
-  const product = {
-    id,
-    name,
-    category: $('productCategory').value,
-    price,
-    size: $('productSize').value.trim(),
-    badge: $('productBadge').value.trim() || 'New',
-    desc: $('productDesc').value.trim(),
-    tone: $('productTone').value
-  };
-
-  const index = products.findIndex(item => item.id === id);
-  if (index >= 0) products[index] = product;
-  else products.unshift(product);
-
-  persist(index >= 0 ? 'Product updated' : 'Product added');
-  clearForm();
+$('productForm').addEventListener('submit',e=>{
+  e.preventDefault(); clearValidation(); const name=$('productName').value.trim(); const price=Number($('productPrice').value); let valid=true;
+  if(name.length<2){ $('nameError').textContent='Enter a clear product name.'; valid=false; }
+  if(!Number.isFinite(price)||price<1){ $('priceError').textContent='Enter a valid price greater than zero.'; valid=false; }
+  if(!valid) return;
+  const existingId=$('productId').value; const id=existingId||`${name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}-${Date.now().toString().slice(-6)}`;
+  const product={ id,name,category:$('productCategory').value,price,size:$('productSize').value.trim(),badge:$('productBadge').value.trim()||'New',desc:$('productDesc').value.trim(),tone:$('productTone').value,status:$('productStatus').value,featured:$('productFeatured').checked,image:$('productImage').value.trim(),gallery:[$('gallery1').value.trim(),$('gallery2').value.trim(),$('gallery3').value.trim()].filter(Boolean),benefits:$('productBenefits').value.split('\n').map(v=>v.trim()).filter(Boolean).slice(0,6),use:$('productUse').value.trim() };
+  const index=products.findIndex(x=>x.id===id); if(index>=0) products[index]=product; else products.unshift(product); persist(index>=0?'Product updated':'Product added'); clearForm();
 });
+$('clearForm').addEventListener('click',clearForm); $('cancelEdit').addEventListener('click',clearForm);
+$('adminSearch').addEventListener('input',e=>{ query=e.target.value.toLowerCase().trim(); render(); }); $('adminCategoryFilter').addEventListener('change',e=>{ categoryFilter=e.target.value; render(); });
+$('resetProducts').addEventListener('click',()=>{ if(confirm('Restore the original product collection? This replaces all current changes.')){ products=cloneDefaults(); persist('Default collection restored'); clearForm(); }});
+$('exportProducts').addEventListener('click',()=>{ const blob=new Blob([JSON.stringify(products,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`maya-secret-products-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url); showToast('Backup exported'); });
+$('importProducts').addEventListener('change',async e=>{ const file=e.target.files?.[0]; if(!file)return; try{ const imported=JSON.parse(await file.text()); if(!Array.isArray(imported)||imported.some(x=>!x.id||!x.name||!x.category||!Number.isFinite(Number(x.price)))) throw new Error(); if(confirm(`Import ${imported.length} products and replace the current collection?`)){ products=imported.map(x=>({...x,price:Number(x.price),gallery:Array.isArray(x.gallery)?x.gallery:[],benefits:Array.isArray(x.benefits)?x.benefits:[]})); persist('Backup imported'); clearForm(); }}catch{ alert('That file is not a valid Maya’s Secret product backup.'); } finally{ e.target.value=''; }});
 
-$('clearForm').addEventListener('click', clearForm);
-$('cancelEdit').addEventListener('click', clearForm);
-
-$('adminSearch').addEventListener('input', event => {
-  query = event.target.value.toLowerCase().trim();
-  render();
+document.addEventListener('click',e=>{
+  const eb=e.target.closest('[data-edit]'); if(eb){ const p=products.find(x=>x.id===eb.dataset.edit); if(!p)return; $('productId').value=p.id; $('productName').value=p.name; $('productCategory').value=p.category; $('productPrice').value=p.price; $('productSize').value=p.size||''; $('productBadge').value=p.badge||''; $('productDesc').value=p.desc||''; $('productTone').value=p.tone||'plum'; $('productStatus').value=p.status||'available'; $('productFeatured').checked=!!p.featured; $('productImage').value=p.image||''; $('gallery1').value=p.gallery?.[0]||''; $('gallery2').value=p.gallery?.[1]||''; $('gallery3').value=p.gallery?.[2]||''; $('productBenefits').value=(p.benefits||[]).join('\n'); $('productUse').value=p.use||''; setEditMode(p); clearValidation(); updatePreview(); document.querySelector('.admin-editor').scrollIntoView({behavior:'smooth',block:'start'}); }
+  const db=e.target.closest('[data-duplicate]'); if(db){ const s=products.find(x=>x.id===db.dataset.duplicate); if(s){ products.unshift({...s,id:`${s.id}-copy-${Date.now().toString().slice(-5)}`,name:`${s.name} Copy`,badge:'New',featured:false,gallery:[...(s.gallery||[])],benefits:[...(s.benefits||[])]}); persist('Product duplicated'); }}
+  const del=e.target.closest('[data-delete]'); if(del){ const p=products.find(x=>x.id===del.dataset.delete); if(p&&confirm(`Delete “${p.name}”? This cannot be undone unless you restore a backup.`)){ products=products.filter(x=>x.id!==p.id); persist('Product deleted'); if($('productId').value===p.id) clearForm(); }}
 });
-
-$('adminCategoryFilter').addEventListener('change', event => {
-  categoryFilter = event.target.value;
-  render();
-});
-
-$('resetProducts').addEventListener('click', () => {
-  if (!confirm('Restore the original product collection? This will replace all current product changes.')) return;
-  products = cloneDefaults();
-  persist('Default collection restored');
-  clearForm();
-});
-
-$('exportProducts').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(products, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `maya-secret-products-${new Date().toISOString().slice(0, 10)}.json`;
-  link.click();
-  URL.revokeObjectURL(url);
-  showToast('Backup exported');
-});
-
-$('importProducts').addEventListener('change', async event => {
-  const file = event.target.files?.[0];
-  if (!file) return;
-  try {
-    const imported = JSON.parse(await file.text());
-    if (!Array.isArray(imported) || imported.some(item => !item.id || !item.name || !item.category || !Number.isFinite(Number(item.price)))) {
-      throw new Error('Invalid product backup');
-    }
-    if (!confirm(`Import ${imported.length} products and replace the current collection?`)) return;
-    products = imported.map(item => ({ ...item, price: Number(item.price) }));
-    persist('Backup imported');
-    clearForm();
-  } catch {
-    alert('That file is not a valid Maya’s Secret product backup.');
-  } finally {
-    event.target.value = '';
-  }
-});
-
-document.addEventListener('click', event => {
-  const editButton = event.target.closest('[data-edit]');
-  if (editButton) {
-    const product = products.find(item => item.id === editButton.dataset.edit);
-    if (!product) return;
-    $('productId').value = product.id;
-    $('productName').value = product.name;
-    $('productCategory').value = product.category;
-    $('productPrice').value = product.price;
-    $('productSize').value = product.size || '';
-    $('productBadge').value = product.badge || '';
-    $('productDesc').value = product.desc || '';
-    $('productTone').value = product.tone || 'plum';
-    setEditMode(product);
-    clearValidation();
-    updatePreview();
-    document.querySelector('.admin-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  const duplicateButton = event.target.closest('[data-duplicate]');
-  if (duplicateButton) {
-    const source = products.find(item => item.id === duplicateButton.dataset.duplicate);
-    if (!source) return;
-    const copy = {
-      ...source,
-      id: `${source.id}-copy-${Date.now().toString().slice(-5)}`,
-      name: `${source.name} Copy`,
-      badge: 'New'
-    };
-    products.unshift(copy);
-    persist('Product duplicated');
-  }
-
-  const deleteButton = event.target.closest('[data-delete]');
-  if (deleteButton) {
-    const product = products.find(item => item.id === deleteButton.dataset.delete);
-    if (!product) return;
-    if (!confirm(`Delete “${product.name}”? This cannot be undone unless you restore a backup.`)) return;
-    products = products.filter(item => item.id !== product.id);
-    persist('Product deleted');
-    if ($('productId').value === product.id) clearForm();
-  }
-});
-
-render();
-updatePreview();
+render(); updatePreview();
