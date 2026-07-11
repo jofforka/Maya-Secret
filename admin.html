@@ -47,6 +47,8 @@
         <article><span>Face care</span><strong id="statFace">0</strong></article>
         <article><span>Body care</span><strong id="statBody">0</strong></article>
         <article><span>Gift sets</span><strong id="statGifts">0</strong></article>
+        <article><span>Featured</span><strong id="statFeatured">0</strong></article>
+        <article><span>Sold out</span><strong id="statSoldOut">0</strong></article>
       </section>
 
       <div class="admin-grid">
@@ -84,13 +86,50 @@
               </label>
             </div>
 
-            <label>Badge
-              <input id="productBadge" maxlength="24" placeholder="e.g. Bestseller">
-            </label>
+            <div class="form-row">
+              <label>Badge
+                <input id="productBadge" maxlength="24" placeholder="e.g. Bestseller">
+              </label>
+              <label>Availability
+                <select id="productStatus">
+                  <option value="available">Available</option>
+                  <option value="soldout">Sold out</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="admin-check"><input id="productFeatured" type="checkbox"> Show this product in the Home page featured collection</label>
+
+            <fieldset class="admin-fieldset">
+              <legend>Product pictures</legend>
+              <p class="field-help">Upload a main picture and up to three additional pictures. Images are compressed before they are saved in this preview.</p>
+              <label>Main product image
+                <input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp">
+              </label>
+              <label>Or paste an image URL
+                <input id="productImage" type="url" placeholder="https://example.com/product.jpg">
+              </label>
+              <div class="gallery-upload-grid">
+                <label>Gallery image 1<input id="galleryFile1" type="file" accept="image/jpeg,image/png,image/webp"><input id="gallery1" type="url" placeholder="Optional image URL"></label>
+                <label>Gallery image 2<input id="galleryFile2" type="file" accept="image/jpeg,image/png,image/webp"><input id="gallery2" type="url" placeholder="Optional image URL"></label>
+                <label>Gallery image 3<input id="galleryFile3" type="file" accept="image/jpeg,image/png,image/webp"><input id="gallery3" type="url" placeholder="Optional image URL"></label>
+              </div>
+              <button class="admin-text-button" id="clearImages" type="button">Remove all uploaded images</button>
+            </fieldset>
 
             <label>Description
               <textarea id="productDesc" rows="5" maxlength="320" placeholder="Briefly describe the product and its key benefit."></textarea>
               <small class="character-count"><span id="descCount">0</span>/320</small>
+            </label>
+
+            <label>Key benefits <span class="label-note">one benefit per line</span>
+              <textarea id="productBenefits" rows="4" maxlength="360" placeholder="Deeply moisturises
+Supports a smoother appearance
+Ideal for daily use"></textarea>
+            </label>
+
+            <label>How to use
+              <textarea id="productUse" rows="4" maxlength="360" placeholder="Explain how and when the customer should use this product."></textarea>
             </label>
 
             <label>Visual tone
