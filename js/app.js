@@ -1,12 +1,16 @@
 const KEY = 'mayaProducts';
 const CART_KEY = 'mayaCart';
 const getProducts = () => {
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY));
-    return Array.isArray(saved) && saved.length ? saved : (window.MAYA_DEFAULT_PRODUCTS || []);
-  } catch {
-    return window.MAYA_DEFAULT_PRODUCTS || [];
+  // The live storefront always uses the published catalogue bundled with the site.
+  // Local Admin edits remain drafts until a new Publish Package is uploaded to GitHub.
+  const published = Array.isArray(window.MAYA_DEFAULT_PRODUCTS) ? window.MAYA_DEFAULT_PRODUCTS : [];
+  if (new URLSearchParams(location.search).get('preview') === '1') {
+    try {
+      const draft = JSON.parse(localStorage.getItem(KEY));
+      if (Array.isArray(draft) && draft.length) return draft;
+    } catch {}
   }
+  return published;
 };
 let products = getProducts();
 let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
