@@ -173,6 +173,7 @@ Ideal for daily use"></textarea>
               <p id="productCountText">0 products</p>
             </div>
             <div class="admin-data-actions">
+              <button id="publishPackage" class="publish-package" type="button">Create publish package</button>
               <button id="exportProducts" type="button">Export backup</button>
               <label class="admin-import-button">Import backup<input id="importProducts" type="file" accept="application/json,.json"></label>
               <button id="resetProducts" class="danger-text" type="button">Restore defaults</button>
@@ -205,6 +206,7 @@ Ideal for daily use"></textarea>
 
   <div class="admin-toast" id="adminToast" role="status" aria-live="polite"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script defer src="js/catalog.js"></script>
   <script defer src="js/admin.js"></script>
 </body>

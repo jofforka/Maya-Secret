@@ -49,3 +49,11 @@ NEXT PRODUCTION STEP
 --------------------
 Replace localStorage and the temporary passcode with Firebase Authentication,
 Firestore and Firebase Storage before using the site as a multi-device live store.
+
+
+SPA PAGE UPDATE
+- New file: spa.html
+- New script: js/spa.js
+- Navigation updated across all public pages.
+- Customers can select a spa service, preferred date and time, then send the completed booking request through WhatsApp.
+- Service prices are preloaded from the supplied Maya's Secret spa menu.

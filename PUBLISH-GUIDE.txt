@@ -1,0 +1,34 @@
+MAYA'S SECRET — FREE GITHUB PRODUCT PUBLISHING
+
+WHAT HAS BEEN FIXED
+- Your six uploaded product images have been extracted from the browser backup.
+- They are now real files inside assets/products/.
+- The live Shop and Home pages use the published catalogue, not stale browser storage.
+- The same images will therefore appear on phones, laptops and customer devices.
+
+FIRST UPLOAD — REPLACE THE WHOLE WEBSITE
+1. Unzip this Maya-Secret-GitHub-Published-Catalogue package.
+2. Open github.com and sign in.
+3. Open the repository: jofforka/Maya-Secret.
+4. Click Add file, then Upload files.
+5. Drag EVERY file and folder from the unzipped package into GitHub.
+6. Confirm replacement when GitHub shows files with the same names.
+7. Scroll down and use the commit message:
+   Publish product images for all devices
+8. Click Commit changes.
+9. Wait 1–3 minutes.
+10. Open https://jofforka.github.io/Maya-Secret/shop.html on your phone and refresh.
+
+FUTURE PRODUCT UPDATES
+1. Open admin.html on the same laptop/browser where you edit products.
+2. Add or edit products and save them.
+3. Click Create publish package.
+4. Unzip the downloaded package.
+5. Upload ONLY its assets, data and js folders to GitHub.
+6. Commit and wait 1–3 minutes.
+
+IMPORTANT
+- Export backup protects your editable Admin data.
+- Create publish package makes the products visible to everyone.
+- Do not put a GitHub password or access token inside the website.
+- The Admin's live website preview can be opened with shop.html?preview=1 on the same device.
