@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Admin | Maya's Secret</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=4.0.0">
 </head>
 <body class="admin-body">
   <main class="admin-shell">
@@ -15,7 +15,7 @@
         <img src="assets/mayas-logo.png" alt="Maya's Secret">
         <p class="eyebrow">PRIVATE ADMIN</p>
         <h1 id="loginTitle">Welcome back.</h1>
-        <p>Sign in to manage the Maya’s Secret product collection. This Cloud Edition manages one shared catalogue across your phone, laptop and public shop using Google Drive.</p>
+        <p>Sign in to manage the Maya’s Secret product collection. Products and images are synchronized through the Maya’s Secret Google Drive cloud catalogue.</p>
         <form id="loginForm" novalidate>
           <label for="adminPassword">Admin passcode</label>
           <div class="password-field">
@@ -34,7 +34,7 @@
         <div>
           <p class="eyebrow">MAYA’S SECRET ADMIN</p>
           <h1>Product management</h1>
-          <p class="admin-subtitle">Create, update and organise the shared collection shown on every device.</p><p class="cloud-status" id="cloudStatus" data-state="working">Waiting for cloud connection…</p>
+          <p class="admin-subtitle">Create, update and organise the collection shown in the shop.</p>
         </div>
         <div class="admin-top-actions">
           <a class="admin-link-button" href="shop.html" target="_blank" rel="noopener">View live shop ↗</a>
@@ -102,7 +102,7 @@
 
             <fieldset class="admin-fieldset">
               <legend>Product pictures</legend>
-              <p class="field-help">Upload a main picture and up to three additional pictures. Images are compressed, uploaded to Google Drive and shared across every device.</p>
+              <p class="field-help">Upload a main picture and up to three additional pictures. Images are compressed before they are saved in this preview.</p>
               <label>Main product image
                 <input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp">
               </label>
@@ -173,7 +173,7 @@ Ideal for daily use"></textarea>
               <p id="productCountText">0 products</p>
             </div>
             <div class="admin-data-actions">
-              <button id="publishPackage" class="publish-package" type="button">Connect cloud catalogue</button>
+              <button id="publishPackage" class="publish-package" type="button">Create cloud backup</button>
               <button id="exportProducts" type="button">Export backup</button>
               <label class="admin-import-button">Import backup<input id="importProducts" type="file" accept="application/json,.json"></label>
               <button id="resetProducts" class="danger-text" type="button">Restore defaults</button>
@@ -207,7 +207,9 @@ Ideal for daily use"></textarea>
   <div class="admin-toast" id="adminToast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script defer src="js/catalog.js"></script><script defer src="js/api.js"></script>
-  <script defer src="js/admin.js"></script>
+  <script defer src="js/config.js?v=4.0.0"></script>
+  <script defer src="js/api.js?v=4.0.0"></script>
+  <script defer src="js/catalog.js?v=4.0.0"></script>
+  <script defer src="js/admin.js?v=4.0.0"></script>
 </body>
 </html>
