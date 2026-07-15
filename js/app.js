@@ -1,18 +1,6 @@
-const KEY = 'mayaProducts';
 const CART_KEY = 'mayaCart';
-const getProducts = () => {
-  // The live storefront always uses the published catalogue bundled with the site.
-  // Local Admin edits remain drafts until a new Publish Package is uploaded to GitHub.
-  const published = Array.isArray(window.MAYA_DEFAULT_PRODUCTS) ? window.MAYA_DEFAULT_PRODUCTS : [];
-  if (new URLSearchParams(location.search).get('preview') === '1') {
-    try {
-      const draft = JSON.parse(localStorage.getItem(KEY));
-      if (Array.isArray(draft) && draft.length) return draft;
-    } catch {}
-  }
-  return published;
-};
-let products = getProducts();
+const cloneBundledProducts = () => (Array.isArray(window.MAYA_DEFAULT_PRODUCTS) ? window.MAYA_DEFAULT_PRODUCTS : []).map(p => ({...p, gallery:[...(p.gallery||[])], benefits:[...(p.benefits||[])]}));
+let products = cloneBundledProducts();
 let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
 let activeProduct = null;
 let modalQty = 1;
@@ -282,29 +270,29 @@ document.querySelector('#contactForm')?.addEventListener('submit', e => {
   window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
 });
 
-ensureProductModal();
-renderFeatured();
-renderShop();
-drawCart();
-renderCheckout();
-
-// Cloud catalogue synchronization. The bundled catalogue remains a safe offline fallback.
-(async function hydrateCloudCatalogue(){
-  if (!window.MayaCloud) return;
-  try {
-    const cloudProducts = await window.MayaCloud.getProducts();
-    if (!cloudProducts.length) return;
-    products = cloudProducts;
-    // Remove cart entries for products that no longer exist, then refresh every storefront surface.
-    cart = cart.filter(item => products.some(product => product.id === item.id));
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    renderFeatured();
-    renderShop();
-    drawCart();
-    renderCheckout();
-    document.dispatchEvent(new CustomEvent('maya:catalog-ready', { detail: { products } }));
-  } catch (error) {
-    console.warn('Maya cloud catalogue unavailable; using bundled fallback.', error);
-    document.documentElement.dataset.cloudStatus = 'offline';
+function renderAllProductViews(){
+  renderFeatured();
+  apply();
+  drawCart();
+  renderCheckout();
+}
+async function initialiseCloudCatalogue(){
+  renderAllProductViews();
+  if(!window.MayaCloud) return;
+  try{
+    const cloudProducts=await window.MayaCloud.getProducts();
+    if(Array.isArray(cloudProducts) && cloudProducts.length){
+      products=cloudProducts.map(p=>({...p,price:Number(p.price||0),gallery:Array.isArray(p.gallery)?p.gallery:[],benefits:Array.isArray(p.benefits)?p.benefits:[]}));
+      renderAllProductViews();
+      document.documentElement.dataset.catalogue='cloud';
+    } else {
+      document.documentElement.dataset.catalogue='fallback';
+    }
+  }catch(error){
+    console.warn('Cloud catalogue unavailable; using bundled catalogue.',error);
+    document.documentElement.dataset.catalogue='offline';
   }
-})();
+}
+ensureProductModal();
+drawCart();
+initialiseCloudCatalogue();
