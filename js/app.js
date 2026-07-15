@@ -282,39 +282,29 @@ document.querySelector('#contactForm')?.addEventListener('submit', e => {
   window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
 });
 
-function refreshProductViews() {
-  renderFeatured();
-  if (document.querySelector('#shopGrid')) apply();
-  else renderShop();
-  drawCart();
-  renderCheckout();
-}
+ensureProductModal();
+renderFeatured();
+renderShop();
+drawCart();
+renderCheckout();
 
-async function loadCloudCatalogue() {
+// Cloud catalogue synchronization. The bundled catalogue remains a safe offline fallback.
+(async function hydrateCloudCatalogue(){
   if (!window.MayaCloud) return;
-  document.documentElement.classList.add('cloud-loading');
   try {
     const cloudProducts = await window.MayaCloud.getProducts();
-    if (Array.isArray(cloudProducts) && cloudProducts.length) {
-      products = cloudProducts.map(item => ({
-        ...item,
-        price: Number(item.price || 0),
-        gallery: Array.isArray(item.gallery) ? item.gallery : [],
-        benefits: Array.isArray(item.benefits) ? item.benefits : []
-      }));
-      refreshProductViews();
-      window.dispatchEvent(new CustomEvent('maya:catalogue-ready', {detail:{products, source:'cloud'}}));
-    } else {
-      window.dispatchEvent(new CustomEvent('maya:catalogue-ready', {detail:{products, source:'fallback'}}));
-    }
+    if (!cloudProducts.length) return;
+    products = cloudProducts;
+    // Remove cart entries for products that no longer exist, then refresh every storefront surface.
+    cart = cart.filter(item => products.some(product => product.id === item.id));
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    renderFeatured();
+    renderShop();
+    drawCart();
+    renderCheckout();
+    document.dispatchEvent(new CustomEvent('maya:catalog-ready', { detail: { products } }));
   } catch (error) {
-    console.warn('Maya cloud catalogue unavailable; using the bundled catalogue.', error);
-    window.dispatchEvent(new CustomEvent('maya:catalogue-ready', {detail:{products, source:'fallback', error:error.message}}));
-  } finally {
-    document.documentElement.classList.remove('cloud-loading');
+    console.warn('Maya cloud catalogue unavailable; using bundled fallback.', error);
+    document.documentElement.dataset.cloudStatus = 'offline';
   }
-}
-
-ensureProductModal();
-refreshProductViews();
-loadCloudCatalogue();
+})();
