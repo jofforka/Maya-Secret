@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Admin | Maya's Secret</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=4.0.0">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="admin-body">
   <main class="admin-shell">
@@ -15,7 +15,7 @@
         <img src="assets/mayas-logo.png" alt="Maya's Secret">
         <p class="eyebrow">PRIVATE ADMIN</p>
         <h1 id="loginTitle">Welcome back.</h1>
-        <p>Sign in to manage the Maya’s Secret product collection. Products and images are synchronized through the Maya’s Secret Google Drive cloud catalogue.</p>
+        <p>Sign in to manage the Maya’s Secret product collection. Products and images are synchronised through the Maya’s Secret Google Drive cloud catalogue.</p>
         <form id="loginForm" novalidate>
           <label for="adminPassword">Admin passcode</label>
           <div class="password-field">
@@ -34,7 +34,7 @@
         <div>
           <p class="eyebrow">MAYA’S SECRET ADMIN</p>
           <h1>Product management</h1>
-          <p class="admin-subtitle">Create, update and organise the collection shown in the shop.</p>
+          <p class="admin-subtitle">Create, update and organise the shared cloud collection shown on every device.</p><div class="cloud-status" id="cloudStatus" data-state="loading"><span></span><strong>Connecting to cloud…</strong></div>
         </div>
         <div class="admin-top-actions">
           <a class="admin-link-button" href="shop.html" target="_blank" rel="noopener">View live shop ↗</a>
@@ -173,10 +173,10 @@ Ideal for daily use"></textarea>
               <p id="productCountText">0 products</p>
             </div>
             <div class="admin-data-actions">
-              <button id="publishPackage" class="publish-package" type="button">Create cloud backup</button>
+              <button id="refreshCloud" class="publish-package" type="button">Refresh cloud</button>
               <button id="exportProducts" type="button">Export backup</button>
               <label class="admin-import-button">Import backup<input id="importProducts" type="file" accept="application/json,.json"></label>
-              <button id="resetProducts" class="danger-text" type="button">Restore defaults</button>
+              <button id="resetProducts" class="danger-text" type="button">Replace cloud with defaults</button>
             </div>
           </div>
 
@@ -207,9 +207,8 @@ Ideal for daily use"></textarea>
   <div class="admin-toast" id="adminToast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script defer src="js/config.js?v=4.0.0"></script>
-  <script defer src="js/api.js?v=4.0.0"></script>
-  <script defer src="js/catalog.js?v=4.0.0"></script>
-  <script defer src="js/admin.js?v=4.0.0"></script>
+  <script defer src="js/cloud.js"></script>
+  <script defer src="js/catalog.js"></script>
+  <script defer src="js/admin.js"></script>
 </body>
 </html>

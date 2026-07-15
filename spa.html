@@ -1,78 +1,49 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Build and reserve a personalised spa experience at Maya's Secret Spa in Abuja. Select multiple massage, facial, waxing, body and wellness services and see your total instantly.">
-<meta name="theme-color" content="#5b173e">
-<title>Luxury Spa Experiences | Maya's Secret</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-<div class="announce">Private spa appointments · Reserve on WhatsApp · Call 0810 904 4321</div>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Book massage, facial, waxing, body and wellness treatments at Maya's Secret Spa in Abuja."><meta name="theme-color" content="#5b173e"><title>Spa Services | Maya's Secret</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"></head><body><div class="announce">Appointments are confirmed directly on WhatsApp · Call 0810 904 4321</div>
 <header class="header"><a class="logo" href="index.html"><img src="assets/mayas-logo.png" alt="Maya's Secret"><span><b>Maya’s Secret</b><small>Skin Care & Spa</small></span></a><button class="menu" aria-label="Open menu"><i></i><i></i></button><nav><a href="index.html">Home</a><a href="shop.html">Shop</a><a class="active" href="spa.html">Spa</a><a href="training.html">Training</a><a href="contact.html">Contact</a></nav><div class="tools"><button class="search-toggle" aria-label="Search products">⌕</button><button class="bag-toggle" aria-label="Open bag">Bag <b class="bag-count">0</b></button></div></header>
-
-<main class="spa-v3-page">
-<section class="spa-v3-hero">
-  <div class="spa-v3-hero-media"><img src="assets/home-care.png" alt="Luxury spa treatment at Maya's Secret"><div class="spa-v3-hero-shade"></div></div>
-  <div class="spa-v3-hero-copy"><p class="eyebrow">MAYA'S SECRET SPA · ABUJA</p><h1>Design your own<br><em>spa experience.</em></h1><p>Select one service or combine several treatments. Your total and estimated time update instantly before you reserve through WhatsApp.</p><div class="actions"><a class="btn light" href="#spaBuilder">Build my experience</a><a class="spa-video-link" href="#packages">Explore packages <span>→</span></a></div><div class="spa-v3-signals"><span>Private appointments</span><span>Transparent pricing</span><span>Personalised care</span></div></div>
-</section>
-
-<section class="spa-concierge section">
-  <div class="section-top"><div><p class="eyebrow">SPA CONCIERGE</p><h2>What do you need today?</h2></div><p>Choose a goal and we’ll open the most relevant treatment category.</p></div>
-  <div class="concierge-grid">
-    <button data-open-category="massage"><span>01</span><b>I want to relax</b><small>Massage & restoration</small></button>
-    <button data-open-category="facials"><span>02</span><b>I want glowing skin</b><small>Facials & radiance</small></button>
-    <button data-open-category="waxing"><span>03</span><b>I want smooth skin</b><small>Professional waxing</small></button>
-    <button data-open-category="body"><span>04</span><b>I want full-body care</b><small>Polish & hammam rituals</small></button>
-    <button data-open-category="wellness"><span>05</span><b>I want to reset</b><small>Detox & wellness</small></button>
-  </div>
-</section>
-
-<section class="spa-packages section" id="packages">
-  <div class="section-top"><div><p class="eyebrow">CURATED EXPERIENCES</p><h2>Thoughtfully paired for you.</h2></div><p>Choose a ready-made experience or build your own combination below.</p></div>
-  <div class="spa-package-grid">
-    <article class="spa-package-card featured"><p>RELAX & RESET</p><h3>Quiet Renewal</h3><ul><li>Swedish Massage</li><li>Foot Detox</li></ul><div><strong>₦40,000</strong><small>Approx. 90 minutes</small></div><button class="btn primary package-add" data-package="quiet-renewal">Add package</button></article>
-    <article class="spa-package-card"><p>GLOW EXPERIENCE</p><h3>Radiance Ritual</h3><ul><li>Hydra Facial</li><li>Glow Body Polish</li></ul><div><strong>₦55,000</strong><small>Approx. 120 minutes</small></div><button class="btn ghost package-add" data-package="radiance-ritual">Add package</button></article>
-    <article class="spa-package-card"><p>FULL SPA DAY</p><h3>Maya Luxe</h3><ul><li>Hot Stone Massage</li><li>Hammam Bath</li><li>Pedicure</li></ul><div><strong>₦95,000</strong><small>Approx. 180 minutes</small></div><button class="btn ghost package-add" data-package="maya-luxe">Add package</button></article>
-  </div>
-</section>
-
-<section class="spa-builder section" id="spaBuilder">
-  <div class="spa-builder-heading"><p class="eyebrow">BUILD YOUR EXPERIENCE</p><h2>Choose as many services as you like.</h2><p>Open a category, add your treatments, and review the live total in your experience summary.</p></div>
-  <div class="spa-builder-layout">
-    <div class="spa-accordion" id="spaAccordion"></div>
-    <aside class="spa-experience-card" id="spaExperienceCard">
-      <div class="experience-head"><div><p>YOUR SPA EXPERIENCE</p><h3><span id="spaSelectedCount">0</span> services selected</h3></div><button id="clearSpaSelection" type="button">Clear</button></div>
-      <div class="experience-empty" id="spaSelectionEmpty"><span>✦</span><p>Your selected treatments will appear here.</p></div>
-      <div class="experience-lines" id="spaSelectionLines"></div>
-      <div class="experience-totals"><div><span>Estimated duration</span><strong id="spaDuration">—</strong></div><div class="grand"><span>Total</span><strong id="spaTotal">₦0</strong></div></div>
-      <a class="btn primary experience-book" href="#booking">Reserve my experience</a>
-      <small>Final availability is confirmed directly by the Maya’s Secret team.</small>
-    </aside>
-  </div>
-</section>
-
-<section class="spa-visit-strip"><div><span>01</span><p>Arrive 15 minutes early</p></div><div><span>02</span><p>Share allergies or health concerns</p></div><div><span>03</span><p>Drink water before and after</p></div><div><span>04</span><p>Relax—we’ll take care of the rest</p></div></section>
-
-<section class="spa-v3-booking" id="booking">
-  <div class="booking-panel-copy"><p class="eyebrow">RESERVE YOUR EXPERIENCE</p><h2>One request.<br>Every service included.</h2><p>Complete your details and WhatsApp will open with your chosen services, estimated duration and total already prepared.</p><div class="booking-mini-summary"><span>Current selection</span><strong id="bookingServiceCount">No services selected yet</strong><small id="bookingMiniTotal">Choose from the menu above</small></div></div>
-  <form class="spa-v3-form" id="spaV3BookingForm">
-    <div class="spa-form-row"><label>Full name<input id="spaName" type="text" autocomplete="name" required></label><label>Phone number<input id="spaPhone" type="tel" autocomplete="tel" required></label></div>
-    <div class="spa-form-row"><label>Preferred date<input id="spaDate" type="date" required></label><label>Preferred time<select id="spaTime" required><option value="">Choose a time</option><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option><option>5:00 PM</option></select></label></div>
-    <label>Additional notes <span>(optional)</span><textarea id="spaNotes" rows="4" placeholder="Tell us about preferences, sensitivities or anything we should know."></textarea></label>
-    <button class="btn primary spa-submit" type="submit">Reserve through WhatsApp</button>
-    <small class="spa-form-note">This sends an appointment request. Your booking is confirmed only after Maya’s Secret replies.</small>
-  </form>
-</section>
-
-<section class="section spa-faq spa-v3-faq"><div><p class="eyebrow">BEFORE YOU BOOK</p><h2>Useful details.</h2></div><div class="spa-faq-list"><details><summary>Can I select more than one service?</summary><p>Yes. Add as many services as you like. The page calculates the combined price and estimated duration before you reserve.</p></details><details><summary>Is my appointment confirmed immediately?</summary><p>No. WhatsApp sends your preferred date and time to Maya’s Secret. The team will confirm availability directly with you.</p></details><details><summary>Can I change my selected services?</summary><p>Yes. Add or remove services at any time before sending your reservation request.</p></details><details><summary>Do specialist services require consultation?</summary><p>Some specialist treatments, including PRP Facial and O‑Shot, may require consultation or assessment before confirmation.</p></details></div></section>
+<main class="spa-page">
+<section class="spa-hero"><div class="spa-hero-copy"><p class="eyebrow">MAYA'S SECRET SPA · ABUJA</p><h1>Pause. Restore.<br><em>Feel renewed.</em></h1><p>Choose from professional massage, facial, waxing, body and wellness treatments, then send your preferred appointment directly through WhatsApp.</p><div class="actions"><a class="btn primary" href="#services">View services</a><a class="btn ghost" href="#booking">Book appointment</a></div></div><div class="spa-hero-image"><img src="assets/home-care.jpg" alt="Relaxing treatment experience at Maya's Secret Spa"><span>Professional care · Private appointments</span></div></section>
+<section class="spa-trust"><article><b>01</b><h3>Professional care</h3><p>Services delivered with attention to hygiene, comfort and client experience.</p></article><article><b>02</b><h3>Clear pricing</h3><p>See the listed price before sending your appointment request.</p></article><article><b>03</b><h3>Easy booking</h3><p>Select a service and send your details to WhatsApp in a few steps.</p></article><article><b>04</b><h3>Personal attention</h3><p>Your appointment is confirmed directly with the Maya’s Secret team.</p></article></section>
+<section class="section spa-services" id="services"><div class="section-top"><div><p class="eyebrow">SPA MENU</p><h2>Choose your experience.</h2></div><p class="spa-services-note">Tap any service to add it to the booking form.</p></div>
+<div class="spa-category-grid">
+<section class="spa-category"><div class="spa-category-head"><span>01</span><div><p>MASSAGE</p><h3>Massage Therapy</h3></div></div><div class="spa-service-list">
+<button class="spa-service" data-category="Massage" data-service="Swedish Massage" data-price="20000"><span><b>Swedish Massage</b><small>Gentle relaxation and whole-body care.</small></span><strong>₦20,000</strong></button>
+<button class="spa-service" data-category="Massage" data-service="Aromatherapy Massage" data-price="20000"><span><b>Aromatherapy Massage</b><small>A calming massage experience with aromatic oils.</small></span><strong>₦20,000</strong></button>
+<button class="spa-service" data-category="Massage" data-service="Cupping Massage" data-price="35000"><span><b>Cupping Massage</b><small>A targeted massage and cupping session.</small></span><strong>₦35,000</strong></button>
+<button class="spa-service" data-category="Massage" data-service="Deep Tissue Massage" data-price="35000"><span><b>Deep Tissue Massage</b><small>Focused pressure for deeper muscular tension.</small></span><strong>₦35,000</strong></button>
+<button class="spa-service" data-category="Massage" data-service="Hot Stone Massage" data-price="35000"><span><b>Hot Stone Massage</b><small>Warm-stone treatment for deep relaxation.</small></span><strong>₦35,000</strong></button>
+</div></section>
+<section class="spa-category"><div class="spa-category-head"><span>02</span><div><p>FACIALS</p><h3>Facial Treatments</h3></div></div><div class="spa-service-list">
+<button class="spa-service" data-category="Facials" data-service="BB Glow Facial" data-price="35000"><span><b>BB Glow Facial</b><small>A glow-focused professional facial session.</small></span><strong>₦35,000</strong></button>
+<button class="spa-service" data-category="Facials" data-service="Dermaplaning Facial" data-price="15000"><span><b>Dermaplaning Facial</b><small>Professional exfoliating facial treatment.</small></span><strong>₦15,000</strong></button>
+<button class="spa-service" data-category="Facials" data-service="Ayurvedic Facial" data-price="30000"><span><b>Ayurvedic Facial</b><small>A restorative facial inspired by Ayurvedic care.</small></span><strong>₦30,000</strong></button>
+<button class="spa-service" data-category="Facials" data-service="Hydra Facial" data-price="20000"><span><b>Hydra Facial</b><small>A hydration-focused cleansing facial.</small></span><strong>₦20,000</strong></button>
+<button class="spa-service" data-category="Facials" data-service="PRP Facial" data-price="50000"><span><b>PRP Facial</b><small>Specialist facial service; consultation is required.</small></span><strong>₦50,000</strong></button>
+</div></section>
+<section class="spa-category"><div class="spa-category-head"><span>03</span><div><p>WAXING</p><h3>Waxing Services</h3></div></div><div class="spa-service-list">
+<button class="spa-service" data-category="Waxing" data-service="Brazilian Wax" data-price="20000"><span><b>Brazilian Wax</b><small>Professional Brazilian waxing service.</small></span><strong>₦20,000</strong></button>
+<button class="spa-service" data-category="Waxing" data-service="Bikini Wax" data-price="15000"><span><b>Bikini Wax</b><small>Professional bikini-line waxing service.</small></span><strong>₦15,000</strong></button>
+<button class="spa-service" data-category="Waxing" data-service="Underarm Wax" data-price="10000"><span><b>Underarm Wax</b><small>Clean and efficient underarm waxing.</small></span><strong>₦10,000</strong></button>
+<button class="spa-service" data-category="Waxing" data-service="Leg Wax" data-price="18000"><span><b>Leg Wax</b><small>Smooth professional leg waxing.</small></span><strong>₦18,000</strong></button>
+<button class="spa-service" data-category="Waxing" data-service="Chin Wax" data-price="10000"><span><b>Chin Wax</b><small>Precise facial waxing for the chin area.</small></span><strong>₦10,000</strong></button>
+<button class="spa-service" data-category="Waxing" data-service="Full Body Wax" data-price="50000"><span><b>Full Body Wax</b><small>A complete professional waxing service.</small></span><strong>₦50,000</strong></button>
+</div></section>
+<section class="spa-category"><div class="spa-category-head"><span>04</span><div><p>BODY CARE</p><h3>Body Treatments</h3></div></div><div class="spa-service-list">
+<button class="spa-service" data-category="Body Treatments" data-service="Glow Body Polish" data-price="35000"><span><b>Glow Body Polish</b><small>Exfoliating body care for smoother-looking skin.</small></span><strong>₦35,000</strong></button>
+<button class="spa-service" data-category="Body Treatments" data-service="Brightening / Lightening Treatment" data-price="40000"><span><b>Brightening / Lightening</b><small>A professional tone-evening body treatment.</small></span><strong>₦40,000</strong></button>
+<button class="spa-service" data-category="Body Treatments" data-service="Hammam Bath" data-price="50000"><span><b>Hammam Bath</b><small>A cleansing and restorative traditional bath ritual.</small></span><strong>₦50,000</strong></button>
+</div></section>
+<section class="spa-category spa-category-wide"><div class="spa-category-head"><span>05</span><div><p>WELLNESS</p><h3>Other Services</h3></div></div><div class="spa-service-list spa-service-columns">
+<button class="spa-service" data-category="Wellness & Other" data-service="Foot Detox" data-price="20000"><span><b>Foot Detox</b><small>A relaxing foot-care wellness session.</small></span><strong>₦20,000</strong></button>
+<button class="spa-service" data-category="Wellness & Other" data-service="Pedicure" data-price="10000"><span><b>Pedicure</b><small>Essential grooming and foot care.</small></span><strong>₦10,000</strong></button>
+<button class="spa-service" data-category="Wellness & Other" data-service="Tag Removal" data-price="10000"><span><b>Tag Removal</b><small>Specialist service; assessment may be required.</small></span><strong>₦10,000</strong></button>
+<button class="spa-service" data-category="Wellness & Other" data-service="Stretch Marks Treatment" data-price="35000"><span><b>Stretch Marks Treatment</b><small>Targeted professional body-care treatment.</small></span><strong>₦35,000</strong></button>
+<button class="spa-service" data-category="Wellness & Other" data-service="Sauna Bath" data-price="15000"><span><b>Sauna Bath</b><small>A warm relaxation and wellness session.</small></span><strong>₦15,000</strong></button>
+<button class="spa-service" data-category="Wellness & Other" data-service="O-Shot" data-price="50000"><span><b>O-Shot</b><small>Specialist service; consultation is required before booking.</small></span><strong>₦50,000</strong></button>
+</div></section>
+</div></section>
+<section class="spa-booking" id="booking"><div class="spa-booking-intro"><p class="eyebrow">BOOK YOUR APPOINTMENT</p><h2>Your preferred service, date and time—sent directly to WhatsApp.</h2><p>Your request is not confirmed until the Maya’s Secret team replies with availability. Specialist treatments may require a consultation before confirmation.</p><div class="spa-booking-summary"><span>Selected service</span><strong id="bookingSummary">Choose a service above</strong><small id="bookingPrice">Price will appear here</small></div></div>
+<form class="spa-booking-form" id="spaBookingForm"><label>Full name<input id="spaName" type="text" autocomplete="name" required placeholder="Your full name"></label><label>Phone number<input id="spaPhone" type="tel" autocomplete="tel" required placeholder="Your phone number"></label><div class="spa-form-row"><label>Category<select id="spaCategory" required><option value="">Select category</option><option>Massage</option><option>Facials</option><option>Waxing</option><option>Body Treatments</option><option>Wellness & Other</option></select></label><label>Service<select id="spaService" required><option value="">Select a service</option></select></label></div><div class="spa-form-row"><label>Preferred date<input id="spaDate" type="date" required></label><label>Preferred time<select id="spaTime" required><option value="">Select time</option><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option><option>5:00 PM</option></select></label></div><label>Additional notes <span>(optional)</span><textarea id="spaNotes" rows="4" placeholder="Share any relevant preference or question"></textarea></label><button class="btn primary spa-submit" type="submit">Send booking request on WhatsApp</button><small class="spa-form-note">WhatsApp will open with your completed request. Review the message, then tap Send.</small></form></section>
+<section class="section spa-faq"><div><p class="eyebrow">BEFORE YOUR VISIT</p><h2>Booking notes.</h2></div><div class="spa-faq-list"><details><summary>Is the booking confirmed immediately?</summary><p>No. The WhatsApp message is an appointment request. Your slot is confirmed when Maya’s Secret replies.</p></details><details><summary>Can I request more than one service?</summary><p>Yes. Select your main service and list any additional service in the notes field.</p></details><details><summary>Can specialist services require consultation?</summary><p>Yes. Certain services may require assessment or consultation before an appointment is confirmed.</p></details><details><summary>Can I reschedule?</summary><p>Contact Maya’s Secret on WhatsApp as early as possible to request a different date or time.</p></details></div></section>
 </main>
-
-<footer class="footer"><div class="footer-brand"><img src="assets/mayas-logo.png" alt=""><h2>Beauty, thoughtfully revealed.</h2><p>Premium skincare, spa care and practical beauty training in Abuja.</p></div><div><h3>Explore</h3><a href="shop.html">Shop</a><a href="spa.html">Spa</a><a href="training.html">Training</a><a href="contact.html">Contact</a></div><div><h3>Visit & connect</h3><p>Abuja, Nigeria</p><a href="tel:+2348109044321">0810 904 4321</a><a href="mailto:hello@mayassecret.com">hello@mayassecret.com</a></div><div><h3>Stay in the glow</h3><p>New products, training dates and beauty notes.</p><form class="newsletter"><input type="email" placeholder="Email address" aria-label="Email address"><button>Join</button></form></div><div class="footer-bottom"><span>© 2026 Maya’s Secret.</span><span>Designed for confident beauty.</span></div></footer>
-<div class="overlay"></div><aside class="cart" aria-hidden="true"><div class="cart-head"><h2>Your bag</h2><button class="cart-close">×</button></div><div class="cart-lines"></div><div class="cart-empty"><p>Your bag is waiting.</p><a href="shop.html">Explore the collection</a></div><div class="cart-foot"><div><span>Estimated total</span><strong class="cart-total">₦0</strong></div><button class="checkout">Proceed to checkout</button><small>Review your order and delivery details before sending it to Maya’s Secret.</small></div></aside><button class="floating-bag" type="button" aria-label="Open shopping bag"><span class="floating-bag-icon">🛍</span><b class="bag-count">0</b></button><a class="floating-spa-book" href="#booking" aria-label="Reserve spa appointment"><span>✦</span><b>Reserve</b></a><div class="toast"></div>
-<script defer src="js/catalog.js"></script><script defer src="js/app.js"></script><script defer src="js/spa.js"></script>
-</body></html>
+<footer class="footer"><div class="footer-brand"><img src="assets/mayas-logo.png" alt=""><h2>Beauty, thoughtfully revealed.</h2><p>Premium skincare, spa care and practical beauty training in Abuja.</p></div><div><h3>Explore</h3><a href="shop.html">Shop</a><a href="spa.html">Spa</a><a href="training.html">Training</a><a href="contact.html">Contact</a></div><div><h3>Visit & connect</h3><p>Abuja, Nigeria</p><a href="tel:+2348109044321">0810 904 4321</a><a href="mailto:hello@mayassecret.com">hello@mayassecret.com</a></div><div><h3>Book directly</h3><p>Choose a service and send your preferred appointment through WhatsApp.</p><a href="#booking">Book a spa service</a></div><div class="footer-bottom"><span>© 2026 Maya’s Secret.</span><span>Designed for confident beauty.</span></div></footer>
+<div class="overlay"></div><aside class="cart" aria-hidden="true"><div class="cart-head"><h2>Your bag</h2><button class="cart-close">×</button></div><div class="cart-lines"></div><div class="cart-empty"><p>Your bag is waiting.</p><a href="shop.html">Explore the collection</a></div><div class="cart-foot"><div><span>Estimated total</span><strong class="cart-total">₦0</strong></div><button class="checkout">Proceed to checkout</button><small>Review your order and delivery details before sending it to Maya’s Secret.</small></div></aside><button class="floating-bag" type="button" aria-label="Open shopping bag"><span class="floating-bag-icon">🛍</span><b class="bag-count">0</b></button><div class="toast"></div><script defer src="js/catalog.js"></script><script defer src="js/app.js"></script><script defer src="js/spa.js"></script></body></html>
