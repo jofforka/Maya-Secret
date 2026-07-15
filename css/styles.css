@@ -261,7 +261,7 @@ p,li,a,button,input,select,textarea{font-weight:500}
 
 /* ===== MAYA'S SECRET SPA V5 PREMIUM EXPERIENCE ===== */
 .spa-v5-page{background:#fbf8f3;color:var(--ink)}
-.spa-v5-hero{min-height:790px;position:relative;display:flex;align-items:center;padding:90px 7vw;background:url('../assets/home-care.jpg') center/cover no-repeat;overflow:hidden;color:#fff}
+.spa-v5-hero{min-height:790px;position:relative;display:flex;align-items:center;padding:90px 7vw;background:url('../assets/home-care.png') center/cover no-repeat;overflow:hidden;color:#fff}
 .spa-v5-hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(31,8,23,.92) 0%,rgba(59,13,39,.72) 48%,rgba(32,11,24,.22) 76%,rgba(20,8,14,.1) 100%)}
 .spa-v5-hero:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 75% 25%,rgba(214,179,106,.18),transparent 30%)}
 .spa-v5-hero-copy{position:relative;z-index:2;max-width:770px}
