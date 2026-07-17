@@ -33,7 +33,7 @@
     },
 
     api: {
-      appsScriptUrl: "",
+      appsScriptUrl: "https://script.google.com/macros/s/AKfycbxG_WDwV7ByiPH_pQ28r2phmSXJrZbC-U1LpG5MC_IkM7CZcxE5EAuXJjj9vLD1Q17f/exec",
       timeout: 30000,
       retries: 3
     },
