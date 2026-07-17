@@ -8,7 +8,7 @@
   "use strict";
 
   const Catalog = {
-    version: "5.0.0",
+    version: "5.0.1",
     initialized: false,
     products: [],
     filteredProducts: [],
@@ -313,7 +313,6 @@
     const grid = getCatalogGrid();
 
     if (!grid) {
-      console.warn("[Catalog] Product grid was not found.");
       return false;
     }
 
@@ -522,10 +521,18 @@
   }
 
   Catalog.load = async function () {
+    if (!getCatalogGrid()) {
+      return [];
+    }
+
     const Cloud = getCloud();
 
     if (!Cloud || typeof Cloud.getProducts !== "function") {
       throw new Error("Cloud product service is unavailable.");
+    }
+
+    if (typeof Cloud.init === "function") {
+      await Cloud.init();
     }
 
     setLoading(true);
@@ -663,7 +670,13 @@
   };
 
   Catalog.init = async function () {
-    if (Catalog.initialized) return Catalog;
+    if (!getCatalogGrid()) {
+      return Catalog;
+    }
+
+    if (Catalog.initialized) {
+      return Catalog;
+    }
 
     Catalog.initialized = true;
 
