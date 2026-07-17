@@ -1,174 +1,510 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-app="maya-secret-business-os" data-version="5.0.0">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Build and reserve a personalised massage, facial, waxing, body or wellness experience at Maya's Secret Spa in Abuja.">
   <meta name="theme-color" content="#5b173e">
+  <meta name="color-scheme" content="light">
   <title>Luxury Spa Experiences | Maya's Secret</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <div class="announce">Appointments are confirmed directly on WhatsApp · Call 0810 904 4321</div>
 
-  <header class="header">
-    <a class="logo" href="index.html">
-      <img src="assets/mayas-logo.png" alt="Maya's Secret">
-      <span><b>Maya’s Secret</b><small>Skin Care & Spa</small></span>
+  <link rel="stylesheet" href="css/styles.css?v=5.0.0">
+  <link rel="stylesheet" href="css/core-framework.css?v=5.0.0">
+</head>
+
+<body data-page="spa">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="announce" role="status">
+    <span>Appointments are confirmed directly on WhatsApp</span>
+    <span aria-hidden="true">·</span>
+    <a href="tel:+2348109044321" data-setting-link="phone">
+      Call <span data-setting="phone">0810 904 4321</span>
     </a>
-    <button class="menu" aria-label="Open menu"><i></i><i></i></button>
-    <nav>
+  </div>
+
+  <header class="header" data-site-header>
+    <a class="logo" href="index.html" aria-label="Maya's Secret home">
+      <img src="assets/mayas-logo.png" alt="Maya's Secret logo">
+      <span>
+        <b>Maya’s Secret</b>
+        <small>Skin Care &amp; Spa</small>
+      </span>
+    </a>
+
+    <button
+      class="menu"
+      type="button"
+      aria-label="Open navigation"
+      aria-controls="primary-navigation"
+      aria-expanded="false"
+      data-menu-toggle
+    >
+      <i></i>
+      <i></i>
+    </button>
+
+    <nav id="primary-navigation" aria-label="Primary navigation" data-navigation>
       <a href="index.html">Home</a>
       <a href="shop.html">Shop</a>
-      <a class="active" href="spa.html">Spa</a>
+      <a href="spa.html" aria-current="page">Spa</a>
       <a href="training.html">Training</a>
       <a href="contact.html">Contact</a>
     </nav>
+
     <div class="tools">
-      <button class="search-toggle" aria-label="Search products">⌕</button>
-      <button class="bag-toggle" aria-label="Open bag">Bag <b class="bag-count">0</b></button>
+      <span
+        class="cloud-indicator"
+        data-cloud-indicator
+        data-state="checking"
+        title="Cloud connection status"
+      >
+        <i aria-hidden="true"></i>
+        <span class="cloud-indicator-label">Checking</span>
+      </span>
+
+      <button
+        class="search-toggle"
+        type="button"
+        aria-label="Search products"
+        data-search-toggle
+      >
+        <span aria-hidden="true">⌕</span>
+      </button>
+
+      <button
+        class="bag-toggle"
+        type="button"
+        aria-label="Open shopping bag"
+        aria-controls="shopping-cart"
+        aria-expanded="false"
+        data-cart-toggle
+      >
+        Bag <b class="bag-count" aria-label="0 items">0</b>
+      </button>
     </div>
   </header>
 
-  <main class="spa-page spa-v5-page">
+  <main id="main-content" class="spa-page spa-v5-page">
     <section class="spa-v5-hero">
-      <div class="spa-v5-hero-shade"></div>
+      <div class="spa-v5-hero-shade" aria-hidden="true"></div>
+
       <div class="spa-v5-hero-copy">
         <p class="eyebrow">MAYA'S SECRET SPA · ABUJA</p>
         <h1>Your time to<br><em>pause and renew.</em></h1>
-        <p>Create a personalised spa experience by combining massage, facial, waxing, body and wellness services in one reservation.</p>
+        <p>
+          Create a personalised spa experience by combining massage, facial, waxing,
+          body and wellness services in one reservation.
+        </p>
+
         <div class="actions">
           <a class="btn primary" href="#spa-menu">Build your experience</a>
-          <a class="btn ghost spa-hero-ghost" href="#spa-booking">Reserve an appointment</a>
+          <a class="btn ghost spa-hero-ghost" href="#spa-booking">
+            Reserve an appointment
+          </a>
         </div>
-        <div class="spa-v5-hero-proof">
+
+        <div class="spa-v5-hero-proof" aria-label="Spa booking benefits">
           <span>Private appointments</span>
           <span>Clear pricing</span>
           <span>Multiple services</span>
         </div>
       </div>
+
       <div class="spa-v5-hero-card">
         <span class="spa-v5-card-kicker">A tailored ritual</span>
         <strong>Choose more than one service.</strong>
-        <p>Your running total and estimated duration update instantly while you browse.</p>
-        <a href="#spa-menu">Explore the spa menu <span>→</span></a>
+        <p>
+          Your running total and estimated duration update instantly while you browse.
+        </p>
+        <a href="#spa-menu">Explore the spa menu <span aria-hidden="true">→</span></a>
       </div>
     </section>
 
-    <section class="spa-v5-trust">
-      <article><span>01</span><div><h3>Professional care</h3><p>Thoughtful service in a calm, hygienic environment.</p></div></article>
-      <article><span>02</span><div><h3>Build your own ritual</h3><p>Select treatments across several categories in one booking.</p></div></article>
-      <article><span>03</span><div><h3>Know the total</h3><p>See the complete listed price before sending your request.</p></div></article>
+    <section class="spa-v5-trust" aria-label="Maya's Secret spa standards">
+      <article>
+        <span>01</span>
+        <div>
+          <h3>Professional care</h3>
+          <p>Thoughtful service in a calm, hygienic environment.</p>
+        </div>
+      </article>
+
+      <article>
+        <span>02</span>
+        <div>
+          <h3>Build your own ritual</h3>
+          <p>Select treatments across several categories in one booking.</p>
+        </div>
+      </article>
+
+      <article>
+        <span>03</span>
+        <div>
+          <h3>Know the total</h3>
+          <p>See the complete listed price before sending your request.</p>
+        </div>
+      </article>
     </section>
 
-    <section class="section spa-v5-signatures">
+    <section class="section spa-v5-signatures" aria-labelledby="signature-experiences-title">
       <div class="section-top">
-        <div><p class="eyebrow">SIGNATURE EXPERIENCES</p><h2>Curated for effortless booking.</h2></div>
+        <div>
+          <p class="eyebrow">SIGNATURE EXPERIENCES</p>
+          <h2 id="signature-experiences-title">Curated for effortless booking.</h2>
+        </div>
         <p>Start with a ready-made ritual, then add or remove any service.</p>
       </div>
+
       <div class="spa-package-grid">
         <article class="spa-package-card">
           <div class="spa-package-number">01</div>
-          <p>RELAX & RESET</p>
+          <p>RELAX &amp; RESET</p>
           <h3>Quiet Renewal</h3>
-          <ul><li>Swedish Massage</li><li>Foot Detox</li></ul>
-          <div class="spa-package-foot"><strong>₦40,000</strong><button type="button" class="spa-package-add" data-package="quiet-renewal">Add experience</button></div>
+          <ul>
+            <li>Swedish Massage</li>
+            <li>Foot Detox</li>
+          </ul>
+          <div class="spa-package-foot">
+            <strong>₦40,000</strong>
+            <button type="button" class="spa-package-add" data-package="quiet-renewal">
+              Add experience
+            </button>
+          </div>
         </article>
+
         <article class="spa-package-card featured">
           <span class="spa-package-badge">Most loved</span>
           <div class="spa-package-number">02</div>
-          <p>GLOW & RESTORE</p>
+          <p>GLOW &amp; RESTORE</p>
           <h3>Radiance Ritual</h3>
-          <ul><li>Hydra Facial</li><li>Glow Body Polish</li><li>Sauna Bath</li></ul>
-          <div class="spa-package-foot"><strong>₦70,000</strong><button type="button" class="spa-package-add" data-package="radiance-ritual">Add experience</button></div>
+          <ul>
+            <li>Hydra Facial</li>
+            <li>Glow Body Polish</li>
+            <li>Sauna Bath</li>
+          </ul>
+          <div class="spa-package-foot">
+            <strong>₦70,000</strong>
+            <button type="button" class="spa-package-add" data-package="radiance-ritual">
+              Add experience
+            </button>
+          </div>
         </article>
+
         <article class="spa-package-card">
           <div class="spa-package-number">03</div>
           <p>THE FULL ESCAPE</p>
           <h3>Maya Luxe</h3>
-          <ul><li>Hot Stone Massage</li><li>Hammam Bath</li><li>Hydra Facial</li><li>Pedicure</li></ul>
-          <div class="spa-package-foot"><strong>₦115,000</strong><button type="button" class="spa-package-add" data-package="maya-luxe">Add experience</button></div>
+          <ul>
+            <li>Hot Stone Massage</li>
+            <li>Hammam Bath</li>
+            <li>Hydra Facial</li>
+            <li>Pedicure</li>
+          </ul>
+          <div class="spa-package-foot">
+            <strong>₦115,000</strong>
+            <button type="button" class="spa-package-add" data-package="maya-luxe">
+              Add experience
+            </button>
+          </div>
         </article>
       </div>
     </section>
 
-    <section class="section spa-v5-builder" id="spa-menu">
+    <section
+      class="section spa-v5-builder"
+      id="spa-menu"
+      data-cloud-resource="spa-services"
+      aria-labelledby="spa-menu-title"
+    >
       <div class="spa-v5-builder-head">
-        <div><p class="eyebrow">SPA MENU</p><h2>Build your perfect experience.</h2></div>
-        <p>Open a category, select any service, then continue to another category. Your choices stay selected.</p>
+        <div>
+          <p class="eyebrow">SPA MENU</p>
+          <h2 id="spa-menu-title">Build your perfect experience.</h2>
+        </div>
+        <p>
+          Open a category, select any service, then continue to another category.
+          Your choices stay selected.
+        </p>
       </div>
+
+      <div class="spa-cloud-status" hidden data-spa-cloud-message role="status"></div>
 
       <div class="spa-v5-layout">
         <div class="spa-accordion" id="spaAccordion">
           <section class="spa-accordion-item open" data-category="Massage Therapy">
-            <button class="spa-accordion-trigger" type="button" aria-expanded="true">
+            <button
+              class="spa-accordion-trigger"
+              type="button"
+              id="spa-trigger-massage"
+              aria-expanded="true"
+              aria-controls="spa-panel-massage"
+            >
               <span class="spa-trigger-index">01</span>
-              <span class="spa-trigger-copy"><small>MASSAGE</small><b>Massage Therapy</b></span>
+              <span class="spa-trigger-copy">
+                <small>MASSAGE</small>
+                <b>Massage Therapy</b>
+              </span>
               <span class="spa-trigger-meta">5 services</span>
-              <span class="spa-trigger-icon">⌄</span>
+              <span class="spa-trigger-icon" aria-hidden="true">⌄</span>
             </button>
-            <div class="spa-accordion-panel">
+
+            <div
+              class="spa-accordion-panel"
+              id="spa-panel-massage"
+              role="region"
+              aria-labelledby="spa-trigger-massage"
+            >
               <div class="spa-service-options">
-                <button class="spa-choice" type="button" data-id="swedish-massage" data-name="Swedish Massage" data-category="Massage Therapy" data-price="20000" data-duration="60"><span class="spa-choice-mark">+</span><span><b>Swedish Massage</b><small>Gentle whole-body relaxation and stress relief.</small></span><span class="spa-choice-price">₦20,000<small>60 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="aromatherapy-massage" data-name="Aromatherapy Massage" data-category="Massage Therapy" data-price="20000" data-duration="60"><span class="spa-choice-mark">+</span><span><b>Aromatherapy Massage</b><small>A calming massage enhanced with aromatic oils.</small></span><span class="spa-choice-price">₦20,000<small>60 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="cupping-massage" data-name="Cupping Massage" data-category="Massage Therapy" data-price="35000" data-duration="75"><span class="spa-choice-mark">+</span><span><b>Cupping Massage</b><small>Targeted massage and cupping for focused body care.</small></span><span class="spa-choice-price">₦35,000<small>75 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="deep-tissue-massage" data-name="Deep Tissue Massage" data-category="Massage Therapy" data-price="35000" data-duration="90"><span class="spa-choice-mark">+</span><span><b>Deep Tissue Massage</b><small>Focused pressure for deeper muscular tension.</small></span><span class="spa-choice-price">₦35,000<small>90 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="hot-stone-massage" data-name="Hot Stone Massage" data-category="Massage Therapy" data-price="35000" data-duration="90"><span class="spa-choice-mark">+</span><span><b>Hot Stone Massage</b><small>Warm-stone treatment for deep relaxation.</small></span><span class="spa-choice-price">₦35,000<small>90 min</small></span></button>
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="swedish-massage" data-name="Swedish Massage" data-category="Massage Therapy" data-price="20000" data-duration="60">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Swedish Massage</b><small>Gentle whole-body relaxation and stress relief.</small></span>
+                  <span class="spa-choice-price">₦20,000<small>60 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="aromatherapy-massage" data-name="Aromatherapy Massage" data-category="Massage Therapy" data-price="20000" data-duration="60">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Aromatherapy Massage</b><small>A calming massage enhanced with aromatic oils.</small></span>
+                  <span class="spa-choice-price">₦20,000<small>60 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="cupping-massage" data-name="Cupping Massage" data-category="Massage Therapy" data-price="35000" data-duration="75">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Cupping Massage</b><small>Targeted massage and cupping for focused body care.</small></span>
+                  <span class="spa-choice-price">₦35,000<small>75 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="deep-tissue-massage" data-name="Deep Tissue Massage" data-category="Massage Therapy" data-price="35000" data-duration="90">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Deep Tissue Massage</b><small>Focused pressure for deeper muscular tension.</small></span>
+                  <span class="spa-choice-price">₦35,000<small>90 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="hot-stone-massage" data-name="Hot Stone Massage" data-category="Massage Therapy" data-price="35000" data-duration="90">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Hot Stone Massage</b><small>Warm-stone treatment for deep relaxation.</small></span>
+                  <span class="spa-choice-price">₦35,000<small>90 min</small></span>
+                </button>
               </div>
             </div>
           </section>
 
           <section class="spa-accordion-item" data-category="Facial Treatments">
-            <button class="spa-accordion-trigger" type="button" aria-expanded="false"><span class="spa-trigger-index">02</span><span class="spa-trigger-copy"><small>FACIALS</small><b>Facial Treatments</b></span><span class="spa-trigger-meta">5 services</span><span class="spa-trigger-icon">⌄</span></button>
-            <div class="spa-accordion-panel">
+            <button
+              class="spa-accordion-trigger"
+              type="button"
+              id="spa-trigger-facials"
+              aria-expanded="false"
+              aria-controls="spa-panel-facials"
+            >
+              <span class="spa-trigger-index">02</span>
+              <span class="spa-trigger-copy"><small>FACIALS</small><b>Facial Treatments</b></span>
+              <span class="spa-trigger-meta">5 services</span>
+              <span class="spa-trigger-icon" aria-hidden="true">⌄</span>
+            </button>
+
+            <div
+              class="spa-accordion-panel"
+              id="spa-panel-facials"
+              role="region"
+              aria-labelledby="spa-trigger-facials"
+            >
               <div class="spa-service-options">
-                <button class="spa-choice" type="button" data-id="bb-glow-facial" data-name="BB Glow Facial" data-category="Facial Treatments" data-price="35000" data-duration="75"><span class="spa-choice-mark">+</span><span><b>BB Glow Facial</b><small>A professional glow-focused facial session.</small></span><span class="spa-choice-price">₦35,000<small>75 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="dermaplaning-facial" data-name="Dermaplaning Facial" data-category="Facial Treatments" data-price="15000" data-duration="45"><span class="spa-choice-mark">+</span><span><b>Dermaplaning Facial</b><small>A professional exfoliating facial treatment.</small></span><span class="spa-choice-price">₦15,000<small>45 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="ayurvedic-facial" data-name="Ayurvedic Facial" data-category="Facial Treatments" data-price="30000" data-duration="60"><span class="spa-choice-mark">+</span><span><b>Ayurvedic Facial</b><small>A restorative facial inspired by Ayurvedic care.</small></span><span class="spa-choice-price">₦30,000<small>60 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="hydra-facial" data-name="Hydra Facial" data-category="Facial Treatments" data-price="20000" data-duration="60"><span class="spa-choice-mark">+</span><span><b>Hydra Facial</b><small>A hydration-focused cleansing facial.</small></span><span class="spa-choice-price">₦20,000<small>60 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="prp-facial" data-name="PRP Facial" data-category="Facial Treatments" data-price="50000" data-duration="90"><span class="spa-choice-mark">+</span><span><b>PRP Facial</b><small>Specialist facial service; consultation is required.</small></span><span class="spa-choice-price">₦50,000<small>90 min</small></span></button>
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="bb-glow-facial" data-name="BB Glow Facial" data-category="Facial Treatments" data-price="35000" data-duration="75">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>BB Glow Facial</b><small>A professional glow-focused facial session.</small></span>
+                  <span class="spa-choice-price">₦35,000<small>75 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="dermaplaning-facial" data-name="Dermaplaning Facial" data-category="Facial Treatments" data-price="15000" data-duration="45">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Dermaplaning Facial</b><small>A professional exfoliating facial treatment.</small></span>
+                  <span class="spa-choice-price">₦15,000<small>45 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="ayurvedic-facial" data-name="Ayurvedic Facial" data-category="Facial Treatments" data-price="30000" data-duration="60">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Ayurvedic Facial</b><small>A restorative facial inspired by Ayurvedic care.</small></span>
+                  <span class="spa-choice-price">₦30,000<small>60 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="hydra-facial" data-name="Hydra Facial" data-category="Facial Treatments" data-price="20000" data-duration="60">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Hydra Facial</b><small>A hydration-focused cleansing facial.</small></span>
+                  <span class="spa-choice-price">₦20,000<small>60 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="prp-facial" data-name="PRP Facial" data-category="Facial Treatments" data-price="50000" data-duration="90">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>PRP Facial</b><small>Specialist facial service; consultation is required.</small></span>
+                  <span class="spa-choice-price">₦50,000<small>90 min</small></span>
+                </button>
               </div>
             </div>
           </section>
 
           <section class="spa-accordion-item" data-category="Waxing">
-            <button class="spa-accordion-trigger" type="button" aria-expanded="false"><span class="spa-trigger-index">03</span><span class="spa-trigger-copy"><small>WAXING</small><b>Waxing Services</b></span><span class="spa-trigger-meta">6 services</span><span class="spa-trigger-icon">⌄</span></button>
-            <div class="spa-accordion-panel">
+            <button
+              class="spa-accordion-trigger"
+              type="button"
+              id="spa-trigger-waxing"
+              aria-expanded="false"
+              aria-controls="spa-panel-waxing"
+            >
+              <span class="spa-trigger-index">03</span>
+              <span class="spa-trigger-copy"><small>WAXING</small><b>Waxing Services</b></span>
+              <span class="spa-trigger-meta">6 services</span>
+              <span class="spa-trigger-icon" aria-hidden="true">⌄</span>
+            </button>
+
+            <div
+              class="spa-accordion-panel"
+              id="spa-panel-waxing"
+              role="region"
+              aria-labelledby="spa-trigger-waxing"
+            >
               <div class="spa-service-options">
-                <button class="spa-choice" type="button" data-id="brazilian-wax" data-name="Brazilian Wax" data-category="Waxing" data-price="20000" data-duration="45"><span class="spa-choice-mark">+</span><span><b>Brazilian Wax</b><small>Professional Brazilian waxing service.</small></span><span class="spa-choice-price">₦20,000<small>45 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="bikini-wax" data-name="Bikini Wax" data-category="Waxing" data-price="15000" data-duration="30"><span class="spa-choice-mark">+</span><span><b>Bikini Wax</b><small>Professional bikini-line waxing service.</small></span><span class="spa-choice-price">₦15,000<small>30 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="underarm-wax" data-name="Underarm Wax" data-category="Waxing" data-price="10000" data-duration="20"><span class="spa-choice-mark">+</span><span><b>Underarm Wax</b><small>Clean and efficient underarm waxing.</small></span><span class="spa-choice-price">₦10,000<small>20 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="leg-wax" data-name="Leg Wax" data-category="Waxing" data-price="18000" data-duration="45"><span class="spa-choice-mark">+</span><span><b>Leg Wax</b><small>Smooth professional leg waxing.</small></span><span class="spa-choice-price">₦18,000<small>45 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="chin-wax" data-name="Chin Wax" data-category="Waxing" data-price="10000" data-duration="15"><span class="spa-choice-mark">+</span><span><b>Chin Wax</b><small>Precise facial waxing for the chin area.</small></span><span class="spa-choice-price">₦10,000<small>15 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="full-body-wax" data-name="Full Body Wax" data-category="Waxing" data-price="50000" data-duration="120"><span class="spa-choice-mark">+</span><span><b>Full Body Wax</b><small>A complete professional waxing service.</small></span><span class="spa-choice-price">₦50,000<small>120 min</small></span></button>
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="brazilian-wax" data-name="Brazilian Wax" data-category="Waxing" data-price="20000" data-duration="45">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Brazilian Wax</b><small>Professional Brazilian waxing service.</small></span>
+                  <span class="spa-choice-price">₦20,000<small>45 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="bikini-wax" data-name="Bikini Wax" data-category="Waxing" data-price="15000" data-duration="30">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Bikini Wax</b><small>Professional bikini-line waxing service.</small></span>
+                  <span class="spa-choice-price">₦15,000<small>30 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="underarm-wax" data-name="Underarm Wax" data-category="Waxing" data-price="10000" data-duration="20">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Underarm Wax</b><small>Clean and efficient underarm waxing.</small></span>
+                  <span class="spa-choice-price">₦10,000<small>20 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="leg-wax" data-name="Leg Wax" data-category="Waxing" data-price="18000" data-duration="45">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Leg Wax</b><small>Smooth professional leg waxing.</small></span>
+                  <span class="spa-choice-price">₦18,000<small>45 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="chin-wax" data-name="Chin Wax" data-category="Waxing" data-price="10000" data-duration="15">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Chin Wax</b><small>Precise facial waxing for the chin area.</small></span>
+                  <span class="spa-choice-price">₦10,000<small>15 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="full-body-wax" data-name="Full Body Wax" data-category="Waxing" data-price="50000" data-duration="120">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Full Body Wax</b><small>A complete professional waxing service.</small></span>
+                  <span class="spa-choice-price">₦50,000<small>120 min</small></span>
+                </button>
               </div>
             </div>
           </section>
 
           <section class="spa-accordion-item" data-category="Body Treatments">
-            <button class="spa-accordion-trigger" type="button" aria-expanded="false"><span class="spa-trigger-index">04</span><span class="spa-trigger-copy"><small>BODY CARE</small><b>Body Treatments</b></span><span class="spa-trigger-meta">3 services</span><span class="spa-trigger-icon">⌄</span></button>
-            <div class="spa-accordion-panel">
+            <button
+              class="spa-accordion-trigger"
+              type="button"
+              id="spa-trigger-body"
+              aria-expanded="false"
+              aria-controls="spa-panel-body"
+            >
+              <span class="spa-trigger-index">04</span>
+              <span class="spa-trigger-copy"><small>BODY CARE</small><b>Body Treatments</b></span>
+              <span class="spa-trigger-meta">3 services</span>
+              <span class="spa-trigger-icon" aria-hidden="true">⌄</span>
+            </button>
+
+            <div
+              class="spa-accordion-panel"
+              id="spa-panel-body"
+              role="region"
+              aria-labelledby="spa-trigger-body"
+            >
               <div class="spa-service-options">
-                <button class="spa-choice" type="button" data-id="glow-body-polish" data-name="Glow Body Polish" data-category="Body Treatments" data-price="35000" data-duration="75"><span class="spa-choice-mark">+</span><span><b>Glow Body Polish</b><small>Exfoliating body care for smoother-looking skin.</small></span><span class="spa-choice-price">₦35,000<small>75 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="brightening-treatment" data-name="Brightening / Lightening Treatment" data-category="Body Treatments" data-price="40000" data-duration="90"><span class="spa-choice-mark">+</span><span><b>Brightening / Lightening</b><small>A professional tone-evening body treatment.</small></span><span class="spa-choice-price">₦40,000<small>90 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="hammam-bath" data-name="Hammam Bath" data-category="Body Treatments" data-price="50000" data-duration="90"><span class="spa-choice-mark">+</span><span><b>Hammam Bath</b><small>A cleansing and restorative traditional bath ritual.</small></span><span class="spa-choice-price">₦50,000<small>90 min</small></span></button>
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="glow-body-polish" data-name="Glow Body Polish" data-category="Body Treatments" data-price="35000" data-duration="75">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Glow Body Polish</b><small>Exfoliating body care for smoother-looking skin.</small></span>
+                  <span class="spa-choice-price">₦35,000<small>75 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="brightening-treatment" data-name="Brightening / Lightening Treatment" data-category="Body Treatments" data-price="40000" data-duration="90">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Brightening / Lightening</b><small>A professional tone-evening body treatment.</small></span>
+                  <span class="spa-choice-price">₦40,000<small>90 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="hammam-bath" data-name="Hammam Bath" data-category="Body Treatments" data-price="50000" data-duration="90">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Hammam Bath</b><small>A cleansing and restorative traditional bath ritual.</small></span>
+                  <span class="spa-choice-price">₦50,000<small>90 min</small></span>
+                </button>
               </div>
             </div>
           </section>
 
           <section class="spa-accordion-item" data-category="Wellness & Other">
-            <button class="spa-accordion-trigger" type="button" aria-expanded="false"><span class="spa-trigger-index">05</span><span class="spa-trigger-copy"><small>WELLNESS</small><b>Wellness & Other Services</b></span><span class="spa-trigger-meta">6 services</span><span class="spa-trigger-icon">⌄</span></button>
-            <div class="spa-accordion-panel">
+            <button
+              class="spa-accordion-trigger"
+              type="button"
+              id="spa-trigger-wellness"
+              aria-expanded="false"
+              aria-controls="spa-panel-wellness"
+            >
+              <span class="spa-trigger-index">05</span>
+              <span class="spa-trigger-copy"><small>WELLNESS</small><b>Wellness &amp; Other Services</b></span>
+              <span class="spa-trigger-meta">6 services</span>
+              <span class="spa-trigger-icon" aria-hidden="true">⌄</span>
+            </button>
+
+            <div
+              class="spa-accordion-panel"
+              id="spa-panel-wellness"
+              role="region"
+              aria-labelledby="spa-trigger-wellness"
+            >
               <div class="spa-service-options">
-                <button class="spa-choice" type="button" data-id="foot-detox" data-name="Foot Detox" data-category="Wellness & Other" data-price="20000" data-duration="45"><span class="spa-choice-mark">+</span><span><b>Foot Detox</b><small>A relaxing foot-care wellness session.</small></span><span class="spa-choice-price">₦20,000<small>45 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="pedicure" data-name="Pedicure" data-category="Wellness & Other" data-price="10000" data-duration="45"><span class="spa-choice-mark">+</span><span><b>Pedicure</b><small>Essential grooming and foot care.</small></span><span class="spa-choice-price">₦10,000<small>45 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="tag-removal" data-name="Tag Removal" data-category="Wellness & Other" data-price="10000" data-duration="30"><span class="spa-choice-mark">+</span><span><b>Tag Removal</b><small>Specialist service; assessment may be required.</small></span><span class="spa-choice-price">₦10,000<small>30 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="stretch-marks-treatment" data-name="Stretch Marks Treatment" data-category="Wellness & Other" data-price="35000" data-duration="75"><span class="spa-choice-mark">+</span><span><b>Stretch Marks Treatment</b><small>Targeted professional body-care treatment.</small></span><span class="spa-choice-price">₦35,000<small>75 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="sauna-bath" data-name="Sauna Bath" data-category="Wellness & Other" data-price="15000" data-duration="30"><span class="spa-choice-mark">+</span><span><b>Sauna Bath</b><small>A warm relaxation and wellness session.</small></span><span class="spa-choice-price">₦15,000<small>30 min</small></span></button>
-                <button class="spa-choice" type="button" data-id="o-shot" data-name="O-Shot" data-category="Wellness & Other" data-price="50000" data-duration="60"><span class="spa-choice-mark">+</span><span><b>O-Shot</b><small>Specialist service; consultation is required before booking.</small></span><span class="spa-choice-price">₦50,000<small>60 min</small></span></button>
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="foot-detox" data-name="Foot Detox" data-category="Wellness & Other" data-price="20000" data-duration="45">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Foot Detox</b><small>A relaxing foot-care wellness session.</small></span>
+                  <span class="spa-choice-price">₦20,000<small>45 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="pedicure" data-name="Pedicure" data-category="Wellness & Other" data-price="10000" data-duration="45">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Pedicure</b><small>Essential grooming and foot care.</small></span>
+                  <span class="spa-choice-price">₦10,000<small>45 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="tag-removal" data-name="Tag Removal" data-category="Wellness & Other" data-price="10000" data-duration="30">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Tag Removal</b><small>Specialist service; assessment may be required.</small></span>
+                  <span class="spa-choice-price">₦10,000<small>30 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="stretch-marks-treatment" data-name="Stretch Marks Treatment" data-category="Wellness & Other" data-price="35000" data-duration="75">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Stretch Marks Treatment</b><small>Targeted professional body-care treatment.</small></span>
+                  <span class="spa-choice-price">₦35,000<small>75 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="sauna-bath" data-name="Sauna Bath" data-category="Wellness & Other" data-price="15000" data-duration="30">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>Sauna Bath</b><small>A warm relaxation and wellness session.</small></span>
+                  <span class="spa-choice-price">₦15,000<small>30 min</small></span>
+                </button>
+
+                <button class="spa-choice" type="button" aria-pressed="false" data-id="o-shot" data-name="O-Shot" data-category="Wellness & Other" data-price="50000" data-duration="60">
+                  <span class="spa-choice-mark" aria-hidden="true">+</span>
+                  <span><b>O-Shot</b><small>Specialist service; consultation is required before booking.</small></span>
+                  <span class="spa-choice-price">₦50,000<small>60 min</small></span>
+                </button>
               </div>
             </div>
           </section>
@@ -176,85 +512,404 @@
 
         <aside class="spa-experience-card" aria-live="polite">
           <div class="spa-experience-head">
-            <div><small>YOUR SPA EXPERIENCE</small><h3>Selected services</h3></div>
-            <button type="button" id="spaClearAll" class="spa-clear">Clear</button>
+            <div>
+              <small>YOUR SPA EXPERIENCE</small>
+              <h3>Selected services</h3>
+            </div>
+            <button type="button" id="spaClearAll" class="spa-clear" data-spa-clear>
+              Clear
+            </button>
           </div>
-          <div id="spaSelectedItems" class="spa-selected-items">
-            <div class="spa-empty-selection"><span>✦</span><p>Your selected treatments will appear here.</p></div>
+
+          <div id="spaSelectedItems" class="spa-selected-items" data-spa-selected-items>
+            <div class="spa-empty-selection">
+              <span aria-hidden="true">✦</span>
+              <p>Your selected treatments will appear here.</p>
+            </div>
           </div>
+
           <div class="spa-experience-totals">
-            <div><span>Services</span><strong id="spaServiceCount">0</strong></div>
-            <div><span>Est. duration</span><strong id="spaDuration">0 min</strong></div>
-            <div class="spa-grand-total"><span>Total</span><strong id="spaTotal">₦0</strong></div>
+            <div>
+              <span>Services</span>
+              <strong id="spaServiceCount" data-spa-service-count>0</strong>
+            </div>
+            <div>
+              <span>Est. duration</span>
+              <strong id="spaDuration" data-spa-duration>0 min</strong>
+            </div>
+            <div class="spa-grand-total">
+              <span>Total</span>
+              <strong id="spaTotal" data-spa-total>₦0</strong>
+            </div>
           </div>
-          <a class="btn primary spa-summary-button disabled" id="spaSummaryButton" href="#spa-booking" aria-disabled="true">Continue to reservation</a>
-          <small class="spa-summary-note">Listed prices are shown before confirmation. Final availability is confirmed on WhatsApp.</small>
+
+          <a
+            class="btn primary spa-summary-button disabled"
+            id="spaSummaryButton"
+            href="#spa-booking"
+            aria-disabled="true"
+            data-spa-summary-button
+          >
+            Continue to reservation
+          </a>
+
+          <small class="spa-summary-note">
+            Listed prices are shown before confirmation. Final availability is confirmed
+            on WhatsApp.
+          </small>
         </aside>
       </div>
     </section>
 
-    <section class="spa-v5-booking" id="spa-booking">
+    <section class="spa-v5-booking" id="spa-booking" aria-labelledby="spa-booking-title">
       <div class="spa-v5-booking-intro">
         <p class="eyebrow">RESERVE YOUR EXPERIENCE</p>
-        <h2>Complete your appointment request.</h2>
-        <p>Select at least one treatment, then enter your preferred date and time. WhatsApp will open with your complete service list and total.</p>
+        <h2 id="spa-booking-title">Complete your appointment request.</h2>
+        <p>
+          Select at least one treatment, then enter your preferred date and time.
+          Your request will be recorded before WhatsApp opens.
+        </p>
+
         <div class="spa-booking-highlight">
           <span>Selected total</span>
-          <strong id="spaBookingTotal">₦0</strong>
-          <small id="spaBookingSummaryText">No services selected yet</small>
+          <strong id="spaBookingTotal" data-spa-booking-total>₦0</strong>
+          <small id="spaBookingSummaryText" data-spa-booking-summary>
+            No services selected yet
+          </small>
         </div>
       </div>
-      <form class="spa-v5-form" id="spaBookingForm">
-        <div class="spa-form-row">
-          <label>Full name<input id="spaName" type="text" autocomplete="name" required placeholder="Your full name"></label>
-          <label>Phone number<input id="spaPhone" type="tel" autocomplete="tel" required placeholder="Your phone number"></label>
+
+      <form
+        class="spa-v5-form"
+        id="spaBookingForm"
+        data-spa-booking-form
+        data-booking-source="website"
+        novalidate
+      >
+        <div class="spa-form-heading">
+          <span
+            class="cloud-indicator compact"
+            data-cloud-indicator
+            data-state="checking"
+            title="Cloud booking connection"
+          >
+            <i aria-hidden="true"></i>
+            <span class="cloud-indicator-label">Checking cloud</span>
+          </span>
         </div>
+
+        <div class="form-alert" role="alert" hidden data-spa-form-alert></div>
+
         <div class="spa-form-row">
-          <label>Preferred date<input id="spaDate" type="date" required></label>
-          <label>Preferred time<select id="spaTime" required><option value="">Select time</option><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option><option>5:00 PM</option></select></label>
+          <label for="spaName">
+            Full name
+            <input
+              id="spaName"
+              name="name"
+              type="text"
+              autocomplete="name"
+              required
+              minlength="2"
+              maxlength="120"
+              placeholder="Your full name"
+            >
+            <small class="field-error" data-error-for="spaName"></small>
+          </label>
+
+          <label for="spaPhone">
+            Phone number
+            <input
+              id="spaPhone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              required
+              maxlength="30"
+              placeholder="Your active WhatsApp number"
+            >
+            <small class="field-error" data-error-for="spaPhone"></small>
+          </label>
         </div>
-        <label>Additional notes <span>(optional)</span><textarea id="spaNotes" rows="4" placeholder="Share any preferences, allergies or questions"></textarea></label>
-        <button class="btn primary spa-submit" id="spaSubmit" type="submit" disabled>Reserve my experience on WhatsApp</button>
-        <small class="spa-form-note">Your appointment is confirmed only after the Maya’s Secret team replies with availability.</small>
+
+        <div class="spa-form-row">
+          <label for="spaDate">
+            Preferred date
+            <input id="spaDate" name="date" type="date" required>
+            <small class="field-error" data-error-for="spaDate"></small>
+          </label>
+
+          <label for="spaTime">
+            Preferred time
+            <select id="spaTime" name="time" required>
+              <option value="">Select time</option>
+              <option>9:00 AM</option>
+              <option>10:00 AM</option>
+              <option>11:00 AM</option>
+              <option>12:00 PM</option>
+              <option>1:00 PM</option>
+              <option>2:00 PM</option>
+              <option>3:00 PM</option>
+              <option>4:00 PM</option>
+              <option>5:00 PM</option>
+            </select>
+            <small class="field-error" data-error-for="spaTime"></small>
+          </label>
+        </div>
+
+        <label for="spaNotes">
+          Additional notes <span>(optional)</span>
+          <textarea
+            id="spaNotes"
+            name="notes"
+            rows="4"
+            maxlength="750"
+            placeholder="Share any preferences, allergies or questions"
+          ></textarea>
+        </label>
+
+        <input type="hidden" name="currency" value="NGN">
+        <input type="hidden" name="channel" value="WhatsApp">
+        <input type="hidden" name="bookingStatus" value="Pending">
+        <input type="hidden" name="paymentStatus" value="Unconfirmed">
+
+        <button
+          class="btn primary spa-submit"
+          id="spaSubmit"
+          type="submit"
+          disabled
+          data-spa-submit
+        >
+          <span data-submit-text>Record request &amp; open WhatsApp</span>
+          <span class="button-spinner" aria-hidden="true" hidden data-submit-spinner></span>
+        </button>
+
+        <small class="spa-form-note">
+          Submitting creates a pending appointment request. The booking is confirmed
+          only after Maya’s Secret replies with availability.
+        </small>
       </form>
     </section>
 
+    <section
+      class="spa-booking-success"
+      hidden
+      data-spa-booking-success
+      aria-labelledby="spa-success-title"
+      aria-live="polite"
+    >
+      <span class="spa-success-icon" aria-hidden="true">✓</span>
+      <p class="eyebrow">REQUEST RECORDED</p>
+      <h2 id="spa-success-title">Your appointment request is ready.</h2>
+      <p>
+        Booking reference:
+        <strong data-spa-booking-reference>—</strong>
+      </p>
+      <button class="btn primary" type="button" data-spa-open-whatsapp>
+        Open WhatsApp
+      </button>
+      <a class="text-link" href="#spa-menu">Adjust services →</a>
+    </section>
+
     <section class="section spa-v5-visit">
-      <div><p class="eyebrow">BEFORE YOUR VISIT</p><h2>A smoother spa day starts here.</h2></div>
+      <div>
+        <p class="eyebrow">BEFORE YOUR VISIT</p>
+        <h2>A smoother spa day starts here.</h2>
+      </div>
+
       <div class="spa-visit-grid">
-        <article><span>01</span><h3>Arrive early</h3><p>Plan to arrive around 10–15 minutes before your appointment.</p></article>
-        <article><span>02</span><h3>Share relevant details</h3><p>Tell us about allergies, sensitivities or medical concerns before treatment.</p></article>
-        <article><span>03</span><h3>Stay hydrated</h3><p>Drink water before and after massage, sauna and body treatments.</p></article>
+        <article>
+          <span>01</span>
+          <h3>Arrive early</h3>
+          <p>Plan to arrive around 10–15 minutes before your appointment.</p>
+        </article>
+
+        <article>
+          <span>02</span>
+          <h3>Share relevant details</h3>
+          <p>Tell us about allergies, sensitivities or medical concerns before treatment.</p>
+        </article>
+
+        <article>
+          <span>03</span>
+          <h3>Stay hydrated</h3>
+          <p>Drink water before and after massage, sauna and body treatments.</p>
+        </article>
       </div>
     </section>
 
     <section class="section spa-faq spa-v5-faq">
-      <div><p class="eyebrow">FREQUENTLY ASKED</p><h2>Booking notes.</h2></div>
+      <div>
+        <p class="eyebrow">FREQUENTLY ASKED</p>
+        <h2>Booking notes.</h2>
+      </div>
+
       <div class="spa-faq-list">
-        <details><summary>Can I select more than one service?</summary><p>Yes. Choose as many services as you need across the different categories. Your total price and estimated duration update automatically.</p></details>
-        <details><summary>Is the reservation confirmed immediately?</summary><p>No. The WhatsApp message is an appointment request. Your slot is confirmed when Maya’s Secret replies.</p></details>
-        <details><summary>Can specialist services require consultation?</summary><p>Yes. PRP Facial, O-Shot, tag removal and certain targeted treatments may require an assessment before confirmation.</p></details>
-        <details><summary>Can I change my selected services later?</summary><p>Yes. Discuss any changes with Maya’s Secret on WhatsApp before your appointment is confirmed.</p></details>
+        <details>
+          <summary>Can I select more than one service?</summary>
+          <p>
+            Yes. Choose as many services as you need across the different categories.
+            Your total price and estimated duration update automatically.
+          </p>
+        </details>
+
+        <details>
+          <summary>Is the reservation confirmed immediately?</summary>
+          <p>
+            No. The WhatsApp message is an appointment request. Your slot is confirmed
+            when Maya’s Secret replies.
+          </p>
+        </details>
+
+        <details>
+          <summary>Can specialist services require consultation?</summary>
+          <p>
+            Yes. PRP Facial, O-Shot, tag removal and certain targeted treatments may
+            require an assessment before confirmation.
+          </p>
+        </details>
+
+        <details>
+          <summary>Can I change my selected services later?</summary>
+          <p>
+            Yes. Discuss any changes with Maya’s Secret on WhatsApp before your
+            appointment is confirmed.
+          </p>
+        </details>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="footer-brand"><img src="assets/mayas-logo.png" alt=""><h2>Beauty, thoughtfully revealed.</h2><p>Premium skincare, spa care and practical beauty training in Abuja.</p></div>
-    <div><h3>Explore</h3><a href="shop.html">Shop</a><a href="spa.html">Spa</a><a href="training.html">Training</a><a href="contact.html">Contact</a></div>
-    <div><h3>Visit & connect</h3><p>Abuja, Nigeria</p><a href="tel:+2348109044321">0810 904 4321</a><a href="mailto:hello@mayassecret.com">hello@mayassecret.com</a></div>
-    <div><h3>Book directly</h3><p>Build your spa experience and send the full appointment request through WhatsApp.</p><a href="#spa-menu">Choose spa services</a></div>
-    <div class="footer-bottom"><span>© 2026 Maya’s Secret.</span><span>Designed for confident beauty.</span></div>
+    <div class="footer-brand">
+      <img src="assets/mayas-logo.png" alt="" width="72" height="72" loading="lazy">
+      <h2>Beauty, thoughtfully revealed.</h2>
+      <p>Premium skincare, spa care and practical beauty training in Abuja.</p>
+    </div>
+
+    <div>
+      <h3>Explore</h3>
+      <a href="shop.html">Shop</a>
+      <a href="spa.html">Spa</a>
+      <a href="training.html">Training</a>
+      <a href="contact.html">Contact</a>
+    </div>
+
+    <div>
+      <h3>Visit &amp; connect</h3>
+      <p data-setting="location">Abuja, Nigeria</p>
+      <a href="tel:+2348109044321" data-setting-link="phone">
+        <span data-setting="phone">0810 904 4321</span>
+      </a>
+      <a href="mailto:hello@mayassecret.com" data-setting-link="email">
+        <span data-setting="email">hello@mayassecret.com</span>
+      </a>
+    </div>
+
+    <div>
+      <h3>Book directly</h3>
+      <p>
+        Build your spa experience and send the complete appointment request through
+        WhatsApp.
+      </p>
+      <a href="#spa-menu">Choose spa services</a>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span data-current-year>2026</span> Maya’s Secret.</span>
+      <span>Designed for confident beauty.</span>
+    </div>
   </footer>
 
-  <div class="overlay"></div>
-  <aside class="cart" aria-hidden="true"><div class="cart-head"><h2>Your bag</h2><button class="cart-close">×</button></div><div class="cart-lines"></div><div class="cart-empty"><p>Your bag is waiting.</p><a href="shop.html">Explore the collection</a></div><div class="cart-foot"><div><span>Estimated total</span><strong class="cart-total">₦0</strong></div><button class="checkout">Proceed to checkout</button><small>Review your order and delivery details before sending it to Maya’s Secret.</small></div></aside>
-  <button class="floating-bag" type="button" aria-label="Open shopping bag"><span class="floating-bag-icon">🛍</span><b class="bag-count">0</b></button>
-  <a class="spa-floating-reserve" id="spaFloatingReserve" href="#spa-booking"><span id="spaFloatingCount">0</span><b>Reserve</b><strong id="spaFloatingTotal">₦0</strong></a>
-  <div class="toast"></div>
-  <script defer src="js/cloud.js?v=4.1.0"></script>
-  <script defer src="js/catalog.js?v=4.1.0"></script>
-  <script defer src="js/app.js?v=4.1.0"></script>
-  <script defer src="js/spa.js?v=5.1.0"></script>
+  <div class="overlay" data-overlay hidden></div>
+
+  <aside
+    id="shopping-cart"
+    class="cart"
+    aria-hidden="true"
+    aria-labelledby="cart-title"
+    inert
+    data-cart
+  >
+    <div class="cart-head">
+      <h2 id="cart-title">Your bag</h2>
+      <button
+        class="cart-close"
+        type="button"
+        aria-label="Close shopping bag"
+        data-cart-close
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="cart-lines" data-cart-lines></div>
+
+    <div class="cart-empty" data-cart-empty>
+      <p>Your bag is waiting.</p>
+      <a href="shop.html">Explore the collection</a>
+    </div>
+
+    <div class="cart-foot">
+      <div>
+        <span>Estimated total</span>
+        <strong class="cart-total">₦0</strong>
+      </div>
+
+      <button class="checkout" type="button" data-checkout>
+        Proceed to checkout
+      </button>
+
+      <small>
+        Review your order and delivery details before sending it to Maya’s Secret.
+      </small>
+    </div>
+  </aside>
+
+  <button
+    class="floating-bag"
+    type="button"
+    aria-label="Open shopping bag"
+    aria-controls="shopping-cart"
+    data-cart-toggle
+  >
+    <span class="floating-bag-icon" aria-hidden="true">🛍</span>
+    <b class="bag-count" aria-label="0 items">0</b>
+  </button>
+
+  <a
+    class="spa-floating-reserve"
+    id="spaFloatingReserve"
+    href="#spa-booking"
+    aria-label="Reserve selected spa services"
+    data-spa-floating-reserve
+  >
+    <span id="spaFloatingCount" data-spa-floating-count>0</span>
+    <b>Reserve</b>
+    <strong id="spaFloatingTotal" data-spa-floating-total>₦0</strong>
+  </a>
+
+  <div class="toast-region" aria-live="polite" aria-atomic="true" data-toast-region></div>
+
+  <div class="global-loader" aria-hidden="true" data-global-loader>
+    <span class="spinner"></span>
+    <p data-loader-message>Loading…</p>
+  </div>
+
+  <!-- Sprint 1: shared application framework -->
+  <script defer src="js/core/config.js?v=5.0.0"></script>
+  <script defer src="js/core/utils.js?v=5.0.0"></script>
+  <script defer src="js/core/ui.js?v=5.0.0"></script>
+  <script defer src="js/core/auth.js?v=5.0.0"></script>
+  <script defer src="js/core/api.js?v=5.0.0"></script>
+  <script defer src="js/core/framework.js?v=5.0.0"></script>
+
+  <!-- Sprint 2: Business Cloud compatibility entry point -->
+  <script defer src="js/cloud/cloud.js?v=5.0.0"></script>
+
+  <!-- Existing catalogue, cart and spa layers -->
+  <script defer src="js/catalog.js?v=5.0.0"></script>
+  <script defer src="js/app.js?v=5.0.0"></script>
+  <script defer src="js/spa.js?v=5.0.0"></script>
 </body>
 </html>
