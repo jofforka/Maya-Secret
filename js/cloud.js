@@ -71,24 +71,64 @@
   }
 
   function getEndpointFromConfig() {
-    const config = getConfig();
 
-    return normalizeEndpoint(
-      config.cloudUrl ||
-      config.apiUrl ||
-      config.endpoint ||
-      (
-        config.cloud &&
-        (
-          config.cloud.url ||
-          config.cloud.endpoint ||
-          config.cloud.apiUrl
-        )
-      ) ||
-      ""
-    );
+  const configModule = window.BusinessConfig || window.MayaConfig;
+
+  /* Preferred source */
+  if (configModule) {
+
+    if (typeof configModule.getAppsScriptUrl === "function") {
+      const url = normalizeEndpoint(
+        configModule.getAppsScriptUrl()
+      );
+
+      if (url) {
+        return url;
+      }
+    }
+
+    if (
+      configModule.api &&
+      configModule.api.appsScriptUrl
+    ) {
+      return normalizeEndpoint(
+        configModule.api.appsScriptUrl
+      );
+    }
+
+    if (configModule.appsScriptUrl) {
+      return normalizeEndpoint(
+        configModule.appsScriptUrl
+      );
+    }
   }
 
+  /* Fallback */
+  const config = getConfig();
+
+  return normalizeEndpoint(
+
+    (config.api &&
+      config.api.appsScriptUrl) ||
+
+    config.appsScriptUrl ||
+
+    config.cloudUrl ||
+
+    config.apiUrl ||
+
+    config.endpoint ||
+
+    (config.cloud &&
+      (
+        config.cloud.url ||
+        config.cloud.endpoint ||
+        config.cloud.apiUrl
+      )) ||
+
+    ""
+  );
+}
   function buildUrl(action, params) {
     if (!Cloud.endpoint) {
       throw new Error("Cloud endpoint is not configured.");
