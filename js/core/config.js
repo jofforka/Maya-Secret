@@ -16,6 +16,7 @@
       language: "en-NG"
     },
 
+    
     commission: {
       rate: 0.15,
       calculation: "paid_sales_only"
