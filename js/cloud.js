@@ -1,168 +1,103 @@
-window.MAYA_CLOUD = Object.freeze({
-  apiUrl: 'https://script.google.com/macros/s/AKfycbxG_WDwV7ByiPH_pQ28r2phmSXJrZbC-U1LpG5MC_IkM7CZcxE5EAuXJjj9vLD1Q17f/exec',
-  timeoutMs: 30000,
-  retries: 2,
-  version: '5.0'
-});
+js = r'''/*!
+ * Maya's Secret Business OS v5.0
+ * Cloud Adapter
+ * File: js/cloud.js
+ */
 
-window.MayaCloud = (() => {
+(function(window){
+"use strict";
 
-  const config = window.MAYA_CLOUD;
+const API=window.BusinessAPI||{};
+const Cloud={};
 
-  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+function ok(data){return {success:true,...data};}
+function fail(err){return {success:false,message:err?.message||String(err)};}
 
-  async function request(url, options = {}) {
+Cloud.getProducts=async()=>API.getProducts();
+Cloud.loadProducts=Cloud.getProducts;
 
-    let lastError;
+Cloud.saveProduct=async(product)=>{
+  await API.saveProduct(product);
+  return ok({products:await API.getProducts()});
+};
 
-    for (let attempt = 0; attempt <= config.retries; attempt++) {
+Cloud.upsertProduct=Cloud.saveProduct;
 
-      const controller = new AbortController();
+Cloud.deleteProduct=async(id)=>{
+  await API.deleteProduct(id);
+  return ok({products:await API.getProducts()});
+};
 
-      const timer = setTimeout(() => controller.abort(), config.timeoutMs);
+Cloud.removeProduct=Cloud.deleteProduct;
 
-      try {
+Cloud.getOrders=()=>API.getOrders();
+Cloud.loadOrders=Cloud.getOrders;
 
-        const response = await fetch(url, {
-          cache: 'no-store',
-          redirect: 'follow',
-          signal: controller.signal,
-          ...options
-        });
+Cloud.saveOrder=async(order)=>{
+  await API.saveOrder(order);
+  return ok({orders:await API.getOrders()});
+};
 
-        if (!response.ok) {
-          throw new Error(`Cloud request failed (${response.status})`);
-        }
+Cloud.updateOrder=async(order)=>{
+  await API.updateOrder(order);
+  return ok({orders:await API.getOrders()});
+};
 
-        const type = response.headers.get('content-type') || '';
+Cloud.getBookings=()=>API.getBookings();
+Cloud.getSpaBookings=Cloud.getBookings;
+Cloud.loadBookings=Cloud.getBookings;
 
-        if (!type.includes('application/json')) {
-          throw new Error('Unexpected response from cloud service.');
-        }
+Cloud.saveBooking=async(booking)=>{
+  await API.saveBooking(booking);
+  return ok({bookings:await API.getBookings()});
+};
 
-        const data = await response.json();
+Cloud.updateBooking=async(booking)=>{
+  await API.updateBooking(booking);
+  return ok({bookings:await API.getBookings()});
+};
 
-        if (!data || data.success === false) {
-          throw new Error(data?.error || 'Cloud operation failed.');
-        }
+Cloud.deleteBooking=async(id)=>{
+  await API.deleteBooking(id);
+  return ok({bookings:await API.getBookings()});
+};
 
-        return data;
+Cloud.getCustomers=()=>API.getCustomers();
 
-      } catch (err) {
+Cloud.getSettings=()=>API.getSettings();
+Cloud.loadSettings=Cloud.getSettings;
 
-        lastError = err;
+Cloud.saveSettings=async(settings)=>{
+  await API.saveSettings(settings);
+  return ok({settings:await API.getSettings()});
+};
 
-        if (err.name === 'AbortError') {
-          lastError = new Error('The cloud service took too long to respond.');
-        }
+Cloud.dashboard=()=>API.getDashboard();
+Cloud.salesReport=(f)=>API.getSalesReport(f);
+Cloud.commissionReport=(f)=>API.getCommissionReport(f);
 
-        if (attempt < config.retries) {
-          await sleep(1000 * (attempt + 1));
-          continue;
-        }
+Cloud.exportBackup=()=>API.exportBackup();
+Cloud.importBackup=(b)=>API.importBackup(b);
 
-      } finally {
-        clearTimeout(timer);
-      }
+Cloud.sync=()=>API.sync();
+Cloud.publishCatalogue=()=>API.publishCatalogue();
 
-    }
+Cloud.uploadImage=(file)=>API.uploadImage(file);
 
-    throw lastError;
+Cloud.writeLog=(entry)=>API.writeLog(entry);
+Cloud.getLogs=()=>API.getLogs();
 
-  }
+Cloud.health=async()=>{
+ try{
+   await API.health();
+   return ok({status:"online"});
+ }catch(e){
+   return fail(e);
+ }
+};
 
-  async function getProducts() {
-    const data = await request(
-      `${config.apiUrl}?action=getProducts&t=${Date.now()}`
-    );
-    return Array.isArray(data.products)
-      ? data.products
-      : [];
-  }
+window.MayaCloud=Cloud;
+window.MAYA_CLOUD=Cloud;
+window.BusinessCloud=Cloud;
 
-  function post(action, payload = {}) {
-
-    return request(config.apiUrl, {
-
-      method: 'POST',
-
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-
-      body: JSON.stringify({
-        action,
-        version: config.version,
-        ...payload
-      })
-
-    });
-
-  }
-
-  function saveProduct(product) {
-    return post('saveProduct', { product });
-  }
-
-  function deleteProduct(productId) {
-    return post('deleteProduct', { productId });
-  }
-
-  function importProducts(products) {
-    return post('importProducts', { products });
-  }
-
-  function createBackup() {
-    return post('createBackup');
-  }
-
-  function restoreBackup(data) {
-    return post('restoreBackup', { data });
-  }
-
-  function uploadImage(fileName, mimeType, base64) {
-
-    if (!fileName || !mimeType || !base64) {
-      throw new Error('Invalid image supplied.');
-    }
-
-    return post('uploadImage', {
-      fileName,
-      mimeType,
-      base64
-    });
-
-  }
-
-  async function ping() {
-
-    try {
-      await getProducts();
-      return true;
-    } catch {
-      return false;
-    }
-
-  }
-
-  return Object.freeze({
-
-    getProducts,
-
-    saveProduct,
-
-    deleteProduct,
-
-    importProducts,
-
-    createBackup,
-
-    restoreBackup,
-
-    uploadImage,
-
-    ping
-
-  });
-
-})();
+})(window);
