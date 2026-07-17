@@ -1,13 +1,3 @@
-js = r'''/*!
- * Maya's Secret Business OS v5.0
- * Authentication and session manager
- * File: js/core/auth.js
- *
- * Important:
- * This is lightweight browser-side access control for the private admin UI.
- * It does not replace server-side authentication for sensitive cloud data.
- */
-
 (function (window, document) {
   "use strict";
 
