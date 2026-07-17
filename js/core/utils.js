@@ -1,9 +1,3 @@
-js = r"""/*!
- * Maya's Secret Business OS v5.0
- * Core utility helpers
- * File: js/core/utils.js
- */
-
 (function (window, document) {
   "use strict";
 
