@@ -1,193 +1,240 @@
-(function(window, document){
-"use strict";
+/**
+ * Maya's Secret Business OS v5.0
+ * framework.js
+ * Complete replacement file
+ */
 
-const Config = window.BusinessConfig;
-const Utils = window.BusinessUtils || window.MayaUtils;
-const UI = window.BusinessUI || window.MayaUI;
-const Auth = window.BusinessAuth || window.MayaAuth;
-const API = window.BusinessAPI || window.MayaAPI;
+(function (window, document) {
+  "use strict";
 
-const Framework = {
-  version: "5.0.0",
-  state: {
-    initialized:false,
-    online:navigator.onLine,
-    currentView:"dashboard",
-    data:{}
-  }
-};
+  const Framework = {
+    version: "5.0.0",
+    initialized: false,
+    booting: false,
+    modules: {},
+    state: {
+      ready: false,
+      cloud: "idle",
+      currentView: null
+    }
+  };
 
-function emit(name,detail={}){
-  document.dispatchEvent(new CustomEvent(name,{detail,bubbles:true}));
-}
+  function getModule(name, aliases) {
+    const names = [name].concat(aliases || []);
 
-Framework.init = async function(){
+    for (let i = 0; i < names.length; i += 1) {
+      if (window[names[i]]) return window[names[i]];
+    }
 
-  if(this.state.initialized) return this;
-
-  this.state.initialized = true;
-
-  UI?.init?.();
-  Auth?.init?.();
-
-  if(!Auth?.isAuthenticated?.()){
-    emit("framework:ready",{authenticated:false});
-    return this;
+    return null;
   }
 
-  bindRouting();
-  bindConnectivity();
-  bindRefreshButtons();
-
-  await this.bootstrap();
-
-  emit("framework:ready",{authenticated:true});
-
-  return this;
-};
-
-Framework.bootstrap = async function(){
-
-  try{
-
-    UI?.loading?.(true,"Loading Business OS...");
-
-    const results = await Promise.allSettled([
-      API?.getDashboard?.(),
-      API?.getProducts?.(),
-      API?.getOrders?.(),
-      API?.getBookings?.(),
-      API?.getCustomers?.(),
-      API?.getSettings?.()
+  function registerModules() {
+    Framework.modules.config = getModule("BusinessConfig", ["MayaConfig"]);
+    Framework.modules.utils = getModule("BusinessUtils", ["MayaUtils"]);
+    Framework.modules.ui = getModule("BusinessUI", ["MayaUI"]);
+    Framework.modules.auth = getModule("BusinessAuth", ["MayaAuth"]);
+    Framework.modules.api = getModule("BusinessAPI", ["MayaAPI"]);
+    Framework.modules.cloud = getModule("BusinessCloud", [
+      "MayaCloud",
+      "MAYA_CLOUD"
     ]);
-
-    this.state.data.dashboard = value(results[0]);
-    this.state.data.products  = value(results[1],[]);
-    this.state.data.orders    = value(results[2],[]);
-    this.state.data.bookings  = value(results[3],[]);
-    this.state.data.customers = value(results[4],[]);
-    this.state.data.settings  = value(results[5],{});
-
-    updateDashboard();
-
-    UI?.toast?.("Business OS ready.","success");
-
-  }catch(e){
-    console.error(e);
-    UI?.toast?.(e.message || "Unable to load dashboard.","error");
-  }finally{
-    UI?.loading?.(false);
   }
 
-};
+  function callModule(moduleName, methodName) {
+    const args = Array.prototype.slice.call(arguments, 2);
+    const module = Framework.modules[moduleName];
 
-function value(result,fallback=null){
-  return result && result.status==="fulfilled" ? result.value : fallback;
-}
+    if (!module || typeof module[methodName] !== "function") {
+      return Promise.resolve(null);
+    }
 
-function updateDashboard(){
-
-  const d = Framework.state.data.dashboard || {};
-
-  set("[data-dashboard-sales]",d.sales);
-  set("[data-dashboard-orders]",d.orders);
-  set("[data-dashboard-customers]",d.customers);
-  set("[data-dashboard-bookings]",d.bookings);
-  set("[data-dashboard-revenue]",
-      Utils?.money ? Utils.money(d.revenue||0) : d.revenue||0);
-}
-
-function set(selector,val){
-  const el=document.querySelector(selector);
-  if(el) el.textContent = val ?? "0";
-}
-
-function bindRouting(){
-
-  document.addEventListener("admin:viewChanged",e=>{
-    Framework.state.currentView=e.detail.view;
-    location.hash=e.detail.view;
-  });
-
-  window.addEventListener("hashchange",()=>{
-    const view=location.hash.replace("#","") || "dashboard";
-    UI?.showView?.(view);
-  });
-
-  const initial=location.hash.replace("#","");
-  if(initial){
-    UI?.showView?.(initial);
+    try {
+      return Promise.resolve(module[methodName].apply(module, args));
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
-}
-
-function bindConnectivity(){
-
-  function refresh(){
-    Framework.state.online=navigator.onLine;
-
-    UI?.updateCloudStatus?.(
-      navigator.onLine?"online":"offline",
-      navigator.onLine?"Connected":"Offline"
+  function emit(name, detail) {
+    document.dispatchEvent(
+      new CustomEvent(name, {
+        detail: detail || {}
+      })
     );
   }
 
-  refresh();
+  function logError(error, context) {
+    console.error("[BusinessFramework]", context || "Error", error);
 
-  window.addEventListener("online",refresh);
-  window.addEventListener("offline",refresh);
+    emit("business:framework:error", {
+      context: context || "unknown",
+      error: error
+    });
 
-}
+    const UI = Framework.modules.ui;
 
-function bindRefreshButtons(){
+    if (UI && typeof UI.toast === "function") {
+      UI.toast(
+        error && error.message
+          ? error.message
+          : "An unexpected error occurred.",
+        "error"
+      );
+    }
+  }
 
-  document.querySelectorAll("[data-refresh]").forEach(btn=>{
-    btn.addEventListener("click",()=>Framework.refresh());
+  Framework.bootstrap = async function () {
+    if (Framework.initialized) return Framework;
+    if (Framework.booting) return Framework;
+
+    Framework.booting = true;
+    registerModules();
+
+    const UI = Framework.modules.ui;
+
+    try {
+      if (UI && typeof UI.loading === "function") {
+        UI.loading(true, "Starting Business OS...");
+      }
+
+      await callModule("ui", "init");
+      await callModule("auth", "init");
+      await callModule("api", "init");
+      await callModule("cloud", "init");
+
+      Framework.initialized = true;
+      Framework.state.ready = true;
+
+      emit("business:framework:ready", {
+        version: Framework.version,
+        modules: Object.keys(Framework.modules)
+      });
+
+      return Framework;
+    } catch (error) {
+      logError(error, "bootstrap");
+      throw error;
+    } finally {
+      Framework.booting = false;
+
+      if (UI && typeof UI.loading === "function") {
+        UI.loading(false);
+      }
+    }
+  };
+
+  Framework.init = Framework.bootstrap;
+
+  Framework.refresh = async function () {
+    registerModules();
+
+    const UI = Framework.modules.ui;
+
+    try {
+      if (UI && typeof UI.loading === "function") {
+        UI.loading(true, "Refreshing data...");
+      }
+
+      let result = null;
+
+      if (
+        Framework.modules.cloud &&
+        typeof Framework.modules.cloud.refresh === "function"
+      ) {
+        result = await Framework.modules.cloud.refresh();
+      } else if (
+        Framework.modules.api &&
+        typeof Framework.modules.api.refresh === "function"
+      ) {
+        result = await Framework.modules.api.refresh();
+      }
+
+      emit("business:framework:refreshed", {
+        result: result
+      });
+
+      return result;
+    } catch (error) {
+      logError(error, "refresh");
+      throw error;
+    } finally {
+      if (UI && typeof UI.loading === "function") {
+        UI.loading(false);
+      }
+    }
+  };
+
+  Framework.setCloudState = function (state, label) {
+    Framework.state.cloud = state || "unknown";
+
+    const UI = Framework.modules.ui || getModule("BusinessUI", ["MayaUI"]);
+
+    if (UI && typeof UI.updateCloudStatus === "function") {
+      UI.updateCloudStatus(
+        Framework.state.cloud,
+        label || Framework.state.cloud
+      );
+    }
+
+    emit("business:cloud:state", {
+      state: Framework.state.cloud,
+      label: label || ""
+    });
+  };
+
+  Framework.showView = function (viewName) {
+    Framework.state.currentView = viewName;
+
+    const UI = Framework.modules.ui || getModule("BusinessUI", ["MayaUI"]);
+
+    if (UI && typeof UI.showView === "function") {
+      return UI.showView(viewName);
+    }
+
+    return false;
+  };
+
+  Framework.getModule = function (name) {
+    registerModules();
+    return Framework.modules[name] || null;
+  };
+
+  Framework.health = function () {
+    registerModules();
+
+    const status = {};
+
+    Object.keys(Framework.modules).forEach(function (key) {
+      status[key] = Boolean(Framework.modules[key]);
+    });
+
+    return {
+      version: Framework.version,
+      initialized: Framework.initialized,
+      ready: Framework.state.ready,
+      cloud: Framework.state.cloud,
+      modules: status
+    };
+  };
+
+  document.addEventListener("admin:viewChanged", function (event) {
+    Framework.state.currentView =
+      event && event.detail ? event.detail.view : null;
   });
 
-}
+  window.BusinessFramework = Framework;
+  window.MayaFramework = Framework;
 
-Framework.refresh = async function(){
-  if(!Auth?.requireAuth?.()) return;
-
-  UI?.loading?.(true,"Refreshing...");
-  try{
-    await this.bootstrap();
-  }finally{
-    UI?.loading?.(false);
+  function start() {
+    Framework.bootstrap().catch(function () {
+      // Error already handled inside bootstrap.
+    });
   }
-};
 
-Framework.sync = async function(){
-  if(!API?.sync) return;
-  UI?.loading?.(true,"Synchronising...");
-  try{
-    await API.sync();
-    UI?.toast?.("Cloud synchronisation complete.","success");
-  }catch(e){
-    UI?.toast?.(e.message,"error");
-  }finally{
-    UI?.loading?.(false);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
   }
-};
-
-Framework.logout=function(){
-  Auth?.logout?.();
-};
-
-Framework.getState=function(){
-  return structuredClone ? structuredClone(this.state) : JSON.parse(JSON.stringify(this.state));
-};
-
-window.BusinessFramework=Framework;
-window.MayaFramework=Framework;
-
-document.addEventListener("maya:auth:signed-in",()=>Framework.bootstrap());
-
-if(document.readyState==="loading"){
-  document.addEventListener("DOMContentLoaded",()=>Framework.init(),{once:true});
-}else{
-  Framework.init();
-}
-
-})(window,document);
+})(window, document);
