@@ -121,6 +121,8 @@
           overlay.hidden = false;
           overlay.classList.add("is-active");
         }
+
+        openBtn.setAttribute("aria-expanded", "true");
       });
     }
 
@@ -152,9 +154,14 @@
 
   UI.closeSidebar = function () {
     const sidebar = $(".admin-sidebar");
+    const openBtn = $(".admin-mobile-menu");
 
     if (sidebar) {
       sidebar.classList.remove("open");
+    }
+
+    if (openBtn) {
+      openBtn.setAttribute("aria-expanded", "false");
     }
 
     document.body.classList.remove("admin-sidebar-open");
@@ -171,6 +178,7 @@
     if (!first) return;
 
     const viewName =
+      first.dataset.adminSection ||
       first.id ||
       first.dataset.adminView ||
       first.dataset.view ||
@@ -182,11 +190,6 @@
   UI.showView = function (name) {
     if (!name) return false;
 
-    $$(".admin-view").forEach(function (view) {
-      view.classList.remove("active");
-      view.hidden = true;
-    });
-
     const escapedName =
       window.CSS && typeof window.CSS.escape === "function"
         ? window.CSS.escape(String(name))
@@ -194,6 +197,7 @@
 
     const target =
       document.getElementById(name) ||
+      $('.admin-view[data-admin-section="' + escapedName + '"]') ||
       $('.admin-view[data-admin-view="' + escapedName + '"]') ||
       $('.admin-view[data-view="' + escapedName + '"]');
 
@@ -202,8 +206,12 @@
       return false;
     }
 
-    target.hidden = false;
-    target.classList.add("active");
+    $$(".admin-view").forEach(function (view) {
+      const active = view === target;
+      view.classList.toggle("active", active);
+      view.hidden = !active;
+      view.setAttribute("aria-hidden", String(!active));
+    });
 
     $$(".admin-nav button, [data-admin-view-link]").forEach(function (button) {
       const active =
@@ -233,7 +241,11 @@
   };
 
   function setupPasswordToggle() {
-    $$("[data-password-toggle]").forEach(function (button) {
+    const buttons = $$(
+      "[data-password-toggle], #togglePassword"
+    );
+
+    buttons.forEach(function (button) {
       button.addEventListener("click", function () {
         const field = button.closest(".password-field");
         const input = field ? field.querySelector("input") : null;
@@ -309,7 +321,7 @@
     }
 
     let textElement = loader.querySelector(
-      ".global-loader-text, [data-loader-text], strong, span"
+      ".global-loader-text, [data-loader-message], [data-loader-text], strong, p, span"
     );
 
     if (!textElement) {
@@ -334,10 +346,10 @@
     }
 
     const textElement = loader.querySelector(
-      ".global-loader-text, [data-loader-text], strong, span"
+      ".global-loader-text, [data-loader-message], [data-loader-text], strong, p, span"
     );
 
-    if (textElement) {
+    if (textElement && text) {
       safeText(textElement, text);
     }
 
@@ -390,6 +402,8 @@
 
       const textElement =
         element.querySelector("[data-cloud-status-text]") ||
+        element.querySelector(".cloud-indicator-label") ||
+        element.querySelector("strong") ||
         element.querySelector("small") ||
         element.querySelector("span:last-child");
 
@@ -400,8 +414,13 @@
   };
 
   UI.setTitle = function (title, subtitle) {
-    const heading = $(".admin-topbar-main h1");
-    const subtitleElement = $(".admin-subtitle");
+    const heading =
+      $("[data-admin-page-title]") ||
+      $(".admin-topbar-main h1");
+
+    const subtitleElement =
+      $("[data-admin-page-subtitle]") ||
+      $(".admin-subtitle");
 
     if (title !== undefined) {
       safeText(heading, title);
