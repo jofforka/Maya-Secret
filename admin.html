@@ -1,214 +1,1114 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-app="maya-secret-business-os" data-version="5.0.0">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>Admin | Maya's Secret</title>
+  <meta name="theme-color" content="#5b173e">
+  <meta name="color-scheme" content="light">
+  <title>Business OS Admin | Maya's Secret</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+
+  <link rel="stylesheet" href="css/styles.css?v=5.0.0">
+  <link rel="stylesheet" href="css/core-framework.css?v=5.0.0">
 </head>
-<body class="admin-body">
-  <main class="admin-shell">
+
+<body class="admin-body" data-page="admin">
+  <a class="skip-link" href="#adminMain">Skip to admin content</a>
+
+  <main class="admin-shell" id="adminMain">
+    <!-- Login -->
     <section class="admin-login" id="adminLogin" aria-labelledby="loginTitle">
       <div class="admin-login-card">
-        <img src="assets/mayas-logo.png" alt="Maya's Secret">
+        <img src="assets/mayas-logo.png" alt="Maya's Secret logo">
         <p class="eyebrow">PRIVATE ADMIN</p>
         <h1 id="loginTitle">Welcome back.</h1>
-        <p>Sign in to manage the Maya’s Secret product collection. Products and images are synchronised through the Maya’s Secret Google Drive cloud catalogue.</p>
+        <p>
+          Sign in to manage products, orders, customers, reports and the Maya’s Secret
+          cloud business records.
+        </p>
+
         <form id="loginForm" novalidate>
           <label for="adminPassword">Admin passcode</label>
+
           <div class="password-field">
-            <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter passcode" required>
-            <button type="button" id="togglePassword" aria-label="Show passcode">Show</button>
+            <input
+              id="adminPassword"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Enter passcode"
+              required
+            >
+            <button type="button" id="togglePassword" aria-label="Show passcode">
+              Show
+            </button>
           </div>
-          <button class="btn primary" type="submit">Sign in</button>
+
+          <button class="btn primary" type="submit" data-login-submit>
+            <span data-login-text>Sign in</span>
+            <span class="button-spinner" aria-hidden="true" hidden data-login-spinner></span>
+          </button>
+
           <small id="loginError" role="alert"></small>
         </form>
+
+        <div class="admin-login-cloud">
+          <span class="cloud-indicator compact" data-cloud-indicator data-state="checking">
+            <i aria-hidden="true"></i>
+            <span class="cloud-indicator-label">Checking cloud</span>
+          </span>
+        </div>
+
         <a class="admin-back-link" href="index.html">← Return to website</a>
       </div>
     </section>
 
-    <section class="admin-panel" id="adminPanel" hidden>
-      <header class="admin-topbar">
-        <div>
-          <p class="eyebrow">MAYA’S SECRET ADMIN</p>
-          <h1>Product management</h1>
-          <p class="admin-subtitle">Create, update and organise the shared cloud collection shown on every device.</p><div class="cloud-status" id="cloudStatus" data-state="loading"><span></span><strong>Connecting to cloud…</strong></div>
+    <!-- Business OS -->
+    <section class="admin-panel admin-os" id="adminPanel" hidden>
+      <aside class="admin-sidebar" id="adminSidebar" aria-label="Admin navigation">
+        <div class="admin-sidebar-brand">
+          <img src="assets/mayas-logo.png" alt="">
+          <div>
+            <strong>Maya’s Secret</strong>
+            <small>Business OS v5.0</small>
+          </div>
         </div>
-        <div class="admin-top-actions">
-          <a class="admin-link-button" href="shop.html" target="_blank" rel="noopener">View live shop ↗</a>
-          <button class="admin-outline-button" id="adminLogout" type="button">Log out</button>
+
+        <button
+          class="admin-sidebar-toggle"
+          type="button"
+          aria-label="Close admin navigation"
+          aria-controls="adminSidebar"
+          data-admin-sidebar-close
+        >
+          ×
+        </button>
+
+        <nav class="admin-nav" aria-label="Business OS sections">
+          <button class="active" type="button" data-admin-view="dashboard" aria-current="page">
+            <span aria-hidden="true">⌂</span>
+            Dashboard
+          </button>
+
+          <button type="button" data-admin-view="orders">
+            <span aria-hidden="true">▣</span>
+            Orders
+            <b data-nav-count="orders">0</b>
+          </button>
+
+          <button type="button" data-admin-view="products">
+            <span aria-hidden="true">◇</span>
+            Products
+            <b data-nav-count="products">0</b>
+          </button>
+
+          <button type="button" data-admin-view="spa-bookings">
+            <span aria-hidden="true">✦</span>
+            Spa bookings
+            <b data-nav-count="spa-bookings">0</b>
+          </button>
+
+          <button type="button" data-admin-view="customers">
+            <span aria-hidden="true">◎</span>
+            Customers
+            <b data-nav-count="customers">0</b>
+          </button>
+
+          <button type="button" data-admin-view="reports">
+            <span aria-hidden="true">↗</span>
+            Reports
+          </button>
+
+          <button type="button" data-admin-view="settings">
+            <span aria-hidden="true">⚙</span>
+            Settings
+          </button>
+
+          <button type="button" data-admin-view="logs">
+            <span aria-hidden="true">≡</span>
+            Activity logs
+          </button>
+        </nav>
+
+        <div class="admin-sidebar-foot">
+          <a href="shop.html" target="_blank" rel="noopener">View live shop ↗</a>
+          <button id="adminLogout" type="button">Log out</button>
         </div>
-      </header>
+      </aside>
 
-      <section class="admin-stats" aria-label="Product overview">
-        <article><span>Total products</span><strong id="statTotal">0</strong></article>
-        <article><span>Face care</span><strong id="statFace">0</strong></article>
-        <article><span>Body care</span><strong id="statBody">0</strong></article>
-        <article><span>Gift sets</span><strong id="statGifts">0</strong></article>
-        <article><span>Featured</span><strong id="statFeatured">0</strong></article>
-        <article><span>Sold out</span><strong id="statSoldOut">0</strong></article>
-      </section>
+      <div class="admin-workspace">
+        <header class="admin-topbar">
+          <div class="admin-topbar-main">
+            <button
+              class="admin-mobile-menu"
+              type="button"
+              aria-label="Open admin navigation"
+              aria-controls="adminSidebar"
+              aria-expanded="false"
+              data-admin-sidebar-open
+            >
+              <i></i><i></i>
+            </button>
 
-      <div class="admin-grid">
-        <aside class="admin-editor">
-          <form class="product-form" id="productForm" novalidate>
-            <input type="hidden" id="productId">
-            <div class="admin-form-heading">
+            <div>
+              <p class="eyebrow">MAYA’S SECRET BUSINESS OS</p>
+              <h1 data-admin-page-title>Dashboard</h1>
+              <p class="admin-subtitle" data-admin-page-subtitle>
+                Monitor cloud activity, paid sales and business performance.
+              </p>
+            </div>
+          </div>
+
+          <div class="admin-top-actions">
+            <div class="cloud-status" id="cloudStatus" data-state="loading">
+              <span aria-hidden="true"></span>
+              <strong>Connecting to cloud…</strong>
+            </div>
+
+            <button
+              class="admin-outline-button"
+              id="refreshBusinessData"
+              type="button"
+              data-refresh-business
+            >
+              Refresh
+            </button>
+
+            <a class="admin-link-button" href="shop.html" target="_blank" rel="noopener">
+              Live shop ↗
+            </a>
+          </div>
+        </header>
+
+        <div class="admin-view-container">
+          <!-- Dashboard -->
+          <section
+            class="admin-view active"
+            data-admin-section="dashboard"
+            aria-labelledby="dashboardTitle"
+          >
+            <div class="admin-dashboard-head">
               <div>
-                <p class="eyebrow" id="formMode">NEW PRODUCT</p>
-                <h2 id="formTitle">Add product</h2>
+                <p class="eyebrow">BUSINESS OVERVIEW</p>
+                <h2 id="dashboardTitle">Performance at a glance.</h2>
               </div>
-              <button class="admin-icon-button" id="cancelEdit" type="button" hidden aria-label="Cancel editing">×</button>
-            </div>
 
-            <label>Product name
-              <input id="productName" maxlength="80" required placeholder="e.g. Radiance Face Serum">
-              <small class="field-error" id="nameError"></small>
-            </label>
-
-            <label>Category
-              <select id="productCategory" required>
-                <option>Face Care</option>
-                <option>Body Care</option>
-                <option>Gift Sets</option>
-              </select>
-            </label>
-
-            <div class="form-row">
-              <label>Price (₦)
-                <input id="productPrice" type="number" min="1" step="1" inputmode="numeric" required placeholder="0">
-                <small class="field-error" id="priceError"></small>
-              </label>
-              <label>Size
-                <input id="productSize" maxlength="30" placeholder="e.g. 150 ml">
-              </label>
-            </div>
-
-            <div class="form-row">
-              <label>Badge
-                <input id="productBadge" maxlength="24" placeholder="e.g. Bestseller">
-              </label>
-              <label>Availability
-                <select id="productStatus">
-                  <option value="available">Available</option>
-                  <option value="soldout">Sold out</option>
+              <label class="admin-period-filter" for="dashboardPeriod">
+                Period
+                <select id="dashboardPeriod" data-dashboard-period>
+                  <option value="today">Today</option>
+                  <option value="week">This week</option>
+                  <option value="month" selected>This month</option>
+                  <option value="year">This year</option>
                 </select>
               </label>
             </div>
 
-            <label class="admin-check"><input id="productFeatured" type="checkbox"> Show this product in the Home page featured collection</label>
+            <section class="admin-metric-grid" aria-label="Business metrics">
+              <article>
+                <span>Confirmed paid sales</span>
+                <strong data-metric="paid-sales">₦0</strong>
+                <small>Commissionable revenue</small>
+              </article>
 
-            <fieldset class="admin-fieldset">
-              <legend>Product pictures</legend>
-              <p class="field-help">Upload a main picture and up to three additional pictures. Images are compressed before they are saved in this preview.</p>
-              <label>Main product image
-                <input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp">
-              </label>
-              <label>Or paste an image URL
-                <input id="productImage" type="url" placeholder="https://example.com/product.jpg">
-              </label>
-              <div class="gallery-upload-grid">
-                <label>Gallery image 1<input id="galleryFile1" type="file" accept="image/jpeg,image/png,image/webp"><input id="gallery1" type="url" placeholder="Optional image URL"></label>
-                <label>Gallery image 2<input id="galleryFile2" type="file" accept="image/jpeg,image/png,image/webp"><input id="gallery2" type="url" placeholder="Optional image URL"></label>
-                <label>Gallery image 3<input id="galleryFile3" type="file" accept="image/jpeg,image/png,image/webp"><input id="gallery3" type="url" placeholder="Optional image URL"></label>
-              </div>
-              <button class="admin-text-button" id="clearImages" type="button">Remove all uploaded images</button>
-            </fieldset>
+              <article>
+                <span>Pending order value</span>
+                <strong data-metric="pending-sales">₦0</strong>
+                <small>Not included in commission</small>
+              </article>
 
-            <label>Description
-              <textarea id="productDesc" rows="5" maxlength="320" placeholder="Briefly describe the product and its key benefit."></textarea>
-              <small class="character-count"><span id="descCount">0</span>/320</small>
-            </label>
+              <article class="commission-card">
+                <span>Your commission</span>
+                <strong data-metric="commission">₦0</strong>
+                <small>
+                  <b data-commission-rate>15%</b> of confirmed paid sales
+                </small>
+              </article>
 
-            <label>Key benefits <span class="label-note">one benefit per line</span>
-              <textarea id="productBenefits" rows="4" maxlength="360" placeholder="Deeply moisturises
-Supports a smoother appearance
-Ideal for daily use"></textarea>
-            </label>
+              <article>
+                <span>Paid orders</span>
+                <strong data-metric="paid-orders">0</strong>
+                <small data-metric-note="paid-orders">0 completed</small>
+              </article>
 
-            <label>How to use
-              <textarea id="productUse" rows="4" maxlength="360" placeholder="Explain how and when the customer should use this product."></textarea>
-            </label>
+              <article>
+                <span>Spa bookings</span>
+                <strong data-metric="spa-bookings">0</strong>
+                <small data-metric-note="spa-bookings">0 confirmed</small>
+              </article>
 
-            <label>Visual tone
-              <select id="productTone">
-                <option value="plum">Plum</option>
-                <option value="cream">Cream</option>
-                <option value="amber">Amber</option>
-                <option value="sage">Sage</option>
-                <option value="rose">Rose</option>
-                <option value="sand">Sand</option>
-                <option value="wine">Wine</option>
-                <option value="bronze">Bronze</option>
-              </select>
-            </label>
+              <article>
+                <span>Customers</span>
+                <strong data-metric="customers">0</strong>
+                <small data-metric-note="customers">0 returning</small>
+              </article>
+            </section>
 
-            <div class="admin-product-preview" aria-label="Product preview">
-              <div class="product-art tone-plum" id="previewArt">
-                <span class="product-badge" id="previewBadge">New</span>
-                <div class="product-pack">MS</div>
-              </div>
+            <div class="admin-dashboard-grid">
+              <section class="admin-dashboard-card">
+                <div class="admin-card-head">
+                  <div>
+                    <p class="eyebrow">RECENT ORDERS</p>
+                    <h3>Latest checkout activity</h3>
+                  </div>
+                  <button type="button" data-admin-view-link="orders">View all</button>
+                </div>
+
+                <div class="admin-table-wrap">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody data-dashboard-orders>
+                      <tr class="admin-table-empty">
+                        <td colspan="4">No cloud orders loaded yet.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="admin-dashboard-card">
+                <div class="admin-card-head">
+                  <div>
+                    <p class="eyebrow">CLOUD HEALTH</p>
+                    <h3>Business Cloud status</h3>
+                  </div>
+                </div>
+
+                <dl class="admin-cloud-details">
+                  <div>
+                    <dt>API</dt>
+                    <dd data-cloud-detail="api">Checking…</dd>
+                  </div>
+                  <div>
+                    <dt>Products</dt>
+                    <dd data-cloud-detail="products">—</dd>
+                  </div>
+                  <div>
+                    <dt>Orders sheet</dt>
+                    <dd data-cloud-detail="orders">—</dd>
+                  </div>
+                  <div>
+                    <dt>Last sync</dt>
+                    <dd data-cloud-detail="lastSync">—</dd>
+                  </div>
+                  <div>
+                    <dt>Last backup</dt>
+                    <dd data-cloud-detail="lastBackup">—</dd>
+                  </div>
+                </dl>
+
+                <button
+                  class="admin-outline-button full"
+                  type="button"
+                  data-run-cloud-diagnostic
+                >
+                  Run cloud diagnostic
+                </button>
+              </section>
+            </div>
+          </section>
+
+          <!-- Orders -->
+          <section
+            class="admin-view"
+            data-admin-section="orders"
+            aria-labelledby="ordersTitle"
+            hidden
+          >
+            <div class="admin-products-head">
               <div>
-                <p id="previewCategory">Face Care</p>
-                <h3 id="previewName">Your product</h3>
-                <small id="previewSize">Size</small>
-                <strong id="previewPrice">₦0</strong>
+                <p class="eyebrow">SALES</p>
+                <h2 id="ordersTitle">Orders</h2>
+                <p data-orders-count>0 orders</p>
+              </div>
+
+              <div class="admin-data-actions">
+                <button type="button" data-export-orders>Export CSV</button>
+                <button type="button" data-refresh-orders>Refresh orders</button>
               </div>
             </div>
 
-            <div class="form-buttons">
-              <button class="btn primary" type="submit" id="saveProduct">Save product</button>
-              <button class="btn ghost" id="clearForm" type="button">Clear form</button>
-            </div>
-          </form>
-        </aside>
+            <div class="admin-toolbar admin-orders-toolbar">
+              <label class="admin-search" for="orderSearch">
+                Search orders
+                <input
+                  id="orderSearch"
+                  type="search"
+                  placeholder="Order ID, name or phone"
+                  data-order-search
+                >
+              </label>
 
-        <section class="admin-products">
-          <div class="admin-products-head">
-            <div>
-              <p class="eyebrow">CATALOGUE</p>
-              <h2>Current products</h2>
-              <p id="productCountText">0 products</p>
-            </div>
-            <div class="admin-data-actions">
-              <button id="refreshCloud" class="publish-package" type="button">Refresh cloud</button>
-              <button id="exportProducts" type="button">Export backup</button>
-              <label class="admin-import-button">Import backup<input id="importProducts" type="file" accept="application/json,.json"></label>
-              <button id="resetProducts" class="danger-text" type="button">Replace cloud with defaults</button>
-            </div>
-          </div>
+              <label for="orderStatusFilter">
+                Order status
+                <select id="orderStatusFilter" data-order-status-filter>
+                  <option value="All">All statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Preparing">Preparing</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </label>
 
-          <div class="admin-toolbar">
-            <label class="admin-search">Search products
-              <input id="adminSearch" type="search" placeholder="Search by name, category or badge">
-            </label>
-            <label>Filter category
-              <select id="adminCategoryFilter">
-                <option value="All">All categories</option>
-                <option value="Face Care">Face Care</option>
-                <option value="Body Care">Body Care</option>
-                <option value="Gift Sets">Gift Sets</option>
-              </select>
-            </label>
-          </div>
+              <label for="orderPaymentFilter">
+                Payment
+                <select id="orderPaymentFilter" data-order-payment-filter>
+                  <option value="All">All payments</option>
+                  <option value="Unconfirmed">Unconfirmed</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Refunded">Refunded</option>
+                </select>
+              </label>
+            </div>
 
-          <div id="adminProductList" class="admin-product-list"></div>
-          <div id="adminEmptyState" class="admin-empty-state" hidden>
-            <h3>No products found</h3>
-            <p>Try a different search or category filter.</p>
-          </div>
-        </section>
+            <div class="admin-table-wrap">
+              <table class="admin-table orders-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th aria-label="Actions"></th>
+                  </tr>
+                </thead>
+                <tbody id="adminOrderList" data-order-list>
+                  <tr class="admin-table-empty">
+                    <td colspan="8">No orders loaded yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="admin-empty-state" hidden data-orders-empty>
+              <h3>No orders found</h3>
+              <p>Try changing the search or status filters.</p>
+            </div>
+          </section>
+
+          <!-- Products -->
+          <section
+            class="admin-view"
+            data-admin-section="products"
+            aria-labelledby="productsTitle"
+            hidden
+          >
+            <section class="admin-stats" aria-label="Product overview">
+              <article><span>Total products</span><strong id="statTotal">0</strong></article>
+              <article><span>Face care</span><strong id="statFace">0</strong></article>
+              <article><span>Body care</span><strong id="statBody">0</strong></article>
+              <article><span>Gift sets</span><strong id="statGifts">0</strong></article>
+              <article><span>Featured</span><strong id="statFeatured">0</strong></article>
+              <article><span>Sold out</span><strong id="statSoldOut">0</strong></article>
+            </section>
+
+            <div class="admin-grid">
+              <aside class="admin-editor">
+                <form class="product-form" id="productForm" novalidate>
+                  <input type="hidden" id="productId">
+
+                  <div class="admin-form-heading">
+                    <div>
+                      <p class="eyebrow" id="formMode">NEW PRODUCT</p>
+                      <h2 id="formTitle">Add product</h2>
+                    </div>
+
+                    <button
+                      class="admin-icon-button"
+                      id="cancelEdit"
+                      type="button"
+                      hidden
+                      aria-label="Cancel editing"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <label for="productName">
+                    Product name
+                    <input
+                      id="productName"
+                      maxlength="80"
+                      required
+                      placeholder="e.g. Radiance Face Serum"
+                    >
+                    <small class="field-error" id="nameError"></small>
+                  </label>
+
+                  <label for="productCategory">
+                    Category
+                    <select id="productCategory" required>
+                      <option>Face Care</option>
+                      <option>Body Care</option>
+                      <option>Gift Sets</option>
+                    </select>
+                  </label>
+
+                  <div class="form-row">
+                    <label for="productPrice">
+                      Price (₦)
+                      <input
+                        id="productPrice"
+                        type="number"
+                        min="1"
+                        step="1"
+                        inputmode="numeric"
+                        required
+                        placeholder="0"
+                      >
+                      <small class="field-error" id="priceError"></small>
+                    </label>
+
+                    <label for="productSize">
+                      Size
+                      <input
+                        id="productSize"
+                        maxlength="30"
+                        placeholder="e.g. 150 ml"
+                      >
+                    </label>
+                  </div>
+
+                  <div class="form-row">
+                    <label for="productBadge">
+                      Badge
+                      <input
+                        id="productBadge"
+                        maxlength="24"
+                        placeholder="e.g. Bestseller"
+                      >
+                    </label>
+
+                    <label for="productStatus">
+                      Availability
+                      <select id="productStatus">
+                        <option value="available">Available</option>
+                        <option value="soldout">Sold out</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <label class="admin-check" for="productFeatured">
+                    <input id="productFeatured" type="checkbox">
+                    Show this product in the Home page featured collection
+                  </label>
+
+                  <fieldset class="admin-fieldset">
+                    <legend>Product pictures</legend>
+                    <p class="field-help">
+                      Upload a main picture and up to three additional pictures.
+                      Images are compressed before cloud upload.
+                    </p>
+
+                    <label for="productImageFile">
+                      Main product image
+                      <input
+                        id="productImageFile"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                      >
+                    </label>
+
+                    <label for="productImage">
+                      Or paste an image URL
+                      <input
+                        id="productImage"
+                        type="url"
+                        placeholder="https://example.com/product.jpg"
+                      >
+                    </label>
+
+                    <div class="gallery-upload-grid">
+                      <label for="galleryFile1">
+                        Gallery image 1
+                        <input
+                          id="galleryFile1"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                        >
+                        <input id="gallery1" type="url" placeholder="Optional image URL">
+                      </label>
+
+                      <label for="galleryFile2">
+                        Gallery image 2
+                        <input
+                          id="galleryFile2"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                        >
+                        <input id="gallery2" type="url" placeholder="Optional image URL">
+                      </label>
+
+                      <label for="galleryFile3">
+                        Gallery image 3
+                        <input
+                          id="galleryFile3"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                        >
+                        <input id="gallery3" type="url" placeholder="Optional image URL">
+                      </label>
+                    </div>
+
+                    <div class="admin-upload-status" hidden data-image-upload-status></div>
+
+                    <button class="admin-text-button" id="clearImages" type="button">
+                      Remove all uploaded images
+                    </button>
+                  </fieldset>
+
+                  <label for="productDesc">
+                    Description
+                    <textarea
+                      id="productDesc"
+                      rows="5"
+                      maxlength="320"
+                      placeholder="Briefly describe the product and its key benefit."
+                    ></textarea>
+                    <small class="character-count">
+                      <span id="descCount">0</span>/320
+                    </small>
+                  </label>
+
+                  <label for="productBenefits">
+                    Key benefits
+                    <span class="label-note">one benefit per line</span>
+                    <textarea
+                      id="productBenefits"
+                      rows="4"
+                      maxlength="360"
+                      placeholder="Deeply moisturises&#10;Supports a smoother appearance&#10;Ideal for daily use"
+                    ></textarea>
+                  </label>
+
+                  <label for="productUse">
+                    How to use
+                    <textarea
+                      id="productUse"
+                      rows="4"
+                      maxlength="360"
+                      placeholder="Explain how and when the customer should use this product."
+                    ></textarea>
+                  </label>
+
+                  <label for="productTone">
+                    Visual tone
+                    <select id="productTone">
+                      <option value="plum">Plum</option>
+                      <option value="cream">Cream</option>
+                      <option value="amber">Amber</option>
+                      <option value="sage">Sage</option>
+                      <option value="rose">Rose</option>
+                      <option value="sand">Sand</option>
+                      <option value="wine">Wine</option>
+                      <option value="bronze">Bronze</option>
+                    </select>
+                  </label>
+
+                  <div class="admin-product-preview" aria-label="Product preview">
+                    <div class="product-art tone-plum" id="previewArt">
+                      <span class="product-badge" id="previewBadge">New</span>
+                      <div class="product-pack">MS</div>
+                    </div>
+
+                    <div>
+                      <p id="previewCategory">Face Care</p>
+                      <h3 id="previewName">Your product</h3>
+                      <small id="previewSize">Size</small>
+                      <strong id="previewPrice">₦0</strong>
+                    </div>
+                  </div>
+
+                  <div class="form-buttons">
+                    <button class="btn primary" type="submit" id="saveProduct">
+                      <span data-save-product-text>Save product</span>
+                      <span class="button-spinner" aria-hidden="true" hidden data-save-product-spinner></span>
+                    </button>
+
+                    <button class="btn ghost" id="clearForm" type="button">
+                      Clear form
+                    </button>
+                  </div>
+                </form>
+              </aside>
+
+              <section class="admin-products">
+                <div class="admin-products-head">
+                  <div>
+                    <p class="eyebrow">CATALOGUE</p>
+                    <h2 id="productsTitle">Current products</h2>
+                    <p id="productCountText">0 products</p>
+                  </div>
+
+                  <div class="admin-data-actions">
+                    <button id="refreshCloud" class="publish-package" type="button">
+                      Refresh cloud
+                    </button>
+                    <button id="exportProducts" type="button">Export backup</button>
+                    <label class="admin-import-button">
+                      Import backup
+                      <input
+                        id="importProducts"
+                        type="file"
+                        accept="application/json,.json"
+                      >
+                    </label>
+                    <button id="resetProducts" class="danger-text" type="button">
+                      Replace cloud with defaults
+                    </button>
+                  </div>
+                </div>
+
+                <div class="admin-toolbar">
+                  <label class="admin-search" for="adminSearch">
+                    Search products
+                    <input
+                      id="adminSearch"
+                      type="search"
+                      placeholder="Search by name, category or badge"
+                    >
+                  </label>
+
+                  <label for="adminCategoryFilter">
+                    Filter category
+                    <select id="adminCategoryFilter">
+                      <option value="All">All categories</option>
+                      <option value="Face Care">Face Care</option>
+                      <option value="Body Care">Body Care</option>
+                      <option value="Gift Sets">Gift Sets</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div id="adminProductList" class="admin-product-list"></div>
+
+                <div id="adminEmptyState" class="admin-empty-state" hidden>
+                  <h3>No products found</h3>
+                  <p>Try a different search or category filter.</p>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <!-- Spa bookings -->
+          <section
+            class="admin-view"
+            data-admin-section="spa-bookings"
+            aria-labelledby="spaBookingsTitle"
+            hidden
+          >
+            <div class="admin-products-head">
+              <div>
+                <p class="eyebrow">APPOINTMENTS</p>
+                <h2 id="spaBookingsTitle">Spa bookings</h2>
+                <p data-spa-bookings-count>0 booking requests</p>
+              </div>
+
+              <div class="admin-data-actions">
+                <button type="button" data-export-spa-bookings>Export CSV</button>
+                <button type="button" data-refresh-spa-bookings>Refresh bookings</button>
+              </div>
+            </div>
+
+            <div class="admin-toolbar">
+              <label class="admin-search" for="spaBookingSearch">
+                Search bookings
+                <input
+                  id="spaBookingSearch"
+                  type="search"
+                  placeholder="Booking ID, name or phone"
+                  data-spa-booking-search
+                >
+              </label>
+
+              <label for="spaBookingStatusFilter">
+                Status
+                <select id="spaBookingStatusFilter" data-spa-booking-status-filter>
+                  <option value="All">All statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Booking</th>
+                    <th>Date requested</th>
+                    <th>Customer</th>
+                    <th>Services</th>
+                    <th>Total</th>
+                    <th>Appointment</th>
+                    <th>Status</th>
+                    <th aria-label="Actions"></th>
+                  </tr>
+                </thead>
+                <tbody data-spa-booking-list>
+                  <tr class="admin-table-empty">
+                    <td colspan="8">No spa bookings loaded yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Customers -->
+          <section
+            class="admin-view"
+            data-admin-section="customers"
+            aria-labelledby="customersTitle"
+            hidden
+          >
+            <div class="admin-products-head">
+              <div>
+                <p class="eyebrow">CUSTOMER RECORDS</p>
+                <h2 id="customersTitle">Customers</h2>
+                <p data-customers-count>0 customers</p>
+              </div>
+
+              <div class="admin-data-actions">
+                <button type="button" data-export-customers>Export CSV</button>
+                <button type="button" data-refresh-customers>Refresh customers</button>
+              </div>
+            </div>
+
+            <div class="admin-toolbar">
+              <label class="admin-search" for="customerSearch">
+                Search customers
+                <input
+                  id="customerSearch"
+                  type="search"
+                  placeholder="Name, phone or email"
+                  data-customer-search
+                >
+              </label>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Phone / email</th>
+                    <th>Orders</th>
+                    <th>Paid value</th>
+                    <th>Last activity</th>
+                    <th aria-label="Actions"></th>
+                  </tr>
+                </thead>
+                <tbody data-customer-list>
+                  <tr class="admin-table-empty">
+                    <td colspan="6">No customers loaded yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Reports -->
+          <section
+            class="admin-view"
+            data-admin-section="reports"
+            aria-labelledby="reportsTitle"
+            hidden
+          >
+            <div class="admin-products-head">
+              <div>
+                <p class="eyebrow">REPORTING</p>
+                <h2 id="reportsTitle">Sales and commission reports</h2>
+                <p>Commission is based only on confirmed paid sales.</p>
+              </div>
+            </div>
+
+            <div class="admin-report-controls">
+              <label for="reportStartDate">
+                Start date
+                <input id="reportStartDate" type="date" data-report-start>
+              </label>
+
+              <label for="reportEndDate">
+                End date
+                <input id="reportEndDate" type="date" data-report-end>
+              </label>
+
+              <button class="btn primary" type="button" data-generate-report>
+                Generate report
+              </button>
+            </div>
+
+            <section class="admin-report-summary" aria-label="Report summary">
+              <article>
+                <span>Paid sales</span>
+                <strong data-report-metric="paidSales">₦0</strong>
+              </article>
+              <article>
+                <span>Paid orders</span>
+                <strong data-report-metric="paidOrders">0</strong>
+              </article>
+              <article>
+                <span>Commission rate</span>
+                <strong data-report-metric="commissionRate">15%</strong>
+              </article>
+              <article class="commission-card">
+                <span>Commission due</span>
+                <strong data-report-metric="commissionDue">₦0</strong>
+              </article>
+            </section>
+
+            <div class="admin-report-actions">
+              <button type="button" data-export-report="csv">Download CSV</button>
+              <button type="button" data-export-report="xlsx">Download Excel</button>
+              <button type="button" data-export-report="pdf">Download PDF</button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Paid total</th>
+                    <th>Commission</th>
+                  </tr>
+                </thead>
+                <tbody data-report-rows>
+                  <tr class="admin-table-empty">
+                    <td colspan="5">Generate a report to view commissionable sales.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Settings -->
+          <section
+            class="admin-view"
+            data-admin-section="settings"
+            aria-labelledby="settingsTitle"
+            hidden
+          >
+            <div class="admin-products-head">
+              <div>
+                <p class="eyebrow">BUSINESS SETTINGS</p>
+                <h2 id="settingsTitle">Settings</h2>
+                <p>Update shared business information used throughout the website.</p>
+              </div>
+            </div>
+
+            <form class="admin-settings-form" data-settings-form novalidate>
+              <div class="admin-settings-grid">
+                <label for="settingBusinessName">
+                  Business name
+                  <input
+                    id="settingBusinessName"
+                    name="businessName"
+                    value="Maya's Secret"
+                    maxlength="120"
+                  >
+                </label>
+
+                <label for="settingPhone">
+                  Phone / WhatsApp
+                  <input
+                    id="settingPhone"
+                    name="phone"
+                    type="tel"
+                    inputmode="tel"
+                    value="0810 904 4321"
+                  >
+                </label>
+
+                <label for="settingEmail">
+                  Email
+                  <input
+                    id="settingEmail"
+                    name="email"
+                    type="email"
+                    value="hello@mayassecret.com"
+                  >
+                </label>
+
+                <label for="settingLocation">
+                  Location
+                  <input
+                    id="settingLocation"
+                    name="location"
+                    value="Abuja, Nigeria"
+                  >
+                </label>
+
+                <label for="settingBusinessHours">
+                  Business hours
+                  <textarea
+                    id="settingBusinessHours"
+                    name="businessHours"
+                    rows="3"
+                  >Monday–Saturday
+9:00 AM–6:00 PM</textarea>
+                </label>
+
+                <label for="settingAnnouncement">
+                  Announcement bar
+                  <textarea
+                    id="settingAnnouncement"
+                    name="announcement"
+                    rows="3"
+                  >Complimentary Abuja delivery on qualifying orders</textarea>
+                </label>
+
+                <label for="settingCommissionRate">
+                  Commission rate (%)
+                  <input
+                    id="settingCommissionRate"
+                    name="commissionRate"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value="15"
+                    inputmode="decimal"
+                  >
+                  <small>Applied only to confirmed paid sales.</small>
+                </label>
+
+                <label for="settingCurrency">
+                  Currency
+                  <select id="settingCurrency" name="currency">
+                    <option value="NGN" selected>Nigerian Naira (₦)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-buttons">
+                <button class="btn primary" type="submit" data-save-settings>
+                  Save settings
+                </button>
+                <button class="btn ghost" type="button" data-reload-settings>
+                  Reload cloud settings
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Logs -->
+          <section
+            class="admin-view"
+            data-admin-section="logs"
+            aria-labelledby="logsTitle"
+            hidden
+          >
+            <div class="admin-products-head">
+              <div>
+                <p class="eyebrow">AUDIT TRAIL</p>
+                <h2 id="logsTitle">Activity logs</h2>
+                <p>Review product, order, settings and cloud changes.</p>
+              </div>
+
+              <div class="admin-data-actions">
+                <button type="button" data-export-logs>Export logs</button>
+                <button type="button" data-refresh-logs>Refresh logs</button>
+              </div>
+            </div>
+
+            <div class="admin-toolbar">
+              <label class="admin-search" for="logSearch">
+                Search activity
+                <input
+                  id="logSearch"
+                  type="search"
+                  placeholder="Action, user or record"
+                  data-log-search
+                >
+              </label>
+
+              <label for="logTypeFilter">
+                Activity type
+                <select id="logTypeFilter" data-log-type-filter>
+                  <option value="All">All activity</option>
+                  <option value="Product">Products</option>
+                  <option value="Order">Orders</option>
+                  <option value="Booking">Bookings</option>
+                  <option value="Settings">Settings</option>
+                  <option value="Authentication">Authentication</option>
+                  <option value="System">System</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Action</th>
+                    <th>Record</th>
+                    <th>User</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody data-log-list>
+                  <tr class="admin-table-empty">
+                    <td colspan="5">No activity logs loaded yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </div>
     </section>
   </main>
 
-  <div class="admin-toast" id="adminToast" role="status" aria-live="polite"></div>
+  <div class="admin-overlay" hidden data-admin-overlay></div>
+
+  <div
+    class="admin-toast"
+    id="adminToast"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
+
+  <div class="global-loader" aria-hidden="true" data-global-loader>
+    <span class="spinner"></span>
+    <p data-loader-message>Loading business data…</p>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script defer src="js/cloud.js?v=4.1.0"></script>
-  <script defer src="js/catalog.js?v=4.1.0"></script>
-  <script defer src="js/admin.js?v=4.1.0"></script>
+
+  <!-- Sprint 1: shared application framework -->
+  <script defer src="js/core/config.js?v=5.0.0"></script>
+  <script defer src="js/core/utils.js?v=5.0.0"></script>
+  <script defer src="js/core/ui.js?v=5.0.0"></script>
+  <script defer src="js/core/auth.js?v=5.0.0"></script>
+  <script defer src="js/core/api.js?v=5.0.0"></script>
+  <script defer src="js/core/framework.js?v=5.0.0"></script>
+
+  <!-- Sprint 2: Business Cloud compatibility entry point -->
+  <script defer src="js/cloud/cloud.js?v=5.0.0"></script>
+
+  <!-- Existing catalogue and Admin logic -->
+  <script defer src="js/catalog.js?v=5.0.0"></script>
+  <script defer src="js/admin.js?v=5.0.0"></script>
 </body>
 </html>
