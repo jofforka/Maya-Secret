@@ -1,2 +1,414 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Contact Maya’s Secret for products, spa appointments and beauty training in Abuja."><meta name="theme-color" content="#5b173e"><title>Contact | Maya's Secret</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/styles.css"></head><body><div class="announce">Complimentary Abuja delivery on qualifying orders · WhatsApp: 0810 904 4321</div>
-<header class="header"><a class="logo" href="index.html"><img src="assets/mayas-logo.png" alt="Maya's Secret"><span><b>Maya’s Secret</b><small>Skin Care & Spa</small></span></a><button class="menu" aria-label="Open menu"><i></i><i></i></button><nav><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="spa.html">Spa</a><a href="training.html">Training</a><a href="contact.html">Contact</a></nav><div class="tools"><button class="search-toggle" aria-label="Search products">⌕</button><button class="bag-toggle" aria-label="Open bag">Bag <b class="bag-count">0</b></button></div></header><main><section class="page-hero"><p class="eyebrow">CONTACT MAYA’S SECRET</p><h1>Let’s make beauty feel simple.</h1><p>Order products, ask about training, arrange a treatment or get help choosing the right next step.</p></section><section class="contact-layout section"><div class="contact-details"><article><span>01</span><div><p>CALL OR WHATSAPP</p><a href="tel:+2348109044321">0810 904 4321</a></div></article><article><span>02</span><div><p>EMAIL</p><a href="mailto:hello@mayassecret.com">hello@mayassecret.com</a></div></article><article><span>03</span><div><p>LOCATION</p><strong>Abuja, Nigeria</strong></div></article><article><span>04</span><div><p>BUSINESS HOURS</p><strong>Monday–Saturday<br>9:00 AM–6:00 PM</strong></div></article></div><form class="contact-form" id="contactForm"><p class="eyebrow">SEND AN ENQUIRY</p><h2>How can we help?</h2><label>Name<input id="contactName" required></label><label>Phone or email<input id="contactReach" required></label><label>I’m interested in<select id="contactTopic"><option>Product order</option><option>Training</option><option>Spa treatment</option><option>Home service</option><option>General enquiry</option></select></label><label>Message<textarea id="contactMessage" rows="5" required></textarea></label><button class="btn primary" type="submit">Send via WhatsApp</button></form></section><section class="contact-cta"><div><p class="eyebrow">THE FASTEST WAY TO REACH US</p><h2>Prefer a direct conversation?</h2><p>WhatsApp Maya’s Secret for product availability, appointments and upcoming training dates.</p></div><a class="btn light" href="https://wa.me/2348109044321" target="_blank">Open WhatsApp</a></section></main><footer class="footer"><div class="footer-brand"><img src="assets/mayas-logo.png" alt=""><h2>Beauty, thoughtfully revealed.</h2><p>Premium skincare, spa care and practical beauty training in Abuja.</p></div><div><h3>Explore</h3><a href="shop.html">Shop</a><a href="spa.html">Spa</a><a href="training.html">Training</a><a href="contact.html">Contact</a></div><div><h3>Visit & connect</h3><p>Abuja, Nigeria</p><a href="tel:+2348109044321">0810 904 4321</a><a href="mailto:hello@mayassecret.com">hello@mayassecret.com</a></div><div><h3>Stay in the glow</h3><p>New products, training dates and beauty notes.</p><form class="newsletter"><input type="email" placeholder="Email address" aria-label="Email address"><button>Join</button></form></div><div class="footer-bottom"><span>© 2026 Maya’s Secret.</span><span>Designed for confident beauty.</span></div></footer><div class="overlay"></div><aside class="cart" aria-hidden="true"><div class="cart-head"><h2>Your bag</h2><button class="cart-close">×</button></div><div class="cart-lines"></div><div class="cart-empty"><p>Your bag is waiting.</p><a href="shop.html">Explore the collection</a></div><div class="cart-foot"><div><span>Estimated total</span><strong class="cart-total">₦0</strong></div><button class="checkout">Checkout on WhatsApp</button><small>Availability and delivery are confirmed before payment.</small></div></aside><div class="toast"></div><script defer src="js/catalog.js?v=4.1.0"></script><script defer src="js/app.js?v=4.1.0"></script></body></html>
+<!doctype html>
+<html lang="en" data-app="maya-secret-business-os" data-version="5.0.0">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Contact Maya’s Secret for products, spa appointments and beauty training in Abuja.">
+  <meta name="theme-color" content="#5b173e">
+  <meta name="color-scheme" content="light">
+  <title>Contact | Maya's Secret</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css?v=5.0.0">
+  <link rel="stylesheet" href="css/core-framework.css?v=5.0.0">
+</head>
+
+<body data-page="contact">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="announce" role="status">
+    <span data-setting="announcement">Complimentary Abuja delivery on qualifying orders</span>
+    <span aria-hidden="true">·</span>
+    <a href="https://wa.me/2348109044321" data-setting-link="whatsapp">
+      WhatsApp: <span data-setting="phone">0810 904 4321</span>
+    </a>
+  </div>
+
+  <header class="header" data-site-header>
+    <a class="logo" href="index.html" aria-label="Maya's Secret home">
+      <img src="assets/mayas-logo.png" alt="Maya's Secret logo">
+      <span>
+        <b>Maya’s Secret</b>
+        <small>Skin Care &amp; Spa</small>
+      </span>
+    </a>
+
+    <button
+      class="menu"
+      type="button"
+      aria-label="Open navigation"
+      aria-controls="primary-navigation"
+      aria-expanded="false"
+      data-menu-toggle
+    >
+      <i></i>
+      <i></i>
+    </button>
+
+    <nav id="primary-navigation" aria-label="Primary navigation" data-navigation>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="spa.html">Spa</a>
+      <a href="training.html">Training</a>
+      <a href="contact.html" aria-current="page">Contact</a>
+    </nav>
+
+    <div class="tools">
+      <span
+        class="cloud-indicator"
+        data-cloud-indicator
+        data-state="checking"
+        title="Cloud connection status"
+      >
+        <i aria-hidden="true"></i>
+        <span class="cloud-indicator-label">Checking</span>
+      </span>
+
+      <button
+        class="search-toggle"
+        type="button"
+        aria-label="Search products"
+        data-search-toggle
+      >
+        <span aria-hidden="true">⌕</span>
+      </button>
+
+      <button
+        class="bag-toggle"
+        type="button"
+        aria-label="Open shopping bag"
+        aria-controls="shopping-cart"
+        aria-expanded="false"
+        data-cart-toggle
+      >
+        Bag <b class="bag-count" aria-label="0 items">0</b>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="page-hero contact-page-hero">
+      <div>
+        <p class="eyebrow">CONTACT MAYA’S SECRET</p>
+        <h1>Let’s make beauty feel simple.</h1>
+        <p>
+          Order products, ask about training, arrange a treatment or get help choosing
+          the right next step.
+        </p>
+      </div>
+    </section>
+
+    <section class="contact-layout section" aria-labelledby="contact-form-title">
+      <div class="contact-details">
+        <article>
+          <span>01</span>
+          <div>
+            <p>CALL OR WHATSAPP</p>
+            <a href="tel:+2348109044321" data-setting-link="phone">
+              <span data-setting="phone">0810 904 4321</span>
+            </a>
+          </div>
+        </article>
+
+        <article>
+          <span>02</span>
+          <div>
+            <p>EMAIL</p>
+            <a href="mailto:hello@mayassecret.com" data-setting-link="email">
+              <span data-setting="email">hello@mayassecret.com</span>
+            </a>
+          </div>
+        </article>
+
+        <article>
+          <span>03</span>
+          <div>
+            <p>LOCATION</p>
+            <strong data-setting="location">Abuja, Nigeria</strong>
+          </div>
+        </article>
+
+        <article>
+          <span>04</span>
+          <div>
+            <p>BUSINESS HOURS</p>
+            <strong data-setting="businessHours">
+              Monday–Saturday<br>
+              9:00 AM–6:00 PM
+            </strong>
+          </div>
+        </article>
+      </div>
+
+      <form
+        class="contact-form"
+        id="contactForm"
+        data-contact-form
+        data-lead-source="website-contact"
+        novalidate
+      >
+        <div class="contact-form-heading">
+          <div>
+            <p class="eyebrow">SEND AN ENQUIRY</p>
+            <h2 id="contact-form-title">How can we help?</h2>
+          </div>
+
+          <span
+            class="cloud-indicator compact"
+            data-cloud-indicator
+            data-state="checking"
+            title="Cloud enquiry connection"
+          >
+            <i aria-hidden="true"></i>
+            <span class="cloud-indicator-label">Checking cloud</span>
+          </span>
+        </div>
+
+        <div class="form-alert" role="alert" hidden data-contact-alert></div>
+
+        <label for="contactName">
+          Name
+          <input
+            id="contactName"
+            name="name"
+            type="text"
+            autocomplete="name"
+            required
+            minlength="2"
+            maxlength="120"
+            placeholder="Your full name"
+          >
+          <small class="field-error" data-error-for="contactName"></small>
+        </label>
+
+        <label for="contactReach">
+          Phone or email
+          <input
+            id="contactReach"
+            name="contact"
+            type="text"
+            autocomplete="email"
+            required
+            maxlength="160"
+            placeholder="Your phone number or email"
+          >
+          <small class="field-error" data-error-for="contactReach"></small>
+        </label>
+
+        <label for="contactTopic">
+          I’m interested in
+          <select id="contactTopic" name="topic" required>
+            <option value="Product order">Product order</option>
+            <option value="Training">Training</option>
+            <option value="Spa treatment">Spa treatment</option>
+            <option value="Home service">Home service</option>
+            <option value="General enquiry">General enquiry</option>
+          </select>
+        </label>
+
+        <label for="contactMessage">
+          Message
+          <textarea
+            id="contactMessage"
+            name="message"
+            rows="5"
+            required
+            minlength="5"
+            maxlength="1000"
+            placeholder="Tell us how we can help"
+          ></textarea>
+          <small class="field-error" data-error-for="contactMessage"></small>
+        </label>
+
+        <input type="hidden" name="channel" value="WhatsApp">
+        <input type="hidden" name="leadStatus" value="New">
+
+        <button
+          class="btn primary"
+          type="submit"
+          data-contact-submit
+        >
+          <span data-submit-text>Record enquiry &amp; open WhatsApp</span>
+          <span class="button-spinner" aria-hidden="true" hidden data-submit-spinner></span>
+        </button>
+
+        <small class="contact-form-note">
+          Your enquiry will be recorded first, then WhatsApp will open with your message.
+        </small>
+      </form>
+    </section>
+
+    <section
+      class="contact-success"
+      hidden
+      data-contact-success
+      aria-labelledby="contact-success-title"
+      aria-live="polite"
+    >
+      <span class="contact-success-icon" aria-hidden="true">✓</span>
+      <p class="eyebrow">ENQUIRY RECORDED</p>
+      <h2 id="contact-success-title">Your message is ready for WhatsApp.</h2>
+      <p>
+        Enquiry reference:
+        <strong data-contact-reference>—</strong>
+      </p>
+      <button class="btn primary" type="button" data-contact-open-whatsapp>
+        Open WhatsApp
+      </button>
+    </section>
+
+    <section class="contact-cta">
+      <div>
+        <p class="eyebrow">THE FASTEST WAY TO REACH US</p>
+        <h2>Prefer a direct conversation?</h2>
+        <p>
+          WhatsApp Maya’s Secret for product availability, appointments and upcoming
+          training dates.
+        </p>
+      </div>
+
+      <a
+        class="btn light"
+        href="https://wa.me/2348109044321"
+        target="_blank"
+        rel="noopener"
+        data-setting-link="whatsapp"
+      >
+        Open WhatsApp
+      </a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-brand">
+      <img src="assets/mayas-logo.png" alt="" width="72" height="72" loading="lazy">
+      <h2>Beauty, thoughtfully revealed.</h2>
+      <p>Premium skincare, spa care and practical beauty training in Abuja.</p>
+    </div>
+
+    <div>
+      <h3>Explore</h3>
+      <a href="shop.html">Shop</a>
+      <a href="spa.html">Spa</a>
+      <a href="training.html">Training</a>
+      <a href="contact.html">Contact</a>
+    </div>
+
+    <div>
+      <h3>Visit &amp; connect</h3>
+      <p data-setting="location">Abuja, Nigeria</p>
+      <a href="tel:+2348109044321" data-setting-link="phone">
+        <span data-setting="phone">0810 904 4321</span>
+      </a>
+      <a href="mailto:hello@mayassecret.com" data-setting-link="email">
+        <span data-setting="email">hello@mayassecret.com</span>
+      </a>
+    </div>
+
+    <div>
+      <h3>Stay in the glow</h3>
+      <p>New products, training dates and beauty notes.</p>
+
+      <form class="newsletter" data-newsletter-form novalidate>
+        <label class="sr-only" for="newsletter-email">Email address</label>
+        <input
+          id="newsletter-email"
+          name="email"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder="Email address"
+          required
+        >
+        <button type="submit">Join</button>
+      </form>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span data-current-year>2026</span> Maya’s Secret.</span>
+      <span>Designed for confident beauty.</span>
+    </div>
+  </footer>
+
+  <div class="overlay" data-overlay hidden></div>
+
+  <aside
+    id="shopping-cart"
+    class="cart"
+    aria-hidden="true"
+    aria-labelledby="cart-title"
+    inert
+    data-cart
+  >
+    <div class="cart-head">
+      <h2 id="cart-title">Your bag</h2>
+      <button
+        class="cart-close"
+        type="button"
+        aria-label="Close shopping bag"
+        data-cart-close
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="cart-lines" data-cart-lines></div>
+
+    <div class="cart-empty" data-cart-empty>
+      <p>Your bag is waiting.</p>
+      <a href="shop.html">Explore the collection</a>
+    </div>
+
+    <div class="cart-foot">
+      <div>
+        <span>Estimated total</span>
+        <strong class="cart-total">₦0</strong>
+      </div>
+
+      <button class="checkout" type="button" data-checkout>
+        Proceed to checkout
+      </button>
+
+      <small>
+        Availability and delivery are confirmed before payment.
+      </small>
+    </div>
+  </aside>
+
+  <button
+    class="floating-bag"
+    type="button"
+    aria-label="Open shopping bag"
+    aria-controls="shopping-cart"
+    data-cart-toggle
+  >
+    <span class="floating-bag-icon" aria-hidden="true">🛍</span>
+    <b class="bag-count" aria-label="0 items">0</b>
+  </button>
+
+  <div class="toast-region" aria-live="polite" aria-atomic="true" data-toast-region></div>
+
+  <div class="global-loader" aria-hidden="true" data-global-loader>
+    <span class="spinner"></span>
+    <p data-loader-message>Loading…</p>
+  </div>
+
+  <!-- Sprint 1: shared application framework -->
+  <script defer src="js/core/config.js?v=5.0.0"></script>
+  <script defer src="js/core/utils.js?v=5.0.0"></script>
+  <script defer src="js/core/ui.js?v=5.0.0"></script>
+  <script defer src="js/core/auth.js?v=5.0.0"></script>
+  <script defer src="js/core/api.js?v=5.0.0"></script>
+  <script defer src="js/core/framework.js?v=5.0.0"></script>
+
+  <!-- Sprint 2: Business Cloud compatibility entry point -->
+  <script defer src="js/cloud/cloud.js?v=5.0.0"></script>
+
+  <!-- Existing catalogue and cart layers -->
+  <script defer src="js/catalog.js?v=5.0.0"></script>
+  <script defer src="js/app.js?v=5.0.0"></script>
+</body>
+</html>
