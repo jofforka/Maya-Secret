@@ -1,8 +1,3 @@
-js = r'''/*!
- * Maya's Secret Business OS v5.0
- * File: js/core/api.js
- */
-
 (function(window){
 "use strict";
 
