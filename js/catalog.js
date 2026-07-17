@@ -1,289 +1,696 @@
-products = [
-{"id":"radiance-body-oil","name":"Baby Glowing Lotion","category":"Body Care","price":8500,"size":"150 ml","badge":"✨ Customer Favourite","desc":"A gentle daily body lotion designed to nourish, hydrate, and soften children's skin while supporting a healthy, natural-looking glow. Its lightweight texture absorbs easily, leaving skin feeling smooth, moisturised, and comfortable throughout the day.","tone":"plum","status":"available","featured":True,"image":"assets/products/baby-glowing-lotion.jpg","gallery":[],"benefits":["Provides long-lasting hydration","Helps keep skin soft and smooth","Supports a healthy-looking natural glow","Comfortable for everyday use","Leaves skin feeling fresh and nourished"],"use":"Apply generously to clean skin after bathing or whenever moisture is needed. Massage gently until fully absorbed. For best results, use daily as part of the Baby Glow skincare routine."},
-{"id":"velvet-body-butter","name":"Baby Glow Oil","category":"Body Care","price":10000,"size":"250 g","badge":"⭐ Best Seller","desc":"A lightweight nourishing body oil specially formulated to help keep children's skin soft, moisturised, and naturally radiant. Baby Glow Oil absorbs comfortably into the skin and is ideal for daily care, leaving the skin feeling smooth, healthy, and refreshed.","tone":"rose","status":"available","featured":True,"image":"assets/products/baby-glow-oil.jpg","gallery":[],"benefits":["Helps lock in moisture","Leaves skin feeling soft and smooth","Supports a healthy-looking natural glow","Lightweight and easy to absorb","Suitable for everyday skincare"],"use":"Apply a small amount onto clean skin and massage gently until fully absorbed. Use after bathing or whenever the skin needs extra moisture. For best results, use consistently as part of your daily skincare routine."},
-{"id":"luminous-face-serum","name":"Flawless Face Cream","category":"Face Care","price":12000,"size":"30 ml","badge":"💎 Premium Formula","desc":"Flawless Face Cream is a luxurious daily facial moisturiser formulated to help keep your skin smooth, hydrated, and naturally radiant. Its rich yet comfortable texture melts into the skin, providing lasting moisture while promoting a fresh, healthy-looking complexion.","tone":"cream","status":"available","featured":True,"image":"assets/products/flawless-face-cream.jpg","gallery":[],"benefits":["Deeply hydrates facial skin","Helps improve skin softness","Supports a smoother-looking complexion","Promotes a healthy natural glow","Suitable for everyday facial care"],"use":"Apply a small amount to clean, dry skin after cleansing. Massage gently over the face and neck using upward circular motions. Use morning and evening as part of your daily skincare routine."},
-{"id":"clarity-cleanser","name":"Stretchmark Oil","category":"Body Care","price":7500,"size":"200 ml","badge":"🌿 Targeted Care","desc":"Stretchmark Oil is a nourishing body oil specially developed to improve skin hydration and elasticity while helping reduce the appearance of stretch marks. Its lightweight formula absorbs comfortably into the skin, making it an excellent addition to your daily body care routine.","tone":"sage","status":"available","featured":True,"image":"assets/products/stretchmark-oil.jpg","gallery":[],"benefits":["Helps reduce the appearance of stretch marks","Supports improved skin elasticity","Deeply nourishes and moisturises the skin","Leaves skin feeling soft and smooth","Suitable for daily body care"],"use":"Apply a few drops directly to clean, dry skin and massage gently using circular motions until fully absorbed. Use morning and evening for best results. Consistent daily use is recommended."},
-{"id":"dew-moisture-cream","name":"Whitening Kojic Acid Soap","category":"Body Care","price":11000,"size":"50 ml","badge":"⭐ Best Seller","desc":"Whitening Kojic Acid Soap is a luxurious cleansing bar designed to gently cleanse the skin while promoting a brighter, smoother, and more radiant-looking complexion. Suitable for both face and body, it removes impurities without leaving the skin feeling stripped, making it an excellent choice for everyday skincare.","tone":"sand","status":"available","featured":True,"image":"assets/products/whitening-kojic-acid-soap.jpg","gallery":[],"benefits":["Gently cleanses the skin","Helps brighten dull-looking skin","Helps reduce the appearance of dark spots","Promotes a clearer, more radiant complexion","Suitable for face and body","Suitable for daily use"],"use":"Wet the skin and the soap with clean water. Work into a rich lather and gently massage over the face or body. Rinse thoroughly with water. Follow with a moisturiser. Use once or twice daily based on your skincare routine."},
-{"id":"silk-body-scrub","name":"Baby Glow Complete Collection","category":"Gift Sets","price":30000,"size":"300 g","badge":"🎁 Complete Set","desc":"The Baby Glow Complete Collection brings together Maya's Secret's essential baby skincare products in one nourishing routine. Designed for gentle daily care, this complete set helps cleanse, moisturise, and nourish delicate skin, leaving it feeling soft, smooth, and naturally radiant.","tone":"wine","status":"available","featured":True,"image":"assets/products/baby-glow-complete-collection.jpg","gallery":[],"benefits":["Complete daily skincare routine","Gently cleanses and moisturises the skin","Helps maintain soft, healthy-looking skin","Provides lasting hydration","Convenient all-in-one skincare bundle","Suitable for everyday use"],"use":"Step 1: Cleanse the skin using the Baby Glow Soap and rinse thoroughly.\n\nStep 2: Apply Baby Glow Lotion to moisturise the skin.\n\nStep 3: Finish with Baby Glow Oil to help lock in moisture and leave the skin feeling soft and nourished.\n\nUse daily for best results."},
-{"id":"signature-glow-set","name":"Signature Glow Set","category":"Gift Sets","price":28500,"badge":"Save as a Set","size":"3 pieces","tone":"wine","desc":"A focused three-step face ritual for cleansing, hydration and everyday radiance.","status":"available","featured":False,"image":"","gallery":[],"benefits":["A coordinated routine in one set","Ideal for gifting or starting a new ritual","Conveniently combines complementary essentials"],"use":"Use as directed on clean skin. Contact Maya’s Secret for personalised guidance if you are managing a specific skin concern."},
-{"id":"body-renewal-set","name":"Body Renewal Set","category":"Gift Sets","price":25000,"badge":"Complete Ritual","size":"3 pieces","tone":"bronze","desc":"A complete body ritual pairing exfoliation, deep moisture and a luminous finishing oil.","status":"available","featured":False,"image":"","gallery":[],"benefits":["A coordinated routine in one set","Ideal for gifting or starting a new ritual","Conveniently combines complementary essentials"],"use":"Use as directed on clean skin. Contact Maya’s Secret for personalised guidance if you are managing a specific skin concern."}
-]
-
-data = json.dumps(products, ensure_ascii=False, separators=(",", ":"))
-
-js = f"""'use strict';
-
-window.MAYA_CATALOG_VERSION = '2026-07-17-business-os-v5';
-window.MAYA_DEFAULT_PRODUCTS = Object.freeze({data});
-
 /**
- * Maya's Secret catalogue service.
- * Provides one reliable product source for the homepage, shop, checkout,
- * product modal and admin dashboard.
+ * Maya's Secret Business OS v5.0
+ * catalog.js
+ * Complete replacement file
  */
-window.MayaCatalog = (() => {{
-  const STORAGE_KEY = 'maya_products_v5';
-  const VALID_STATUSES = new Set(['available', 'soldout', 'draft', 'archived']);
 
-  const clone = (value) => JSON.parse(JSON.stringify(value));
+(function (window, document) {
+  "use strict";
 
-  const text = (value, fallback = '') =>
-    typeof value === 'string' ? value.trim() : fallback;
+  const Catalog = {
+    version: "5.0.0",
+    initialized: false,
+    products: [],
+    filteredProducts: [],
+    categories: [],
+    state: {
+      search: "",
+      category: "all",
+      sort: "featured",
+      loading: false,
+      error: null
+    }
+  };
 
-  const number = (value, fallback = 0) => {{
-    const parsed = Number(value);
-    return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
-  }};
+  function getCloud() {
+    return (
+      window.BusinessCloud ||
+      window.MayaCloud ||
+      window.MAYA_CLOUD ||
+      null
+    );
+  }
 
-  const boolean = (value) =>
-    value === true || value === 'true' || value === 1 || value === '1';
+  function getUI() {
+    return window.BusinessUI || window.MayaUI || null;
+  }
 
-  const list = (value) => {{
-    if (Array.isArray(value)) {{
-      return value.map((item) => text(String(item))).filter(Boolean);
-    }}
-    if (typeof value === 'string') {{
-      return value
-        .split(/\\r?\\n|,/)
-        .map((item) => item.trim())
-        .filter(Boolean);
-    }}
+  function $(selector, root) {
+    return (root || document).querySelector(selector);
+  }
+
+  function $$(selector, root) {
+    return Array.from((root || document).querySelectorAll(selector));
+  }
+
+  function emit(name, detail) {
+    document.dispatchEvent(
+      new CustomEvent(name, {
+        detail: detail || {}
+      })
+    );
+  }
+
+  function normalize(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function toNumber(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : 0;
+  }
+
+  function formatMoney(value) {
+    try {
+      return new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        maximumFractionDigits: 0
+      }).format(toNumber(value));
+    } catch (error) {
+      return "₦" + toNumber(value).toLocaleString();
+    }
+  }
+
+  function getProductImage(product) {
+    if (!product) return "";
+
+    if (product.image) return product.image;
+    if (product.imageUrl) return product.imageUrl;
+
+    if (Array.isArray(product.images) && product.images.length) {
+      const first = product.images[0];
+
+      if (typeof first === "string") return first;
+      if (first && first.url) return first.url;
+      if (first && first.imageUrl) return first.imageUrl;
+    }
+
+    return "";
+  }
+
+  function getProductPrice(product) {
+    if (!product) return 0;
+
+    if (product.price !== undefined) return toNumber(product.price);
+    if (product.salePrice !== undefined) return toNumber(product.salePrice);
+    if (product.amount !== undefined) return toNumber(product.amount);
+
+    return 0;
+  }
+
+  function isProductVisible(product) {
+    const status = normalize(product && product.status);
+
+    if (!status) return true;
+
+    return (
+      status === "active" ||
+      status === "published" ||
+      status === "available"
+    );
+  }
+
+  function extractProducts(response) {
+    if (Array.isArray(response)) return response;
+
+    if (response && Array.isArray(response.products)) {
+      return response.products;
+    }
+
+    if (response && response.data && Array.isArray(response.data.products)) {
+      return response.data.products;
+    }
+
+    if (response && Array.isArray(response.data)) {
+      return response.data;
+    }
+
     return [];
-  }};
+  }
 
-  const slugify = (value) =>
-    text(value, 'product')
-      .toLowerCase()
-      .normalize('NFKD')
-      .replace(/[\\u0300-\\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '') || `product-${{Date.now()}}`;
+  function createElement(tagName, className, text) {
+    const element = document.createElement(tagName);
 
-  function normalizeProduct(product, index = 0) {{
-    const source = product && typeof product === 'object' ? product : {{}};
-    const name = text(source.name, `Product ${{index + 1}}`);
-    const status = text(source.status, 'available').toLowerCase();
+    if (className) {
+      element.className = className;
+    }
 
-    return {{
-      id: text(source.id) || slugify(name),
-      name,
-      category: text(source.category, 'Uncategorised'),
-      price: number(source.price),
-      size: text(source.size),
-      badge: text(source.badge),
-      desc: text(source.desc || source.description),
-      tone: text(source.tone, 'cream').toLowerCase(),
-      status: VALID_STATUSES.has(status) ? status : 'available',
-      featured: boolean(source.featured),
-      image: text(source.image),
-      gallery: [...new Set(list(source.gallery).filter((item) => item !== source.image))],
-      benefits: list(source.benefits),
-      use: text(source.use || source.directions),
-      createdAt: text(source.createdAt),
-      updatedAt: text(source.updatedAt)
-    }};
-  }}
+    if (text !== undefined && text !== null) {
+      element.textContent = String(text);
+    }
 
-  function normalizeProducts(products) {{
-    if (!Array.isArray(products)) return [];
-    const seen = new Set();
+    return element;
+  }
 
-    return products
-      .map(normalizeProduct)
-      .filter((product) => {{
-        if (!product.id || seen.has(product.id)) return false;
-        seen.add(product.id);
-        return true;
-      }});
-  }}
+  function getCatalogGrid() {
+    return (
+      $("[data-product-grid]") ||
+      $(".product-grid") ||
+      $("#productGrid") ||
+      $("#catalogGrid")
+    );
+  }
 
-  function defaults() {{
-    return normalizeProducts(clone(window.MAYA_DEFAULT_PRODUCTS));
-  }}
+  function getEmptyState() {
+    return (
+      $("[data-catalog-empty]") ||
+      $(".catalog-empty") ||
+      $("#catalogEmpty")
+    );
+  }
 
-  function readLocal() {{
-    try {{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      return normalizeProducts(JSON.parse(raw));
-    }} catch (error) {{
-      console.warn('MayaCatalog: local catalogue could not be read.', error);
-      return [];
-    }}
-  }}
+  function getLoadingState() {
+    return (
+      $("[data-catalog-loading]") ||
+      $(".catalog-loading") ||
+      $("#catalogLoading")
+    );
+  }
 
-  function saveLocal(products) {{
-    const normalized = normalizeProducts(products);
-    try {{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-    }} catch (error) {{
-      console.warn('MayaCatalog: local catalogue could not be saved.', error);
-    }}
-    return normalized;
-  }}
+  function setLoading(show) {
+    Catalog.state.loading = Boolean(show);
 
-  async function load(options = {{}}) {{
-    const {{
-      preferCloud = true,
-      allowLocal = true,
-      allowDefaults = true,
-      persist = true
-    }} = options;
+    const loadingElement = getLoadingState();
+
+    if (loadingElement) {
+      loadingElement.hidden = !show;
+      loadingElement.classList.toggle("is-active", Boolean(show));
+    }
+
+    const grid = getCatalogGrid();
+
+    if (grid) {
+      grid.setAttribute("aria-busy", String(Boolean(show)));
+    }
+
+    const UI = getUI();
+
+    if (UI && typeof UI.loading === "function") {
+      UI.loading(Boolean(show), show ? "Loading products..." : "");
+    }
+  }
+
+  function showError(error) {
+    Catalog.state.error = error;
+
+    const UI = getUI();
+
+    if (UI && typeof UI.toast === "function") {
+      UI.toast(
+        error && error.message
+          ? error.message
+          : "Unable to load products.",
+        "error"
+      );
+    }
+
+    emit("catalog:error", {
+      error: error
+    });
+  }
+
+  function buildProductCard(product) {
+    const card = createElement("article", "product-card");
+    card.dataset.productId = product.id || "";
+
+    const media = createElement("button", "product-card-media");
+    media.type = "button";
+    media.setAttribute(
+      "aria-label",
+      "View " + (product.name || "product")
+    );
+
+    const imageUrl = getProductImage(product);
+
+    if (imageUrl) {
+      const image = createElement("img", "product-card-image");
+      image.src = imageUrl;
+      image.alt = product.name || "Product";
+      image.loading = "lazy";
+      image.decoding = "async";
+      media.appendChild(image);
+    } else {
+      const placeholder = createElement(
+        "div",
+        "product-card-placeholder",
+        "No image"
+      );
+      media.appendChild(placeholder);
+    }
+
+    if (product.featured === true) {
+      const badge = createElement(
+        "span",
+        "product-card-badge",
+        "Featured"
+      );
+      media.appendChild(badge);
+    }
+
+    const body = createElement("div", "product-card-body");
+    const title = createElement(
+      "h3",
+      "product-card-title",
+      product.name || "Unnamed product"
+    );
+
+    const category = createElement(
+      "p",
+      "product-card-category",
+      product.category || ""
+    );
+
+    const price = createElement(
+      "p",
+      "product-card-price",
+      formatMoney(getProductPrice(product))
+    );
+
+    const actions = createElement("div", "product-card-actions");
+
+    const viewButton = createElement(
+      "button",
+      "product-card-view",
+      "View"
+    );
+    viewButton.type = "button";
+    viewButton.dataset.catalogAction = "view";
+    viewButton.dataset.productId = product.id || "";
+
+    const cartButton = createElement(
+      "button",
+      "product-card-cart",
+      "Add to cart"
+    );
+    cartButton.type = "button";
+    cartButton.dataset.catalogAction = "add-to-cart";
+    cartButton.dataset.productId = product.id || "";
+
+    actions.appendChild(viewButton);
+    actions.appendChild(cartButton);
+
+    body.appendChild(title);
+
+    if (product.category) {
+      body.appendChild(category);
+    }
+
+    body.appendChild(price);
+    body.appendChild(actions);
+
+    card.appendChild(media);
+    card.appendChild(body);
+
+    media.addEventListener("click", function () {
+      Catalog.openProduct(product.id);
+    });
+
+    return card;
+  }
+
+  function renderProducts(products) {
+    const grid = getCatalogGrid();
+
+    if (!grid) {
+      console.warn("[Catalog] Product grid was not found.");
+      return false;
+    }
+
+    grid.innerHTML = "";
+
+    const empty = getEmptyState();
+    const items = Array.isArray(products) ? products : [];
+
+    if (!items.length) {
+      if (empty) {
+        empty.hidden = false;
+      }
+
+      grid.hidden = false;
+      return true;
+    }
+
+    if (empty) {
+      empty.hidden = true;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    items.forEach(function (product) {
+      fragment.appendChild(buildProductCard(product));
+    });
+
+    grid.appendChild(fragment);
+    grid.hidden = false;
+
+    emit("catalog:rendered", {
+      count: items.length
+    });
+
+    return true;
+  }
+
+  function extractCategories(products) {
+    const categories = [];
+
+    (products || []).forEach(function (product) {
+      const category = String(product.category || "").trim();
+
+      if (
+        category &&
+        categories.indexOf(category) === -1
+      ) {
+        categories.push(category);
+      }
+    });
+
+    return categories.sort(function (a, b) {
+      return a.localeCompare(b);
+    });
+  }
+
+  function renderCategoryOptions() {
+    const select =
+      $("[data-catalog-category]") ||
+      $("#categoryFilter") ||
+      $(".catalog-category-filter");
+
+    if (!select) return;
+
+    const currentValue = select.value || "all";
+
+    select.innerHTML = "";
+
+    const allOption = document.createElement("option");
+    allOption.value = "all";
+    allOption.textContent = "All categories";
+    select.appendChild(allOption);
+
+    Catalog.categories.forEach(function (category) {
+      const option = document.createElement("option");
+      option.value = category;
+      option.textContent = category;
+      select.appendChild(option);
+    });
+
+    select.value =
+      Array.from(select.options).some(function (option) {
+        return option.value === currentValue;
+      })
+        ? currentValue
+        : "all";
+  }
+
+  function applyFilters() {
+    const search = normalize(Catalog.state.search);
+    const category = Catalog.state.category || "all";
+    const sort = Catalog.state.sort || "featured";
+
+    let products = Catalog.products.filter(function (product) {
+      const matchesSearch =
+        !search ||
+        normalize(product.name).includes(search) ||
+        normalize(product.category).includes(search) ||
+        normalize(product.description).includes(search);
+
+      const matchesCategory =
+        category === "all" ||
+        normalize(product.category) === normalize(category);
+
+      return matchesSearch && matchesCategory;
+    });
+
+    products.sort(function (a, b) {
+      if (sort === "price-low") {
+        return getProductPrice(a) - getProductPrice(b);
+      }
+
+      if (sort === "price-high") {
+        return getProductPrice(b) - getProductPrice(a);
+      }
+
+      if (sort === "name") {
+        return String(a.name || "").localeCompare(String(b.name || ""));
+      }
+
+      if (sort === "newest") {
+        return (
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime()
+        );
+      }
+
+      if (a.featured === b.featured) {
+        return String(a.name || "").localeCompare(String(b.name || ""));
+      }
+
+      return a.featured ? -1 : 1;
+    });
+
+    Catalog.filteredProducts = products;
+    renderProducts(products);
+
+    emit("catalog:filtered", {
+      count: products.length,
+      search: search,
+      category: category,
+      sort: sort
+    });
+
+    return products;
+  }
+
+  function bindFilters() {
+    const searchInput =
+      $("[data-catalog-search]") ||
+      $("#catalogSearch") ||
+      $(".catalog-search");
+
+    const categorySelect =
+      $("[data-catalog-category]") ||
+      $("#categoryFilter") ||
+      $(".catalog-category-filter");
+
+    const sortSelect =
+      $("[data-catalog-sort]") ||
+      $("#catalogSort") ||
+      $(".catalog-sort");
+
+    if (searchInput) {
+      searchInput.addEventListener("input", function () {
+        Catalog.state.search = searchInput.value || "";
+        applyFilters();
+      });
+    }
+
+    if (categorySelect) {
+      categorySelect.addEventListener("change", function () {
+        Catalog.state.category = categorySelect.value || "all";
+        applyFilters();
+      });
+    }
+
+    if (sortSelect) {
+      sortSelect.addEventListener("change", function () {
+        Catalog.state.sort = sortSelect.value || "featured";
+        applyFilters();
+      });
+    }
+  }
+
+  function bindProductActions() {
+    document.addEventListener("click", function (event) {
+      const button =
+        event.target && event.target.closest
+          ? event.target.closest("[data-catalog-action]")
+          : null;
+
+      if (!button) return;
+
+      const productId = button.dataset.productId;
+      const action = button.dataset.catalogAction;
+
+      if (action === "view") {
+        Catalog.openProduct(productId);
+      }
+
+      if (action === "add-to-cart") {
+        Catalog.addToCart(productId);
+      }
+    });
+  }
+
+  Catalog.load = async function () {
+    const Cloud = getCloud();
+
+    if (!Cloud || typeof Cloud.getProducts !== "function") {
+      throw new Error("Cloud product service is unavailable.");
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await Cloud.getProducts();
+
+      Catalog.products = extractProducts(response)
+        .filter(isProductVisible);
+
+      Catalog.categories = extractCategories(Catalog.products);
+
+      renderCategoryOptions();
+      applyFilters();
+
+      emit("catalog:loaded", {
+        count: Catalog.products.length,
+        products: Catalog.products
+      });
+
+      return Catalog.products;
+    } catch (error) {
+      showError(error);
+      Catalog.products = [];
+      Catalog.filteredProducts = [];
+      renderProducts([]);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  Catalog.refresh = function () {
+    return Catalog.load();
+  };
+
+  Catalog.getProduct = function (productId) {
+    return (
+      Catalog.products.find(function (product) {
+        return String(product.id) === String(productId);
+      }) || null
+    );
+  };
+
+  Catalog.openProduct = function (productId) {
+    const product = Catalog.getProduct(productId);
+
+    if (!product) {
+      showError(new Error("Product not found."));
+      return false;
+    }
+
+    emit("catalog:productSelected", {
+      product: product
+    });
 
     if (
-      preferCloud &&
-      window.MayaCloud &&
-      typeof window.MayaCloud.getProducts === 'function'
-    ) {{
-      try {{
-        const response = await window.MayaCloud.getProducts();
-        const cloudProducts = normalizeProducts(
-          Array.isArray(response) ? response : response?.products
-        );
+      window.BusinessProductModal &&
+      typeof window.BusinessProductModal.open === "function"
+    ) {
+      window.BusinessProductModal.open(product);
+      return true;
+    }
 
-        if (cloudProducts.length) {{
-          if (persist) saveLocal(cloudProducts);
-          dispatch('maya:catalog-loaded', {{
-            source: 'cloud',
-            products: clone(cloudProducts)
-          }});
-          return cloudProducts;
-        }}
-      }} catch (error) {{
-        console.warn('MayaCatalog: cloud catalogue unavailable.', error);
-        dispatch('maya:catalog-error', {{
-          source: 'cloud',
-          message: error?.message || 'Cloud catalogue unavailable'
-        }});
-      }}
-    }}
+    if (
+      window.MayaProductModal &&
+      typeof window.MayaProductModal.open === "function"
+    ) {
+      window.MayaProductModal.open(product);
+      return true;
+    }
 
-    if (allowLocal) {{
-      const localProducts = readLocal();
-      if (localProducts.length) {{
-        dispatch('maya:catalog-loaded', {{
-          source: 'local',
-          products: clone(localProducts)
-        }});
-        return localProducts;
-      }}
-    }}
+    const detailUrl =
+      product.url ||
+      product.detailUrl ||
+      product.productUrl;
 
-    const fallback = allowDefaults ? defaults() : [];
-    if (persist && fallback.length) saveLocal(fallback);
+    if (detailUrl) {
+      window.location.href = detailUrl;
+      return true;
+    }
 
-    dispatch('maya:catalog-loaded', {{
-      source: 'default',
-      products: clone(fallback)
-    }});
+    return false;
+  };
 
-    return fallback;
-  }}
+  Catalog.addToCart = function (productId) {
+    const product = Catalog.getProduct(productId);
 
-  function getById(id, products = readLocal()) {{
-    const target = text(id);
-    return normalizeProducts(products).find((product) => product.id === target) || null;
-  }}
+    if (!product) {
+      showError(new Error("Product not found."));
+      return false;
+    }
 
-  function getCategories(products = readLocal()) {{
-    return [...new Set(
-      normalizeProducts(products)
-        .map((product) => product.category)
-        .filter(Boolean)
-    )].sort((a, b) => a.localeCompare(b));
-  }}
+    if (
+      window.BusinessCart &&
+      typeof window.BusinessCart.add === "function"
+    ) {
+      window.BusinessCart.add(product);
+    } else if (
+      window.MayaCart &&
+      typeof window.MayaCart.add === "function"
+    ) {
+      window.MayaCart.add(product);
+    } else {
+      emit("catalog:addToCart", {
+        product: product
+      });
+    }
 
-  function getFeatured(products = readLocal()) {{
-    return normalizeProducts(products).filter(
-      (product) => product.featured && product.status !== 'archived'
-    );
-  }}
+    const UI = getUI();
 
-  function getPublished(products = readLocal()) {{
-    return normalizeProducts(products).filter(
-      (product) => product.status === 'available' || product.status === 'soldout'
-    );
-  }}
+    if (UI && typeof UI.toast === "function") {
+      UI.toast(
+        (product.name || "Product") + " added to cart.",
+        "success"
+      );
+    }
 
-  function search(query, products = readLocal()) {{
-    const needle = text(query).toLowerCase();
-    const normalized = normalizeProducts(products);
-    if (!needle) return normalized;
+    return true;
+  };
 
-    return normalized.filter((product) =>
-      [
-        product.name,
-        product.category,
-        product.badge,
-        product.size,
-        product.desc,
-        ...product.benefits
-      ].some((value) => String(value).toLowerCase().includes(needle))
-    );
-  }}
+  Catalog.search = function (value) {
+    Catalog.state.search = value || "";
+    return applyFilters();
+  };
 
-  function sort(products, mode = 'featured') {{
-    const output = normalizeProducts(products);
+  Catalog.filterByCategory = function (category) {
+    Catalog.state.category = category || "all";
+    return applyFilters();
+  };
 
-    switch (mode) {{
-      case 'price-low':
-        return output.sort((a, b) => a.price - b.price);
-      case 'price-high':
-        return output.sort((a, b) => b.price - a.price);
-      case 'name':
-        return output.sort((a, b) => a.name.localeCompare(b.name));
-      case 'newest':
-        return output.sort((a, b) =>
-          String(b.updatedAt || b.createdAt).localeCompare(
-            String(a.updatedAt || a.createdAt)
-          )
-        );
-      case 'featured':
-      default:
-        return output.sort(
-          (a, b) =>
-            Number(b.featured) - Number(a.featured) ||
-            a.name.localeCompare(b.name)
-        );
-    }}
-  }}
+  Catalog.sort = function (sortValue) {
+    Catalog.state.sort = sortValue || "featured";
+    return applyFilters();
+  };
 
-  function formatPrice(value) {{
-    return new Intl.NumberFormat('en-NG', {{
-      style: 'currency',
-      currency: 'NGN',
-      maximumFractionDigits: 0
-    }}).format(number(value));
-  }}
+  Catalog.init = async function () {
+    if (Catalog.initialized) return Catalog;
 
-  function dispatch(name, detail) {{
-    window.dispatchEvent(new CustomEvent(name, {{ detail }}));
-  }}
+    Catalog.initialized = true;
 
-  function clearLocal() {{
-    try {{
-      localStorage.removeItem(STORAGE_KEY);
-    }} catch (error) {{
-      console.warn('MayaCatalog: local catalogue could not be cleared.', error);
-    }}
-  }}
+    bindFilters();
+    bindProductActions();
 
-  return Object.freeze({{
-    version: window.MAYA_CATALOG_VERSION,
-    storageKey: STORAGE_KEY,
-    normalizeProduct,
-    normalizeProducts,
-    defaults,
-    load,
-    readLocal,
-    saveLocal,
-    clearLocal,
-    getById,
-    getCategories,
-    getFeatured,
-    getPublished,
-    search,
-    sort,
-    formatPrice
-  }});
-}})();
+    try {
+      await Catalog.load();
+    } catch (error) {
+      console.error("[Catalog] Initialization failed.", error);
+    }
+
+    return Catalog;
+  };
+
+  window.BusinessCatalog = Catalog;
+  window.MayaCatalog = Catalog;
+
+  function start() {
+    Catalog.init();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, {
+      once: true
+    });
+  } else {
+    start();
+  }
+})(window, document);
