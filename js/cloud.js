@@ -1,103 +1,428 @@
-js = r'''/*!
+/**
  * Maya's Secret Business OS v5.0
- * Cloud Adapter
- * File: js/cloud.js
+ * cloud.js
+ * Complete replacement file
  */
 
-(function(window){
-"use strict";
+(function (window, document) {
+  "use strict";
 
-const API=window.BusinessAPI||{};
-const Cloud={};
+  const Cloud = {
+    version: "5.0.0",
+    initialized: false,
+    connected: false,
+    endpoint: "",
+    state: "idle"
+  };
 
-function ok(data){return {success:true,...data};}
-function fail(err){return {success:false,message:err?.message||String(err)};}
+  function getConfig() {
+    const configModule = window.BusinessConfig || window.MayaConfig;
 
-Cloud.getProducts=async()=>API.getProducts();
-Cloud.loadProducts=Cloud.getProducts;
+    if (configModule && typeof configModule.get === "function") {
+      return configModule.get() || {};
+    }
 
-Cloud.saveProduct=async(product)=>{
-  await API.saveProduct(product);
-  return ok({products:await API.getProducts()});
-};
+    return {};
+  }
 
-Cloud.upsertProduct=Cloud.saveProduct;
+  function getUI() {
+    return window.BusinessUI || window.MayaUI || null;
+  }
 
-Cloud.deleteProduct=async(id)=>{
-  await API.deleteProduct(id);
-  return ok({products:await API.getProducts()});
-};
+  function getAPI() {
+    return window.BusinessAPI || window.MayaAPI || null;
+  }
 
-Cloud.removeProduct=Cloud.deleteProduct;
+  function emit(name, detail) {
+    document.dispatchEvent(
+      new CustomEvent(name, {
+        detail: detail || {}
+      })
+    );
+  }
 
-Cloud.getOrders=()=>API.getOrders();
-Cloud.loadOrders=Cloud.getOrders;
+  function setState(state, label) {
+    Cloud.state = state;
+    Cloud.connected = state === "connected";
 
-Cloud.saveOrder=async(order)=>{
-  await API.saveOrder(order);
-  return ok({orders:await API.getOrders()});
-};
+    const UI = getUI();
 
-Cloud.updateOrder=async(order)=>{
-  await API.updateOrder(order);
-  return ok({orders:await API.getOrders()});
-};
+    if (UI && typeof UI.updateCloudStatus === "function") {
+      UI.updateCloudStatus(state, label || state);
+    }
 
-Cloud.getBookings=()=>API.getBookings();
-Cloud.getSpaBookings=Cloud.getBookings;
-Cloud.loadBookings=Cloud.getBookings;
+    const Framework = window.BusinessFramework || window.MayaFramework;
 
-Cloud.saveBooking=async(booking)=>{
-  await API.saveBooking(booking);
-  return ok({bookings:await API.getBookings()});
-};
+    if (
+      Framework &&
+      typeof Framework.setCloudState === "function"
+    ) {
+      Framework.setCloudState(state, label || state);
+    }
 
-Cloud.updateBooking=async(booking)=>{
-  await API.updateBooking(booking);
-  return ok({bookings:await API.getBookings()});
-};
+    emit("business:cloud:state", {
+      state: state,
+      label: label || ""
+    });
+  }
 
-Cloud.deleteBooking=async(id)=>{
-  await API.deleteBooking(id);
-  return ok({bookings:await API.getBookings()});
-};
+  function normalizeEndpoint(value) {
+    return String(value || "").trim();
+  }
 
-Cloud.getCustomers=()=>API.getCustomers();
+  function getEndpointFromConfig() {
+    const config = getConfig();
 
-Cloud.getSettings=()=>API.getSettings();
-Cloud.loadSettings=Cloud.getSettings;
+    return normalizeEndpoint(
+      config.cloudUrl ||
+      config.apiUrl ||
+      config.endpoint ||
+      (
+        config.cloud &&
+        (
+          config.cloud.url ||
+          config.cloud.endpoint ||
+          config.cloud.apiUrl
+        )
+      ) ||
+      ""
+    );
+  }
 
-Cloud.saveSettings=async(settings)=>{
-  await API.saveSettings(settings);
-  return ok({settings:await API.getSettings()});
-};
+  function buildUrl(action, params) {
+    if (!Cloud.endpoint) {
+      throw new Error("Cloud endpoint is not configured.");
+    }
 
-Cloud.dashboard=()=>API.getDashboard();
-Cloud.salesReport=(f)=>API.getSalesReport(f);
-Cloud.commissionReport=(f)=>API.getCommissionReport(f);
+    const query = new URLSearchParams();
+    query.set("action", action);
 
-Cloud.exportBackup=()=>API.exportBackup();
-Cloud.importBackup=(b)=>API.importBackup(b);
+    Object.keys(params || {}).forEach(function (key) {
+      const value = params[key];
 
-Cloud.sync=()=>API.sync();
-Cloud.publishCatalogue=()=>API.publishCatalogue();
+      if (value !== undefined && value !== null) {
+        query.set(key, String(value));
+      }
+    });
 
-Cloud.uploadImage=(file)=>API.uploadImage(file);
+    return Cloud.endpoint +
+      (Cloud.endpoint.indexOf("?") >= 0 ? "&" : "?") +
+      query.toString();
+  }
 
-Cloud.writeLog=(entry)=>API.writeLog(entry);
-Cloud.getLogs=()=>API.getLogs();
+  async function parseResponse(response) {
+    const text = await response.text();
 
-Cloud.health=async()=>{
- try{
-   await API.health();
-   return ok({status:"online"});
- }catch(e){
-   return fail(e);
- }
-};
+    let data;
 
-window.MayaCloud=Cloud;
-window.MAYA_CLOUD=Cloud;
-window.BusinessCloud=Cloud;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (error) {
+      throw new Error(
+        "Cloud returned an invalid JSON response."
+      );
+    }
 
-})(window);
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        data.message ||
+        "Cloud request failed with status " + response.status + "."
+      );
+    }
+
+    if (data && data.success === false) {
+      throw new Error(
+        data.error ||
+        data.message ||
+        "Cloud request was not successful."
+      );
+    }
+
+    return data;
+  }
+
+  async function request(action, options) {
+    options = options || {};
+
+    const method = String(options.method || "GET").toUpperCase();
+    const params = options.params || {};
+    const payload = options.payload || {};
+
+    if (!action) {
+      throw new Error("Cloud action is required.");
+    }
+
+    let response;
+
+    if (method === "GET") {
+      response = await fetch(buildUrl(action, params), {
+        method: "GET",
+        cache: "no-store",
+        redirect: "follow"
+      });
+    } else {
+      response = await fetch(Cloud.endpoint, {
+        method: method,
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(
+          Object.assign(
+            {
+              action: action
+            },
+            payload
+          )
+        ),
+        redirect: "follow"
+      });
+    }
+
+    return parseResponse(response);
+  }
+
+  Cloud.request = request;
+
+  Cloud.init = async function () {
+    if (Cloud.initialized) return Cloud;
+
+    Cloud.endpoint = getEndpointFromConfig();
+
+    if (!Cloud.endpoint) {
+      setState("offline", "Cloud not configured");
+      Cloud.initialized = true;
+
+      emit("business:cloud:ready", {
+        connected: false,
+        configured: false
+      });
+
+      return Cloud;
+    }
+
+    setState("connecting", "Connecting to cloud...");
+
+    try {
+      const health = await Cloud.health();
+
+      setState("connected", "Cloud connected");
+      Cloud.initialized = true;
+
+      emit("business:cloud:ready", {
+        connected: true,
+        configured: true,
+        health: health
+      });
+
+      return Cloud;
+    } catch (error) {
+      setState("error", "Cloud connection failed");
+      Cloud.initialized = true;
+
+      emit("business:cloud:error", {
+        error: error
+      });
+
+      const UI = getUI();
+
+      if (UI && typeof UI.toast === "function") {
+        UI.toast(error.message, "error");
+      }
+
+      return Cloud;
+    }
+  };
+
+  Cloud.health = function () {
+    return request("health", {
+      method: "GET"
+    });
+  };
+
+  Cloud.versionInfo = function () {
+    return request("version", {
+      method: "GET"
+    });
+  };
+
+  Cloud.refresh = async function () {
+    setState("connecting", "Refreshing cloud data...");
+
+    try {
+      const result = await Cloud.health();
+      setState("connected", "Cloud connected");
+
+      emit("business:cloud:refreshed", {
+        result: result
+      });
+
+      return result;
+    } catch (error) {
+      setState("error", "Cloud refresh failed");
+      throw error;
+    }
+  };
+
+  Cloud.getProducts = function () {
+    return request("getProducts", {
+      method: "GET"
+    });
+  };
+
+  Cloud.saveProduct = function (product) {
+    return request("saveProduct", {
+      method: "POST",
+      payload: {
+        product: product
+      }
+    });
+  };
+
+  Cloud.deleteProduct = function (productId) {
+    return request("deleteProduct", {
+      method: "POST",
+      payload: {
+        productId: productId
+      }
+    });
+  };
+
+  Cloud.getOrders = function () {
+    return request("getOrders", {
+      method: "GET"
+    });
+  };
+
+  Cloud.saveOrder = function (order) {
+    return request("saveOrder", {
+      method: "POST",
+      payload: {
+        order: order
+      }
+    });
+  };
+
+  Cloud.updateOrder = function (order) {
+    return request("updateOrder", {
+      method: "POST",
+      payload: {
+        order: order
+      }
+    });
+  };
+
+  Cloud.getBookings = function () {
+    return request("getBookings", {
+      method: "GET"
+    });
+  };
+
+  Cloud.saveBooking = function (booking) {
+    return request("saveBooking", {
+      method: "POST",
+      payload: {
+        booking: booking
+      }
+    });
+  };
+
+  Cloud.updateBooking = function (booking) {
+    return request("updateBooking", {
+      method: "POST",
+      payload: {
+        booking: booking
+      }
+    });
+  };
+
+  Cloud.getCustomers = function () {
+    return request("getCustomers", {
+      method: "GET"
+    });
+  };
+
+  Cloud.getSettings = function () {
+    return request("getSettings", {
+      method: "GET"
+    });
+  };
+
+  Cloud.saveSettings = function (settings) {
+    return request("saveSettings", {
+      method: "POST",
+      payload: {
+        settings: settings
+      }
+    });
+  };
+
+  Cloud.getDashboard = function () {
+    return request("getDashboard", {
+      method: "GET"
+    });
+  };
+
+  Cloud.getReports = function (filters) {
+    return request("getReports", {
+      method: "POST",
+      payload: {
+        filters: filters || {}
+      }
+    });
+  };
+
+  Cloud.getLogs = function () {
+    return request("getLogs", {
+      method: "GET"
+    });
+  };
+
+  Cloud.createBackup = function () {
+    return request("createBackup", {
+      method: "POST"
+    });
+  };
+
+  Cloud.restoreBackup = function (backupId) {
+    return request("restoreBackup", {
+      method: "POST",
+      payload: {
+        backupId: backupId
+      }
+    });
+  };
+
+  Cloud.uploadImage = function (payload) {
+    return request("uploadImage", {
+      method: "POST",
+      payload: payload || {}
+    });
+  };
+
+  Cloud.publish = async function () {
+    const result = await Cloud.refresh();
+
+    emit("business:cloud:published", {
+      result: result
+    });
+
+    return result;
+  };
+
+  window.BusinessCloud = Cloud;
+  window.MayaCloud = Cloud;
+  window.MAYA_CLOUD = Cloud;
+
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+        Cloud.init();
+      },
+      { once: true }
+    );
+  } else {
+    Cloud.init();
+  }
+})(window, document);
