@@ -1,13 +1,19 @@
+/**
+ * Maya's Secret Business OS v5.0
+ * config.js
+ * Complete replacement file
+ */
+
 (function (window) {
   "use strict";
 
   const CONFIG = {
     app: {
       name: "Maya's Secret Business OS",
-      version: "5.0.0",
+      version: "5.0.1",
       environment:
-        location.hostname === "localhost" ||
-        location.hostname === "127.0.0.1"
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
           ? "development"
           : "production",
       currency: "NGN",
@@ -16,7 +22,6 @@
       language: "en-NG"
     },
 
-    
     commission: {
       rate: 0.15,
       calculation: "paid_sales_only"
@@ -34,7 +39,8 @@
     },
 
     api: {
-      appsScriptUrl: "https://script.google.com/macros/s/AKfycbxG_WDwV7ByiPH_pQ28r2phmSXJrZbC-U1LpG5MC_IkM7CZcxE5EAuXJjj9vLD1Q17f/exec",
+      appsScriptUrl:
+        "https://script.google.com/macros/s/AKfycbxG_WDwV7ByiPH_pQ28r2phmSXJrZbC-U1LpG5MC_IkM7CZcxE5EAuXJjj9vLD1Q17f/exec",
       timeout: 30000,
       retries: 3
     },
@@ -66,51 +72,100 @@
   };
 
   function deepMerge(target, source) {
-    Object.keys(source).forEach(key => {
+    if (!source || typeof source !== "object") {
+      return target;
+    }
+
+    Object.keys(source).forEach(function (key) {
+      const value = source[key];
+
       if (
-        source[key] &&
-        typeof source[key] === "object" &&
-        !Array.isArray(source[key])
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value)
       ) {
-        if (!target[key]) target[key] = {};
-        deepMerge(target[key], source[key]);
+        if (
+          !target[key] ||
+          typeof target[key] !== "object" ||
+          Array.isArray(target[key])
+        ) {
+          target[key] = {};
+        }
+
+        deepMerge(target[key], value);
       } else {
-        target[key] = source[key];
+        target[key] = value;
       }
     });
+
     return target;
   }
 
-  window.BusinessConfig = {
-    get() {
+  const BusinessConfig = {
+    get: function () {
       return CONFIG;
     },
 
-    update(values = {}) {
-      deepMerge(CONFIG, values);
+    update: function (values) {
+      deepMerge(CONFIG, values || {});
       return CONFIG;
     },
 
-    setAppsScriptUrl(url) {
-      CONFIG.api.appsScriptUrl = String(url || "").trim();
-    },
+    setAppsScriptUrl: function (url) {
+      CONFIG.api.appsScriptUrl =
+        String(url || "").trim();
 
-    getAppsScriptUrl() {
+      BusinessConfig.api = CONFIG.api;
+      BusinessConfig.appsScriptUrl =
+        CONFIG.api.appsScriptUrl;
+
       return CONFIG.api.appsScriptUrl;
     },
 
-    currency(value) {
-      return new Intl.NumberFormat(CONFIG.app.language, {
-        style: "currency",
-        currency: CONFIG.app.currency,
-        maximumFractionDigits: 0
-      }).format(Number(value || 0));
+    getAppsScriptUrl: function () {
+      return String(
+        CONFIG.api.appsScriptUrl || ""
+      ).trim();
     },
 
-    isDevelopment() {
-      return CONFIG.app.environment === "development";
+    currency: function (value) {
+      return new Intl.NumberFormat(
+        CONFIG.app.language,
+        {
+          style: "currency",
+          currency: CONFIG.app.currency,
+          maximumFractionDigits: 0
+        }
+      ).format(Number(value || 0));
+    },
+
+    isDevelopment: function () {
+      return (
+        CONFIG.app.environment === "development"
+      );
     }
   };
 
-})(window);
+  /*
+   * Direct property aliases are intentionally exposed because
+   * different frontend modules may read either:
+   *
+   * BusinessConfig.get().api.appsScriptUrl
+   * BusinessConfig.api.appsScriptUrl
+   * BusinessConfig.appsScriptUrl
+   * BusinessConfig.getAppsScriptUrl()
+   */
+  BusinessConfig.app = CONFIG.app;
+  BusinessConfig.api = CONFIG.api;
+  BusinessConfig.cloud = CONFIG.cloud;
+  BusinessConfig.ui = CONFIG.ui;
+  BusinessConfig.features = CONFIG.features;
+  BusinessConfig.storage = CONFIG.storage;
+  BusinessConfig.commission = CONFIG.commission;
+  BusinessConfig.appsScriptUrl =
+    CONFIG.api.appsScriptUrl;
 
+  window.BusinessConfig = BusinessConfig;
+  window.MayaConfig = BusinessConfig;
+  window.MAYA_CONFIG = CONFIG;
+})(window);
