@@ -100,17 +100,26 @@
   }
 
   function isProductVisible(product) {
-    const status = normalize(product && product.status);
 
-    if (!status) return true;
+  if (!product) return false;
 
-    return (
-      status === "active" ||
-      status === "published" ||
-      status === "available"
-    );
-  }
+  const status = normalize(product.status);
 
+  if (!status) return true;
+
+  return [
+    "active",
+    "available",
+    "published",
+    "live",
+    "enabled",
+    "instock",
+    "in stock",
+    "true",
+    "1"
+  ].includes(status);
+
+}
   function extractProducts(response) {
     if (Array.isArray(response)) return response;
 
@@ -239,7 +248,11 @@
       media.appendChild(placeholder);
     }
 
-    if (product.featured === true) {
+    if (
+    product.featured === true ||
+    product.featured === "true" ||
+    product.featured === 1
+) {
       const badge = createElement(
         "span",
         "product-card-badge",
@@ -498,28 +511,39 @@
     }
   }
 
-  function bindProductActions() {
-    document.addEventListener("click", function (event) {
-      const button =
-        event.target && event.target.closest
-          ? event.target.closest("[data-catalog-action]")
-          : null;
+ function bindProductActions() {
 
-      if (!button) return;
+  if (Catalog.actionsBound) return;
 
-      const productId = button.dataset.productId;
-      const action = button.dataset.catalogAction;
+  Catalog.actionsBound = true;
 
-      if (action === "view") {
+  document.addEventListener("click", function (event) {
+
+    const button =
+      event.target && event.target.closest
+        ? event.target.closest("[data-catalog-action]")
+        : null;
+
+    if (!button) return;
+
+    const productId = button.dataset.productId;
+    const action = button.dataset.catalogAction;
+
+    switch (action) {
+
+      case "view":
         Catalog.openProduct(productId);
-      }
+        break;
 
-      if (action === "add-to-cart") {
+      case "add-to-cart":
         Catalog.addToCart(productId);
-      }
-    });
-  }
+        break;
 
+    }
+
+  });
+
+}
   Catalog.load = async function () {
     if (!getCatalogGrid()) {
       return [];
@@ -541,8 +565,28 @@
       const response = await Cloud.getProducts();
 
       Catalog.products = extractProducts(response)
-        .filter(isProductVisible);
+  .filter(isProductVisible)
+  .map(function (product, index) {
 
+    if (!product.id || String(product.id).trim() === "") {
+
+      product.id =
+        normalize(product.name)
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") ||
+        ("product-" + index);
+
+    }
+
+    return product;
+
+  });
+console.log(
+  "[Catalog] Products loaded:",
+  Catalog.products.length,
+  Catalog.products
+);
+      console.table(Catalog.products);
       Catalog.categories = extractCategories(Catalog.products);
 
       renderCategoryOptions();
@@ -555,7 +599,8 @@
 
       return Catalog.products;
     } catch (error) {
-      showError(error);
+      console.error("[Catalog] Load failed:", error);
+showError(error);
       Catalog.products = [];
       Catalog.filteredProducts = [];
       renderProducts([]);
@@ -682,6 +727,7 @@
 
     bindFilters();
     bindProductActions();
+    
 
     try {
       await Catalog.load();
