@@ -386,6 +386,9 @@ console.log("Products Loaded:", Admin.state.products.length);
     $("[data-products-body]") ||
     $("#productsTableBody") ||
     $("#adminProductList");
+    console.log("Container:", container);
+console.log("Container ID:", container?.id);
+console.log("Container Tag:", container?.tagName);
 
   if (!container) {
     console.error(
@@ -482,6 +485,7 @@ console.log("Products Loaded:", Admin.state.products.length);
       "</div>";
 
     container.appendChild(card);
+    console.log("Rendered:", product.name);
   });
 }
 
