@@ -941,58 +941,87 @@ function editProduct(productId) {
     product: product
   });
 }
+  
+function bindForms() {
+  if (Admin.formsBound) return;
 
+  Admin.formsBound = true;
+
+  document.addEventListener("submit", function (event) {
+    const form = event.target;
+
+    if (!(form instanceof HTMLFormElement)) return;
+
+    if (
+      form.matches("#productForm") ||
+      form.matches("[data-product-form]")
+    ) {
+      event.preventDefault();
+      handleProductSubmit(form);
+      return;
+    }
+
+    if (
+      form.matches("#settingsForm") ||
+      form.matches("[data-settings-form]")
+    ) {
+      event.preventDefault();
+      handleSettingsSubmit(form);
+    }
+  });
+}
+  
  function bindActions() {
 
     if (Admin.actionsBound) return;
 
     Admin.actionsBound = true;
 
-    document.addEventListener("click", function (event) {
+   document.addEventListener("click", function (event) {
 
-        const button = event.target.closest("[data-admin-action]");
+    const button = event.target.closest("[data-admin-action]");
 
-        if (!button) return;
+    if (!button) return;
 
-        const action = button.dataset.adminAction;
-        const id = button.dataset.id;
+    const action = button.dataset.adminAction;
+    const id = button.dataset.id;
 
-        switch (action) {
+    switch (action) {
 
-            case "refresh":
-                Admin.refresh();
-                break;
+        case "refresh":
+            Admin.refresh();
+            break;
 
-            case "edit-product":
-                editProduct(id);
-                break;
+        case "edit-product":
+            editProduct(id);
+            break;
 
-            case "delete-product":
-                deleteProduct(id);
-                break;
+        case "delete-product":
+            deleteProduct(id);
+            break;
 
-            case "create-backup":
-                createBackup();
-                break;
+        case "create-backup":
+            createBackup();
+            break;
 
-            case "open-product-modal":
+        case "open-product-modal":
 
-                const UI = getUI();
+            const UI = getUI();
 
-                if (
-                    UI &&
-                    UI.modal &&
-                    typeof UI.modal.open === "function"
-                ) {
-                    UI.modal.open(button.dataset.modal || "productModal");
-                }
+            if (
+                UI &&
+                UI.modal &&
+                typeof UI.modal.open === "function"
+            ) {
+                UI.modal.open(button.dataset.modal || "productModal");
+            }
 
-                break;
-        }
+            break;
+    }
 
-    });
+});   // closes addEventListener callback
 
-}
+}      // closes bindActions
 
   async function createBackup() {
     showLoading("Creating backup...");
@@ -1022,32 +1051,31 @@ function showAdminView(viewName) {
     view.style.display = isActive ? "block" : "none";
   });
 }
-  async function loadView(viewName) {
-    Admin.state.currentView = viewName;
-    
-    if (viewName === "dashboard") {
-      await loadDashboard();
-    } else if (viewName === "products") {
-     await loadProducts();
+ async function loadView(viewName) {
+  Admin.state.currentView = viewName;
+  showAdminView(viewName);
 
-updateProductStatistics();
-    } else if (viewName === "orders") {
-      await loadOrders();
-    } else if (
+  if (viewName === "dashboard") {
+    await loadDashboard();
+  } else if (viewName === "products") {
+    await loadProducts();
+    updateProductStatistics();
+  } else if (viewName === "orders") {
+    await loadOrders();
+  } else if (
     viewName === "spa" ||
     viewName === "bookings" ||
     viewName === "spa-bookings"
-) {
+  ) {
     await loadBookings();
-} else if (viewName === "customers") {
-      await loadCustomers();
-    } else if (viewName === "settings") {
-      await loadSettings();
-    } else if (viewName === "logs") {
-      await loadLogs();
-    }
+  } else if (viewName === "customers") {
+    await loadCustomers();
+  } else if (viewName === "settings") {
+    await loadSettings();
+  } else if (viewName === "logs") {
+    await loadLogs();
   }
-
+}
   Admin.refresh = async function () {
     showLoading("Refreshing admin data...");
 
