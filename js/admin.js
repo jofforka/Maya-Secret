@@ -1,5 +1,5 @@
 /**
- * Maya's Secret Business OS v5.0
+ * Maya's Secret Business OS v5.0.2
  * admin.js
  * Complete replacement file
  */
