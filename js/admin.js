@@ -536,15 +536,14 @@ setText(
           "Edit" +
         "</button>" +
 
-        '<button type="button" ' +
-          'class="delete" ' +
-          'data-admin-action="delete-product" ' +
-          'data-id="' +
-escapeAttribute(String(product.id)) +
-'"
-        '">' +
-          "Delete" +
-        "</button>" +
+       '<button type="button" ' +
+  'class="delete" ' +
+  'data-admin-action="delete-product" ' +
+  'data-id="' +
+  escapeAttribute(String(product.id || "")) +
+  '">' +
+  "Delete" +
+'</button>' +
 
       "</div>";
 
