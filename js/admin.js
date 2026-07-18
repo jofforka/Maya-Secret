@@ -942,83 +942,55 @@ function editProduct(productId) {
   });
 }
 
-    Object.keys(product).forEach(function (key) {
-      const field = $('[name="' + escapeSelectorValue(key) + '"]', form);
+ function bindActions() {
 
-      if (!field) return;
-
-      if (field.type === "checkbox") {
-        field.checked = Boolean(product[key]);
-      } else if (
-        product[key] !== undefined &&
-        typeof product[key] !== "object"
-      ) {
-        field.value = product[key];
-      }
-    });
-
-    const UI = getUI();
-
-    if (UI && UI.modal && typeof UI.modal.open === "function") {
-      const modal = form.closest(".modal");
-      UI.modal.open(modal ? modal.id : "productModal");
-    }
-  }
-   function bindActions() {
-
-  if (!Admin.actionsBound) {
+    if (Admin.actionsBound) return;
 
     Admin.actionsBound = true;
 
-    document.addEventListener("click", function(event){
+    document.addEventListener("click", function (event) {
 
-        ...
+        const button = event.target.closest("[data-admin-action]");
 
-    });
+        if (!button) return;
 
-}
+        const action = button.dataset.adminAction;
+        const id = button.dataset.id;
 
-    const button = event.target.closest("[data-admin-action]");
+        switch (action) {
 
-    if (!button) return;
+            case "refresh":
+                Admin.refresh();
+                break;
 
-    const action = button.dataset.adminAction;
-    const id = button.dataset.id;
+            case "edit-product":
+                editProduct(id);
+                break;
 
-    switch (action) {
+            case "delete-product":
+                deleteProduct(id);
+                break;
 
-      case "refresh":
-        Admin.refresh();
-        break;
+            case "create-backup":
+                createBackup();
+                break;
 
-      case "edit-product":
-        editProduct(id);
-        break;
+            case "open-product-modal":
 
-      case "delete-product":
-        deleteProduct(id);
-        break;
+                const UI = getUI();
 
-      case "create-backup":
-        createBackup();
-        break;
+                if (
+                    UI &&
+                    UI.modal &&
+                    typeof UI.modal.open === "function"
+                ) {
+                    UI.modal.open(button.dataset.modal || "productModal");
+                }
 
-      case "open-product-modal":
-
-        const UI = getUI();
-
-        if (
-          UI &&
-          UI.modal &&
-          typeof UI.modal.open === "function"
-        ) {
-          UI.modal.open(button.dataset.modal || "productModal");
+                break;
         }
 
-        break;
-    }
-
-  });
+    });
 
 }
 
