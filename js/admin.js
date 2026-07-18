@@ -374,22 +374,56 @@
   }
 
   function renderProducts() {
-    const body =
-      $("[data-products-body]") ||
-      $("#productsTableBody");
+  const container =
+    $("[data-products-body]") ||
+    $("#productsTableBody") ||
+    $("#adminProductList");
 
-    if (!body) return;
+  if (!container) {
+    console.error(
+      "[Admin] Product display container was not found."
+    );
+    return;
+  }
 
-    body.innerHTML = "";
+  container.innerHTML = "";
 
-    Admin.state.products.forEach(function (product) {
+  if (!Admin.state.products.length) {
+    if (
+      container.tagName === "TBODY" ||
+      container.tagName === "TABLE"
+    ) {
+      container.innerHTML =
+        '<tr><td colspan="5">No products found.</td></tr>';
+    } else {
+      container.innerHTML =
+        '<div class="admin-empty-state">No products found.</div>';
+    }
+
+    return;
+  }
+
+  Admin.state.products.forEach(function (product) {
+    const isTable =
+      container.tagName === "TBODY" ||
+      container.tagName === "TABLE";
+
+    if (isTable) {
       const row = document.createElement("tr");
 
       row.innerHTML =
-        "<td>" + escapeHtml(product.name || "Unnamed product") + "</td>" +
-        "<td>" + escapeHtml(product.category || "—") + "</td>" +
-        "<td>" + escapeHtml(formatMoney(product.price || 0)) + "</td>" +
-        "<td>" + escapeHtml(product.status || "Active") + "</td>" +
+        "<td>" +
+        escapeHtml(product.name || "Unnamed product") +
+        "</td>" +
+        "<td>" +
+        escapeHtml(product.category || "—") +
+        "</td>" +
+        "<td>" +
+        escapeHtml(formatMoney(product.price || 0)) +
+        "</td>" +
+        "<td>" +
+        escapeHtml(product.status || "Active") +
+        "</td>" +
         '<td class="table-actions">' +
         '<button type="button" data-admin-action="edit-product" data-id="' +
         escapeAttribute(product.id || "") +
@@ -399,9 +433,49 @@
         '">Delete</button>' +
         "</td>";
 
-      body.appendChild(row);
-    });
-  }
+      container.appendChild(row);
+      return;
+    }
+
+    const card = document.createElement("article");
+    card.className = "admin-product-card";
+
+    card.innerHTML =
+      '<div class="admin-product-card__image">' +
+      (product.image
+        ? '<img src="' +
+          escapeAttribute(product.image) +
+          '" alt="' +
+          escapeAttribute(product.name || "Product") +
+          '">'
+        : '<div class="admin-product-placeholder">No image</div>') +
+      "</div>" +
+      '<div class="admin-product-card__content">' +
+      "<h3>" +
+      escapeHtml(product.name || "Unnamed product") +
+      "</h3>" +
+      "<p>" +
+      escapeHtml(product.category || "Uncategorized") +
+      "</p>" +
+      "<strong>" +
+      escapeHtml(formatMoney(product.price || 0)) +
+      "</strong>" +
+      '<span class="admin-product-status">' +
+      escapeHtml(product.status || "Active") +
+      "</span>" +
+      '<div class="admin-product-actions">' +
+      '<button type="button" data-admin-action="edit-product" data-id="' +
+      escapeAttribute(product.id || "") +
+      '">Edit</button>' +
+      '<button type="button" data-admin-action="delete-product" data-id="' +
+      escapeAttribute(product.id || "") +
+      '">Delete</button>' +
+      "</div>" +
+      "</div>";
+
+    container.appendChild(card);
+  });
+}
 
   function renderOrders() {
     const body =
