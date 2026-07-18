@@ -8,7 +8,7 @@
   "use strict";
 
   const Admin = {
-    version: "5.0.0",
+    version: "5.0.2",
     initialized: false,
     state: {
       products: [],
@@ -205,25 +205,47 @@
   }
 
   async function loadProducts() {
-    try {
-      const response = await callCloud("getProducts");
+  try {
+    const response = await callCloud("getProducts");
 
-console.log("Raw getProducts() response:", response);
+    console.log("Raw getProducts() response:", response);
 
-Admin.state.products = getResponseArray(response, "products");
+    Admin.state.products = getResponseArray(response, "products").map(function (product, index) {
 
-console.log("Products array:", Admin.state.products);
+      if (product.id && String(product.id).trim() !== "") {
+        return product;
+      }
 
-renderProducts();
+      const generatedId =
+        normalize(product.name)
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") ||
+        ("product-" + index);
 
-console.log("Products Loaded:", Admin.state.products.length);
-      return Admin.state.products;
-    } catch (error) {
-      handleError(error, "loadProducts");
-      return [];
-    }
+      return Object.assign({}, product, {
+        id: generatedId
+      });
+
+    });
+
+    console.log("Products array:", Admin.state.products);
+
+    renderProducts();
+
+    updateProductStatistics();
+
+    console.log("Products Loaded:", Admin.state.products.length);
+
+    return Admin.state.products;
+
+  } catch (error) {
+
+    handleError(error, "loadProducts");
+
+    return [];
+
   }
-
+}
   async function loadOrders() {
     try {
       const response = await callCloud("getOrders");
@@ -301,22 +323,24 @@ console.log("Products Loaded:", Admin.state.products.length);
       formatMoney(metrics.commission || 0)
     );
     setText(
-      "[data-dashboard-orders]",
-      Admin.state.orders.length || metrics.totalOrders || 0
-    );
-    setText(
-      "[data-dashboard-products]",
-      Admin.state.products.length || metrics.totalProducts || 0
-    );
-    setText(
-      "[data-dashboard-customers]",
-      Admin.state.customers.length || metrics.totalCustomers || 0
-    );
-    setText(
-      "[data-dashboard-bookings]",
-      Admin.state.bookings.length || metrics.totalBookings || 0
-    );
+  "[data-dashboard-orders]",
+  safeArray(Admin.state.orders).length || metrics.totalOrders || 0
+);
 
+setText(
+  "[data-dashboard-products]",
+  safeArray(Admin.state.products).length || metrics.totalProducts || 0
+);
+
+setText(
+  "[data-dashboard-customers]",
+  safeArray(Admin.state.customers).length || metrics.totalCustomers || 0
+);
+
+setText(
+  "[data-dashboard-bookings]",
+  safeArray(Admin.state.bookings).length || metrics.totalBookings || 0
+);
     renderRecentOrders(data.recentOrders || []);
     renderRecentBookings(data.recentBookings || []);
   }
@@ -407,47 +431,51 @@ console.log("Products Loaded:", Admin.state.products.length);
     return;
   }
 
-  products.forEach(function (product) {
-    const item = document.createElement("article");
-    item.className = "admin-item";
+  products.forEach(function (product, index) {
 
-    const productImage =
-      product.image ||
-      product.imageUrl ||
-      product.photo ||
-      (
-        Array.isArray(product.images) &&
-        product.images.length
-          ? product.images[0]
-          : ""
-      );
+  if (!product.id || String(product.id).trim() === "") {
+    product.id =
+      normalize(product.name)
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") ||
+      ("product-" + index);
+  }
 
-    const productName =
-      product.name ||
-      product.title ||
-      "Unnamed product";
+  const item = document.createElement("article");
+  item.className = "admin-item";
 
-    const productCategory =
-      product.category ||
-      "Uncategorized";
+  const productImage =
+    product.image ||
+    product.imageUrl ||
+    product.photo ||
+    (Array.isArray(product.images) && product.images.length
+      ? product.images[0]
+      : "");
 
-    const productStatus =
-      product.status ||
-      (
-        product.available === false
-          ? "Sold out"
-          : "Active"
-      );
+  const productName =
+    product.name ||
+    product.title ||
+    "Unnamed product";
 
-    const productDescription =
-      product.description ||
-      product.shortDescription ||
-      "";
+  const productCategory =
+    product.category ||
+    "Uncategorized";
 
-    const statusClass =
-      normalize(productStatus).includes("sold")
-        ? "status-soldout"
-        : "status-live";
+  const productStatus =
+    product.status ||
+    (product.available === false
+      ? "Sold out"
+      : "Active");
+
+  const productDescription =
+    product.description ||
+    product.shortDescription ||
+    "";
+
+  const statusClass =
+    normalize(productStatus).includes("sold")
+      ? "status-soldout"
+      : "status-live";
 
     item.innerHTML =
       '<div class="cart-thumb product-photo">' +
@@ -512,7 +540,8 @@ console.log("Products Loaded:", Admin.state.products.length);
           'class="delete" ' +
           'data-admin-action="delete-product" ' +
           'data-id="' +
-          escapeAttribute(product.id || "") +
+escapeAttribute(String(product.id)) +
+'"
         '">' +
           "Delete" +
         "</button>" +
@@ -529,32 +558,41 @@ console.log("Products Loaded:", Admin.state.products.length);
   console.log("Products rendered:", products.length);
 }
   function updateProductStatistics() {
+
   const products = safeArray(Admin.state.products);
 
   const faceCareCount = products.filter(function (product) {
-    return normalize(product.category) === "face care";
+    return normalize(product.category).includes("face");
   }).length;
 
   const bodyCareCount = products.filter(function (product) {
-    return normalize(product.category) === "body care";
+    return normalize(product.category).includes("body");
   }).length;
 
   const giftSetCount = products.filter(function (product) {
-    return normalize(product.category) === "gift sets";
+    const category = normalize(product.category);
+    return category.includes("gift");
   }).length;
 
   const featuredCount = products.filter(function (product) {
     return (
       product.featured === true ||
-      normalize(product.featured) === "true"
+      normalize(product.featured) === "true" ||
+      product.featured === 1
     );
   }).length;
 
   const soldOutCount = products.filter(function (product) {
+
+    const status = normalize(product.status);
+
     return (
-      normalize(product.status) === "soldout" ||
-      normalize(product.status) === "sold out"
+      status === "sold out" ||
+      status === "soldout" ||
+      status === "out of stock" ||
+      status === "inactive"
     );
+
   }).length;
 
   setText("#statTotal", products.length);
@@ -572,6 +610,7 @@ console.log("Products Loaded:", Admin.state.products.length);
   );
 
   setText("[data-dashboard-products]", products.length);
+
 }
   function renderOrders() {
     const body =
@@ -730,11 +769,28 @@ console.log("Products Loaded:", Admin.state.products.length);
   }
 
   async function handleProductSubmit(form) {
-    const product = serializeForm(form);
 
-    if (product.price !== undefined) {
-      product.price = toNumber(product.price);
-    }
+  const product = serializeForm(form);
+
+  product.id = product.id || product.productId || "";
+
+  product.featured =
+    product.featured === true ||
+    product.featured === "true" ||
+    product.featured === "on";
+
+  if (product.price !== undefined) {
+    product.price = toNumber(product.price);
+  }
+
+  if (product.benefits) {
+    product.benefits = String(product.benefits)
+      .split(/\r?\n/)
+      .map(function(item){
+        return item.trim();
+      })
+      .filter(Boolean);
+  }
 
     showLoading("Saving product...");
 
@@ -781,6 +837,11 @@ console.log("Products Loaded:", Admin.state.products.length);
   }
 
   async function deleteProduct(productId) {
+
+  if (!productId) {
+    toast("Invalid product ID.", "error");
+    return;
+  }
     const UI = getUI();
     let confirmed = true;
 
@@ -832,16 +893,29 @@ function editProduct(productId) {
   setValue("productPrice", product.price);
   setValue("productSize", product.size);
   setValue("productBadge", product.badge);
-  setValue("productDesc", product.desc || product.description);
+  setValue(
+  "productDesc",
+  product.description ||
+  product.desc ||
+  product.shortDescription ||
+  ""
+);
   setValue("productTone", product.tone || "plum");
   setValue("productStatus", product.status || "available");
-  setValue("productImage", product.image);
+ setValue(
+  "productImage",
+  product.image ||
+  product.imageUrl ||
+  ""
+);
   setValue("gallery1", product.gallery?.[0] || "");
   setValue("gallery2", product.gallery?.[1] || "");
   setValue("gallery3", product.gallery?.[2] || "");
   setValue(
     "productBenefits",
-    safeArray(product.benefits).join("\n")
+    Array.isArray(product.benefits)
+  ? product.benefits.join("\n")
+  : (product.benefits || "")
   );
   setValue("productUse", product.use);
 
@@ -868,8 +942,6 @@ function editProduct(productId) {
     product: product
   });
 }
-      return;
-    }
 
     Object.keys(product).forEach(function (key) {
       const field = $('[name="' + escapeSelectorValue(key) + '"]', form);
@@ -893,42 +965,63 @@ function editProduct(productId) {
       UI.modal.open(modal ? modal.id : "productModal");
     }
   }
-    document.addEventListener("click", function (event) {
-      const button =
-        event.target && event.target.closest
-          ? event.target.closest("[data-admin-action]")
-          : null;
+   function bindActions() {
 
-      if (!button) return;
+  if (!Admin.actionsBound) {
 
-      const action = button.dataset.adminAction;
-      const id = button.dataset.id;
+    Admin.actionsBound = true;
 
-      if (action === "refresh") {
+    document.addEventListener("click", function(event){
+
+        ...
+
+    });
+
+}
+
+    const button = event.target.closest("[data-admin-action]");
+
+    if (!button) return;
+
+    const action = button.dataset.adminAction;
+    const id = button.dataset.id;
+
+    switch (action) {
+
+      case "refresh":
         Admin.refresh();
-      }
+        break;
 
-      if (action === "edit-product") {
+      case "edit-product":
         editProduct(id);
-      }
+        break;
 
-      if (action === "delete-product") {
+      case "delete-product":
         deleteProduct(id);
-      }
+        break;
 
-      if (action === "create-backup") {
+      case "create-backup":
         createBackup();
-      }
+        break;
 
-      if (action === "open-product-modal") {
+      case "open-product-modal":
+
         const UI = getUI();
 
-        if (UI && UI.modal && typeof UI.modal.open === "function") {
+        if (
+          UI &&
+          UI.modal &&
+          typeof UI.modal.open === "function"
+        ) {
           UI.modal.open(button.dataset.modal || "productModal");
         }
-      }
-    });
-  }
+
+        break;
+    }
+
+  });
+
+}
 
   async function createBackup() {
     showLoading("Creating backup...");
@@ -955,7 +1048,7 @@ function showAdminView(viewName) {
 
     view.hidden = !isActive;
     view.classList.toggle("active", isActive);
-    view.style.display = isActive ? "" : "none";
+    view.style.display = isActive ? "block" : "none";
   });
 }
   async function loadView(viewName) {
@@ -964,7 +1057,9 @@ function showAdminView(viewName) {
     if (viewName === "dashboard") {
       await loadDashboard();
     } else if (viewName === "products") {
-      await loadProducts();
+     await loadProducts();
+
+updateProductStatistics();
     } else if (viewName === "orders") {
       await loadOrders();
     } else if (
