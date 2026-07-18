@@ -899,10 +899,25 @@ if(resetBtn){
       hideLoading();
     }
   }
+function showAdminView(viewName) {
+  const views = document.querySelectorAll(".admin-view");
 
+  views.forEach(function (view) {
+    const sectionName =
+      view.dataset.adminSection ||
+      view.dataset.view ||
+      view.id.replace(/^admin-/, "").replace(/View$/, "");
+
+    const isActive = sectionName === viewName;
+
+    view.hidden = !isActive;
+    view.classList.toggle("active", isActive);
+    view.style.display = isActive ? "" : "none";
+  });
+}
   async function loadView(viewName) {
     Admin.state.currentView = viewName;
-
+    
     if (viewName === "dashboard") {
       await loadDashboard();
     } else if (viewName === "products") {
