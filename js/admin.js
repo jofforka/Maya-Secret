@@ -207,8 +207,16 @@
   async function loadProducts() {
     try {
       const response = await callCloud("getProducts");
-      Admin.state.products = getResponseArray(response, "products");
-      renderProducts();
+
+console.log("Raw getProducts() response:", response);
+
+Admin.state.products = getResponseArray(response, "products");
+
+console.log("Products array:", Admin.state.products);
+
+renderProducts();
+
+console.log("Products Loaded:", Admin.state.products.length);
       return Admin.state.products;
     } catch (error) {
       handleError(error, "loadProducts");
@@ -294,19 +302,19 @@
     );
     setText(
       "[data-dashboard-orders]",
-      metrics.totalOrders || 0
+      Admin.state.orders.length || metrics.totalOrders || 0
     );
     setText(
       "[data-dashboard-products]",
-      metrics.totalProducts || Admin.state.products.length
+      Admin.state.products.length || metrics.totalProducts || 0
     );
     setText(
       "[data-dashboard-customers]",
-      metrics.totalCustomers || Admin.state.customers.length
+      Admin.state.customers.length || metrics.totalCustomers || 0
     );
     setText(
       "[data-dashboard-bookings]",
-      metrics.totalBookings || Admin.state.bookings.length
+      Admin.state.bookings.length || metrics.totalBookings || 0
     );
 
     renderRecentOrders(data.recentOrders || []);
@@ -778,6 +786,66 @@
   }
 
   function bindActions() {
+    const refreshBtn = document.getElementById("refreshCloud");
+
+if (refreshBtn) {
+    refreshBtn.addEventListener("click", function () {
+        Admin.refresh();
+    });
+  const exportBtn = document.getElementById("exportProducts");
+
+if (exportBtn) {
+    exportBtn.addEventListener("click", function () {
+        createBackup();
+    });
+}
+  const importBtn = document.getElementById("importProducts");
+
+if (importBtn) {
+
+    importBtn.addEventListener("click", async function(){
+
+        try{
+
+            await callCloud("importBackup");
+
+            toast("Backup imported.","success");
+
+            Admin.refresh();
+
+        }catch(e){
+
+            handleError(e,"importBackup");
+
+        }
+
+    });
+
+}
+  const resetBtn=document.getElementById("resetProducts");
+
+if(resetBtn){
+
+    resetBtn.addEventListener("click",async function(){
+
+        try{
+
+            await callCloud("resetProducts");
+
+            toast("Cloud reset successfully.","success");
+
+            Admin.refresh();
+
+        }catch(e){
+
+            handleError(e,"resetProducts");
+
+        }
+
+    });
+
+}
+}
     document.addEventListener("click", function (event) {
       const button =
         event.target && event.target.closest
@@ -838,11 +906,12 @@
     } else if (viewName === "orders") {
       await loadOrders();
     } else if (
-      viewName === "spa" ||
-      viewName === "bookings"
-    ) {
-      await loadBookings();
-    } else if (viewName === "customers") {
+    viewName === "spa" ||
+    viewName === "bookings" ||
+    viewName === "spa-bookings"
+) {
+    await loadBookings();
+} else if (viewName === "customers") {
       await loadCustomers();
     } else if (viewName === "settings") {
       await loadSettings();
