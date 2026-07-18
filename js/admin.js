@@ -383,110 +383,208 @@ console.log("Products Loaded:", Admin.state.products.length);
 
   function renderProducts() {
   const container =
-    $("[data-products-body]") ||
-    $("#productsTableBody") ||
-    $("#adminProductList");
-    console.log("Container:", container);
-console.log("Container ID:", container?.id);
-console.log("Container Tag:", container?.tagName);
+    document.querySelector("[data-products-body]") ||
+    document.getElementById("productsTableBody") ||
+    document.getElementById("adminProductList");
 
   if (!container) {
-    console.error(
-      "[Admin] Product display container was not found."
-    );
+    console.error("[Admin] Product display container was not found.");
     return;
   }
 
   container.innerHTML = "";
 
-  if (!Admin.state.products.length) {
-    if (
-      container.tagName === "TBODY" ||
-      container.tagName === "TABLE"
-    ) {
-      container.innerHTML =
-        '<tr><td colspan="5">No products found.</td></tr>';
-    } else {
-      container.innerHTML =
-        '<div class="admin-empty-state">No products found.</div>';
-    }
+  const products = safeArray(Admin.state.products);
 
+  if (!products.length) {
+    container.innerHTML =
+      '<div class="admin-empty-state">' +
+        "<h3>No products found</h3>" +
+        "<p>Add a product or refresh the cloud data.</p>" +
+      "</div>";
+
+    updateProductStatistics();
     return;
   }
 
-  Admin.state.products.forEach(function (product) {
-    const isTable =
-      container.tagName === "TBODY" ||
-      container.tagName === "TABLE";
+  products.forEach(function (product) {
+    const item = document.createElement("article");
+    item.className = "admin-item";
 
-    if (isTable) {
-      const row = document.createElement("tr");
+    const productImage =
+      product.image ||
+      product.imageUrl ||
+      product.photo ||
+      (
+        Array.isArray(product.images) &&
+        product.images.length
+          ? product.images[0]
+          : ""
+      );
 
-      row.innerHTML =
-        "<td>" +
-        escapeHtml(product.name || "Unnamed product") +
-        "</td>" +
-        "<td>" +
-        escapeHtml(product.category || "—") +
-        "</td>" +
-        "<td>" +
-        escapeHtml(formatMoney(product.price || 0)) +
-        "</td>" +
-        "<td>" +
-        escapeHtml(product.status || "Active") +
-        "</td>" +
-        '<td class="table-actions">' +
-        '<button type="button" data-admin-action="edit-product" data-id="' +
-        escapeAttribute(product.id || "") +
-        '">Edit</button>' +
-        '<button type="button" data-admin-action="delete-product" data-id="' +
-        escapeAttribute(product.id || "") +
-        '">Delete</button>' +
-        "</td>";
+    const productName =
+      product.name ||
+      product.title ||
+      "Unnamed product";
 
-      container.appendChild(row);
-      return;
-    }
+    const productCategory =
+      product.category ||
+      "Uncategorized";
 
-    const card = document.createElement("article");
-    card.className = "admin-product-card";
+    const productStatus =
+      product.status ||
+      (
+        product.available === false
+          ? "Sold out"
+          : "Active"
+      );
 
-    card.innerHTML =
-      '<div class="admin-product-card__image">' +
-      (product.image
-        ? '<img src="' +
-          escapeAttribute(product.image) +
-          '" alt="' +
-          escapeAttribute(product.name || "Product") +
-          '">'
-        : '<div class="admin-product-placeholder">No image</div>') +
+    const productDescription =
+      product.description ||
+      product.shortDescription ||
+      "";
+
+    const statusClass =
+      normalize(productStatus).includes("sold")
+        ? "status-soldout"
+        : "status-live";
+
+    item.innerHTML =
+      '<div class="cart-thumb product-photo">' +
+        (
+          productImage
+            ? '<img src="' +
+              escapeAttribute(productImage) +
+              '" alt="' +
+              escapeAttribute(productName) +
+              '" loading="lazy">'
+            : '<div class="admin-product-placeholder">MS</div>'
+        ) +
       "</div>" +
-      '<div class="admin-product-card__content">' +
-      "<h3>" +
-      escapeHtml(product.name || "Unnamed product") +
-      "</h3>" +
-      "<p>" +
-      escapeHtml(product.category || "Uncategorized") +
-      "</p>" +
-      "<strong>" +
-      escapeHtml(formatMoney(product.price || 0)) +
-      "</strong>" +
-      '<span class="admin-product-status">' +
-      escapeHtml(product.status || "Active") +
-      "</span>" +
-      '<div class="admin-product-actions">' +
-      '<button type="button" data-admin-action="edit-product" data-id="' +
-      escapeAttribute(product.id || "") +
-      '">Edit</button>' +
-      '<button type="button" data-admin-action="delete-product" data-id="' +
-      escapeAttribute(product.id || "") +
-      '">Delete</button>' +
+
+      '<div class="admin-item-content">' +
+
+        '<div class="admin-item-meta">' +
+          "<span>" +
+            escapeHtml(productCategory) +
+          "</span>" +
+          '<span class="' +
+            statusClass +
+          '">' +
+            escapeHtml(productStatus) +
+          "</span>" +
+          (
+            product.featured
+              ? "<span>Featured</span>"
+              : ""
+          ) +
+        "</div>" +
+
+        "<h3>" +
+          escapeHtml(productName) +
+        "</h3>" +
+
+        "<p>" +
+          escapeHtml(formatMoney(product.price || 0)) +
+        "</p>" +
+
+        (
+          productDescription
+            ? "<small>" +
+              escapeHtml(productDescription) +
+              "</small>"
+            : ""
+        ) +
+
       "</div>" +
+
+      '<div class="admin-item-actions">' +
+
+        '<button type="button" ' +
+          'data-admin-action="edit-product" ' +
+          'data-id="' +
+          escapeAttribute(product.id || "") +
+        '">' +
+          "Edit" +
+        "</button>" +
+
+        '<button type="button" ' +
+          'class="delete" ' +
+          'data-admin-action="delete-product" ' +
+          'data-id="' +
+          escapeAttribute(product.id || "") +
+        '">' +
+          "Delete" +
+        "</button>" +
+
       "</div>";
 
-    container.appendChild(card);
-    console.log("Rendered:", product.name);
+    container.appendChild(item);
+
+    console.log("Rendered:", productName);
   });
+
+  updateProductStatistics();
+
+  console.log("Products rendered:", products.length);
+}
+  function updateProductStatistics() {
+  const products = safeArray(Admin.state.products);
+
+  const faceCareCount = products.filter(function (product) {
+    return normalize(product.category).includes("face");
+  }).length;
+
+  const bodyCareCount = products.filter(function (product) {
+    return normalize(product.category).includes("body");
+  }).length;
+
+  const giftSetCount = products.filter(function (product) {
+    const category = normalize(product.category);
+
+    return (
+      category.includes("gift") ||
+      category.includes("set")
+    );
+  }).length;
+
+  const featuredCount = products.filter(function (product) {
+    return (
+      product.featured === true ||
+      normalize(product.featured) === "true" ||
+      normalize(product.badge).includes("featured")
+    );
+  }).length;
+
+  setText(
+    "[data-products-total]",
+    products.length
+  );
+
+  setText(
+    "[data-products-face-care]",
+    faceCareCount
+  );
+
+  setText(
+    "[data-products-body-care]",
+    bodyCareCount
+  );
+
+  setText(
+    "[data-products-gift-sets]",
+    giftSetCount
+  );
+
+  setText(
+    "[data-products-featured]",
+    featuredCount
+  );
+
+  setText(
+    "[data-dashboard-products]",
+    products.length
+  );
 }
 
   function renderOrders() {
