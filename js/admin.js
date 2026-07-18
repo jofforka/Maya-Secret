@@ -532,61 +532,47 @@ console.log("Products Loaded:", Admin.state.products.length);
   const products = safeArray(Admin.state.products);
 
   const faceCareCount = products.filter(function (product) {
-    return normalize(product.category).includes("face");
+    return normalize(product.category) === "face care";
   }).length;
 
   const bodyCareCount = products.filter(function (product) {
-    return normalize(product.category).includes("body");
+    return normalize(product.category) === "body care";
   }).length;
 
   const giftSetCount = products.filter(function (product) {
-    const category = normalize(product.category);
-
-    return (
-      category.includes("gift") ||
-      category.includes("set")
-    );
+    return normalize(product.category) === "gift sets";
   }).length;
 
   const featuredCount = products.filter(function (product) {
     return (
       product.featured === true ||
-      normalize(product.featured) === "true" ||
-      normalize(product.badge).includes("featured")
+      normalize(product.featured) === "true"
     );
   }).length;
 
-  setText(
-    "[data-products-total]",
-    products.length
-  );
+  const soldOutCount = products.filter(function (product) {
+    return (
+      normalize(product.status) === "soldout" ||
+      normalize(product.status) === "sold out"
+    );
+  }).length;
+
+  setText("#statTotal", products.length);
+  setText("#statFace", faceCareCount);
+  setText("#statBody", bodyCareCount);
+  setText("#statGifts", giftSetCount);
+  setText("#statFeatured", featuredCount);
+  setText("#statSoldOut", soldOutCount);
 
   setText(
-    "[data-products-face-care]",
-    faceCareCount
+    "#productCountText",
+    products.length +
+      " product" +
+      (products.length === 1 ? "" : "s")
   );
 
-  setText(
-    "[data-products-body-care]",
-    bodyCareCount
-  );
-
-  setText(
-    "[data-products-gift-sets]",
-    giftSetCount
-  );
-
-  setText(
-    "[data-products-featured]",
-    featuredCount
-  );
-
-  setText(
-    "[data-dashboard-products]",
-    products.length
-  );
+  setText("[data-dashboard-products]", products.length);
 }
-
   function renderOrders() {
     const body =
       $("[data-orders-body]") ||
@@ -819,24 +805,69 @@ console.log("Products Loaded:", Admin.state.products.length);
     }
   }
 
-  function editProduct(productId) {
-    const product = Admin.state.products.find(function (item) {
-      return String(item.id) === String(productId);
-    });
+function editProduct(productId) {
+  const product = Admin.state.products.find(function (item) {
+    return String(item.id) === String(productId);
+  });
 
-    if (!product) {
-      toast("Product not found.", "error");
-      return;
+  if (!product) {
+    toast("Product not found.", "error");
+    return;
+  }
+
+  function setValue(id, value) {
+    const field = document.getElementById(id);
+
+    if (field) {
+      field.value =
+        value === undefined || value === null
+          ? ""
+          : value;
     }
+  }
 
-    const form =
-      $("#productForm") ||
-      $("[data-product-form]");
+  setValue("productId", product.id);
+  setValue("productName", product.name);
+  setValue("productCategory", product.category);
+  setValue("productPrice", product.price);
+  setValue("productSize", product.size);
+  setValue("productBadge", product.badge);
+  setValue("productDesc", product.desc || product.description);
+  setValue("productTone", product.tone || "plum");
+  setValue("productStatus", product.status || "available");
+  setValue("productImage", product.image);
+  setValue("gallery1", product.gallery?.[0] || "");
+  setValue("gallery2", product.gallery?.[1] || "");
+  setValue("gallery3", product.gallery?.[2] || "");
+  setValue(
+    "productBenefits",
+    safeArray(product.benefits).join("\n")
+  );
+  setValue("productUse", product.use);
 
-    if (!form) {
-      emit("admin:editProduct", {
-        product: product
-      });
+  const featuredField =
+    document.getElementById("productFeatured");
+
+  if (featuredField) {
+    featuredField.checked = Boolean(product.featured);
+  }
+
+  setText("#formMode", "EDITING PRODUCT");
+  setText("#formTitle", "Edit product");
+
+  const editor = document.querySelector(".admin-editor");
+
+  if (editor) {
+    editor.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  emit("admin:editProduct", {
+    product: product
+  });
+}
       return;
     }
 
@@ -888,66 +919,79 @@ console.log("Products Loaded:", Admin.state.products.length);
   }
 
   function bindActions() {
-    const refreshBtn = document.getElementById("refreshCloud");
+  document.addEventListener("click", function (event) {
+    const editButton = event.target.closest(
+      '[data-edit], [data-admin-action="edit-product"]'
+    );
 
-if (refreshBtn) {
-    refreshBtn.addEventListener("click", function () {
-        Admin.refresh();
+    if (editButton) {
+      event.preventDefault();
+
+      const productId =
+        editButton.dataset.edit ||
+        editButton.dataset.id;
+
+      editProduct(productId);
+      return;
+    }
+
+    const deleteButton = event.target.closest(
+      '[data-delete], [data-admin-action="delete-product"]'
+    );
+
+    if (deleteButton) {
+      event.preventDefault();
+
+      const productId =
+        deleteButton.dataset.delete ||
+        deleteButton.dataset.id;
+
+      deleteProduct(productId);
+      return;
+    }
+
+    const actionButton =
+      event.target.closest("[data-admin-action]");
+
+    if (!actionButton) return;
+
+    const action = actionButton.dataset.adminAction;
+
+    if (action === "refresh") {
+      Admin.refresh();
+      return;
+    }
+
+    if (action === "create-backup") {
+      createBackup();
+      return;
+    }
+
+    if (action === "open-product-modal") {
+      const UI = getUI();
+
+      if (
+        UI &&
+        UI.modal &&
+        typeof UI.modal.open === "function"
+      ) {
+        UI.modal.open(
+          actionButton.dataset.modal || "productModal"
+        );
+      }
+    }
+  });
+
+  const refreshButton =
+    document.getElementById("refreshCloud");
+
+  if (refreshButton) {
+    refreshButton.addEventListener("click", function () {
+      Admin.refresh();
     });
-  const exportBtn = document.getElementById("exportProducts");
-
-if (exportBtn) {
-    exportBtn.addEventListener("click", function () {
-        createBackup();
-    });
+  }
 }
-  const importBtn = document.getElementById("importProducts");
 
-if (importBtn) {
-
-    importBtn.addEventListener("click", async function(){
-
-        try{
-
-            await callCloud("importBackup");
-
-            toast("Backup imported.","success");
-
-            Admin.refresh();
-
-        }catch(e){
-
-            handleError(e,"importBackup");
-
-        }
-
-    });
-
-}
-  const resetBtn=document.getElementById("resetProducts");
-
-if(resetBtn){
-
-    resetBtn.addEventListener("click",async function(){
-
-        try{
-
-            await callCloud("resetProducts");
-
-            toast("Cloud reset successfully.","success");
-
-            Admin.refresh();
-
-        }catch(e){
-
-            handleError(e,"resetProducts");
-
-        }
-
-    });
-
-}
-}
     document.addEventListener("click", function (event) {
       const button =
         event.target && event.target.closest
