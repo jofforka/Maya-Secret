@@ -178,7 +178,7 @@
     dateInput.min = now.toISOString().split('T')[0];
   }
 
-  form?.addEventListener('submit', event => {
+  form?.addEventListener('submit', async event => {
     event.preventDefault();
 
     if (!selected.size) {
@@ -216,6 +216,39 @@
       'Please confirm availability. Thank you.'
     ].join('\n');
 
+    const booking = {
+    customerName: $('#spaName').value.trim(),
+    phone: $('#spaPhone').value.trim(),
+    bookingDate: rawDate,
+    bookingTime: $('#spaTime').value,
+    notes: $('#spaNotes').value.trim(),
+
+    services,
+
+    total: totalPrice,
+
+    duration: totalDuration,
+
+    status: "Pending",
+
+    createdAt: new Date().toISOString()
+};
+
+try {
+
+    if (window.BusinessCloud) {
+
+        await BusinessCloud.init();
+
+        await BusinessCloud.saveBooking(booking);
+
+    }
+
+} catch (err) {
+
+    console.error("Booking save failed", err);
+
+}
     window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
   });
 
