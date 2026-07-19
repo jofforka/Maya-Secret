@@ -663,12 +663,17 @@ updateSidebarCounters();
   });
 
 }
-  function renderOrders() {
-    const body =
-      $("[data-orders-body]") ||
-      $("#ordersTableBody");
+ function renderOrders() {
+  const body =
+    $("[data-order-list]") ||
+    $("[data-orders-body]") ||
+    $("#ordersTableBody") ||
+    $("#adminOrderList");
 
-    if (!body) return;
+  if (!body) {
+    console.error("[Admin] Orders table was not found.");
+    return;
+  }
 
     body.innerHTML = "";
 
@@ -693,12 +698,16 @@ updateSidebarCounters();
     });
   }
 
-  function renderBookings() {
-    const body =
-      $("[data-bookings-body]") ||
-      $("#bookingsTableBody");
+ function renderBookings() {
+  const body =
+    $("[data-spa-booking-list]") ||
+    $("[data-bookings-body]") ||
+    $("#bookingsTableBody");
 
-    if (!body) return;
+  if (!body) {
+    console.error("[Admin] Spa booking table was not found.");
+    return;
+  }
 
     body.innerHTML = "";
 
@@ -721,15 +730,30 @@ updateSidebarCounters();
         "<td>" + escapeHtml(booking.status || "Pending") + "</td>";
 
       body.appendChild(row);
+      
     });
+   
+      setText(
+  "[data-spa-bookings-count]",
+  Admin.state.bookings.length +
+    " booking request" +
+    (Admin.state.bookings.length === 1 ? "" : "s")
+);
+
+updateSidebarCounters();
+  
   }
 
   function renderCustomers() {
-    const body =
-      $("[data-customers-body]") ||
-      $("#customersTableBody");
+  const body =
+    $("[data-customer-list]") ||
+    $("[data-customers-body]") ||
+    $("#customersTableBody");
 
-    if (!body) return;
+  if (!body) {
+    console.error("[Admin] Customer table was not found.");
+    return;
+  }
 
     body.innerHTML = "";
 
@@ -743,7 +767,18 @@ updateSidebarCounters();
         "<td>" + escapeHtml(formatDate(customer.createdAt)) + "</td>";
 
       body.appendChild(row);
-    });
+
+        });
+      
+      setText(
+  "[data-customers-count]",
+  Admin.state.customers.length +
+    " customer" +
+    (Admin.state.customers.length === 1 ? "" : "s")
+);
+
+updateSidebarCounters();
+   
   }
 
   function renderSettings() {
