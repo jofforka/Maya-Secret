@@ -1,0 +1,12 @@
+MAYA'S SECRET v6.3 — STABLE STOREFRONT FIX
+
+Fixes included:
+- Replaced the duplicated/disorganised shop page with one clean structure.
+- Removed references to missing js/cloud/cloud.js and js/cart.js files.
+- Added a bundled catalogue fallback from data/products.json.
+- Products now render even when Google Apps Script/cloud sync is unavailable.
+- Kept cloud catalogue support: cloud products replace bundled products when available.
+- Restored responsive product grid, filters, search, sorting, product modal and cart.
+- Removed duplicate footers, repeated catalogue loaders and competing inline scripts.
+
+Deploy the CONTENTS of this folder to the site root.
