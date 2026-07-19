@@ -242,11 +242,23 @@ try {
 
         await BusinessCloud.saveBooking(booking);
 
+        if (typeof BusinessCloud.saveCustomer === "function") {
+            await BusinessCloud.saveCustomer({
+                name: booking.customerName,
+                phone: booking.phone,
+                createdAt: booking.createdAt
+            });
+        }
+
     }
 
 } catch (err) {
 
-    console.error("Booking save failed", err);
+    console.error(err);
+
+    alert(
+        "Your booking could not be saved online. You can still send your WhatsApp message."
+    );
 
 }
     window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
