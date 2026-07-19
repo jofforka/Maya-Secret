@@ -381,6 +381,15 @@
       method: "GET"
     });
   };
+  
+  Cloud.saveCustomer = function (customer) {
+  return request("saveCustomer", {
+    method: "POST",
+    payload: {
+      customer: customer
+    }
+  });
+};
 
   Cloud.getSettings = function () {
     return request("getSettings", {
