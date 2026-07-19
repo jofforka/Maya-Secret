@@ -239,3 +239,17 @@ body[data-page="shop"]{
     border-radius:16px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
+
+/* Maya's Secret storefront v5.1 */
+.shop-hero-v2{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);min-height:680px;background:linear-gradient(135deg,#fbf7f1 0%,#f7edf1 100%)}
+.shop-hero-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(64px,9vw,130px) clamp(24px,7vw,110px)}
+.shop-hero-copy h1{max-width:700px;margin:.25em 0;font-family:Lora,serif;font-size:clamp(3rem,6vw,6.5rem);line-height:.96;color:#341126}
+.shop-hero-copy>p:not(.eyebrow){max-width:610px;font-size:1.08rem;line-height:1.75;color:#665862}
+.shop-hero-copy .actions{margin-top:28px}.shop-hero-image{min-height:560px;overflow:hidden}.shop-hero-image img{width:100%;height:100%;object-fit:cover}
+.shop-trust{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:30px;color:#5b173e;font-size:.88rem;font-weight:600}
+.shop-intro{max-width:850px;text-align:center}.shop-intro>p:last-child{max-width:650px;margin-inline:auto;color:#766b72;line-height:1.8}
+.shop-controls{display:grid;grid-template-columns:minmax(240px,1.15fr) 2fr auto;gap:18px;align-items:center;margin:30px 0 40px;padding:18px;border:1px solid rgba(52,17,38,.12);border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(52,17,38,.06)}
+.shop-search input,.shop-sort select{width:100%;min-height:48px;border:1px solid rgba(52,17,38,.16);border-radius:12px;background:#fbf7f1;padding:0 15px;font:inherit;color:#241d22}.shop-search input:focus,.shop-sort select:focus{outline:3px solid rgba(199,163,106,.25);border-color:#c7a36a}
+.filter-row{display:flex;gap:8px;overflow:auto;padding-bottom:2px}.filter-row button{flex:none;min-height:42px;padding:0 15px;border:1px solid rgba(52,17,38,.14);border-radius:999px;background:#fff;color:#5b173e;font:inherit;font-weight:700;cursor:pointer}.filter-row button.active,.filter-row button:hover{background:#5b173e;color:#fff;border-color:#5b173e}.shop-sort{display:flex;align-items:center;gap:10px;color:#766b72;font-size:.86rem}.catalogue-note{color:#766b72;font-size:.9rem}.shop-assurance{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;padding:0;background:rgba(52,17,38,.12);border:1px solid rgba(52,17,38,.12)}.shop-assurance article{padding:42px;background:#fbf7f1}.shop-assurance b{color:#c7a36a}.shop-assurance h3{margin:18px 0 8px;color:#341126}.shop-assurance p{margin:0;color:#766b72;line-height:1.7}.no-results{text-align:center;padding:60px 20px}
+@media(max-width:1000px){.shop-hero-v2{grid-template-columns:1fr;min-height:0}.shop-hero-image{min-height:430px;order:-1}.shop-controls{grid-template-columns:1fr}.shop-sort{max-width:280px}.shop-assurance{grid-template-columns:1fr}}
+@media(max-width:640px){.shop-hero-image{min-height:320px}.shop-hero-copy{padding:48px 20px}.shop-hero-copy h1{font-size:clamp(2.7rem,14vw,4.4rem)}.shop-trust{display:grid}.shop-controls{margin-inline:-4px;padding:12px;border-radius:16px}.filter-row{margin-inline:-2px}.shop-assurance article{padding:30px 22px}.catalogue-note{display:none}}
