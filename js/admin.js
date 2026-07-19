@@ -233,6 +233,8 @@
     renderProducts();
 
     updateProductStatistics();
+    
+    updateSidebarCounters();
 
     console.log("Products Loaded:", Admin.state.products.length);
 
@@ -246,41 +248,66 @@
 
   }
 }
-  async function loadOrders() {
-    try {
-      const response = await callCloud("getOrders");
-      Admin.state.orders = getResponseArray(response, "orders");
-      renderOrders();
-      return Admin.state.orders;
-    } catch (error) {
-      handleError(error, "loadOrders");
-      return [];
-    }
+ async function loadOrders() {
+  try {
+    const response = await callCloud("getOrders");
+
+    Admin.state.orders = getResponseArray(response, "orders");
+
+    renderOrders();
+
+    // Update sidebar badge
+    updateSidebarCounters();
+
+    return Admin.state.orders;
+
+  } catch (error) {
+
+    handleError(error, "loadOrders");
+
+    return [];
   }
+}
 
   async function loadBookings() {
-    try {
-      const response = await callCloud("getBookings");
-      Admin.state.bookings = getResponseArray(response, "bookings");
-      renderBookings();
-      return Admin.state.bookings;
-    } catch (error) {
-      handleError(error, "loadBookings");
-      return [];
-    }
-  }
+  try {
+    const response = await callCloud("getBookings");
 
-  async function loadCustomers() {
-    try {
-      const response = await callCloud("getCustomers");
-      Admin.state.customers = getResponseArray(response, "customers");
-      renderCustomers();
-      return Admin.state.customers;
-    } catch (error) {
-      handleError(error, "loadCustomers");
-      return [];
-    }
+    Admin.state.bookings = getResponseArray(response, "bookings");
+
+    renderBookings();
+
+    updateSidebarCounters();
+
+    return Admin.state.bookings;
+
+  } catch (error) {
+
+    handleError(error, "loadBookings");
+
+    return [];
   }
+}
+
+ async function loadCustomers() {
+  try {
+    const response = await callCloud("getCustomers");
+
+    Admin.state.customers = getResponseArray(response, "customers");
+
+    renderCustomers();
+
+    updateSidebarCounters();
+
+    return Admin.state.customers;
+
+  } catch (error) {
+
+    handleError(error, "loadCustomers");
+
+    return [];
+  }
+}
 
   async function loadSettings() {
     try {
@@ -609,6 +636,31 @@ setText(
   );
 
   setText("[data-dashboard-products]", products.length);
+    
+updateSidebarCounters();
+    
+}
+  function updateSidebarCounters() {
+
+  const counts = {
+    orders: safeArray(Admin.state.orders).length,
+    products: safeArray(Admin.state.products).length,
+    "spa-bookings": safeArray(Admin.state.bookings).length,
+    customers: safeArray(Admin.state.customers).length
+  };
+
+  Object.keys(counts).forEach(function(name){
+
+    const badge = document.querySelector(
+      '[data-nav-count="' + name + '"]'
+    );
+
+    if(!badge) return;
+
+    badge.textContent = counts[name];
+    badge.hidden = false;
+
+  });
 
 }
   function renderOrders() {
