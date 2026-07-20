@@ -77,43 +77,7 @@
     if (count) count.textContent = `${customers.length} unique customer${customers.length === 1 ? '' : 's'}`;
   }
 
-  function isPaid(order){
-    const status = lower(order.paymentStatus || order.payment_status || order.status);
-    return ['paid','confirmed paid','payment confirmed','completed','complete','successful','success'].some(x => status.includes(x));
-  }
-
-  function commissionRate(){
-    const s = state();
-    return number(s.settings?.commissionRate || 15);
-  }
-
-  function filteredPaidOrders(){
-    const start = dateValue($('#reportStartDate')?.value);
-    const end = dateValue($('#reportEndDate')?.value);
-    if (end) end.setHours(23,59,59,999);
-    return safe(state().orders).filter(isPaid).filter(o => {
-      const d = dateValue(o.createdAt || o.date || o.timestamp);
-      if (!d) return !start && !end;
-      return (!start || d >= start) && (!end || d <= end);
-    });
-  }
-
-  function renderReports(){
-    const orders = filteredPaidOrders();
-    const rate = commissionRate();
-    const paidSales = orders.reduce((sum,o) => sum + number(o.total || o.grandTotal || o.amount), 0);
-    const commission = paidSales * rate / 100;
-    const money = v => '₦' + number(v).toLocaleString('en-NG', {maximumFractionDigits:0});
-    const values = {paidSales: money(paidSales), paidOrders: orders.length, commissionRate: `${rate}%`, commissionDue: money(commission)};
-    Object.entries(values).forEach(([key,value]) => { const el=$(`[data-report-metric="${key}"]`); if(el) el.textContent=value; });
-    const body = $('[data-report-rows]');
-    if (body) body.innerHTML = orders.length ? orders.map(o => {
-      const total = number(o.total || o.grandTotal || o.amount);
-      const customer = o.customerName || o.name || o.customer?.name || 'Guest';
-      return `<tr><td>${esc(dateValue(o.createdAt || o.date)?.toLocaleDateString() || '—')}</td><td>${esc(o.id || o.orderId || '—')}</td><td>${esc(customer)}</td><td>${money(total)}</td><td>${money(total*rate/100)}</td></tr>`;
-    }).join('') : '<tr class="admin-table-empty"><td colspan="5">No confirmed paid sales in this period.</td></tr>';
-    window.MayaReportRows = orders;
-  }
+  // Reports are rendered exclusively by admin-transactions.js to prevent table conflicts.
 
   function activityRows(){
     const s = state();
@@ -143,7 +107,6 @@
 
   function sync(){
     renderCustomers();
-    renderReports();
     renderLogs();
     applySettingsPreview(state().settings || {});
   }
@@ -151,13 +114,12 @@
   document.addEventListener('admin:ready', sync);
   document.addEventListener('admin:refreshed', sync);
   document.addEventListener('click', e => {
-    if (e.target.closest('[data-generate-report]')) renderReports();
     if (e.target.closest('[data-refresh-logs]')) renderLogs();
     if (e.target.closest('[data-reload-settings]')) setTimeout(sync, 500);
   });
   document.addEventListener('input', e => { if (e.target.matches('[data-log-search], [data-log-type-filter]')) renderLogs(); });
   document.addEventListener('submit', e => { if (e.target.matches('[data-settings-form], #settingsForm')) setTimeout(() => applySettingsPreview(state().settings), 600); });
-  document.addEventListener('admin:viewChanged', e => setTimeout(() => { const v=e.detail?.view; if(v==='customers') renderCustomers(); if(v==='reports') renderReports(); if(v==='logs') renderLogs(); }, 350));
+  document.addEventListener('admin:viewChanged', e => setTimeout(() => { const v=e.detail?.view; if(v==='customers') renderCustomers(); if(v==='logs') renderLogs(); }, 350));
   document.addEventListener('admin:refreshed', () => setTimeout(sync, 50));
   setTimeout(sync, 1600);
 })(window, document);
