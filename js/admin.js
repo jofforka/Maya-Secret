@@ -254,7 +254,7 @@
 
     Admin.state.orders = getResponseArray(response, "orders");
 
-    renderOrders();
+    // renderOrders();
 
     // Update sidebar badge
     updateSidebarCounters();
