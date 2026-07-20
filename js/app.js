@@ -11,7 +11,7 @@ function productVisual(p, extraClass = '') {
   if (p.image) {
     return `<div class="product-art product-photo ${extraClass}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"></div>`;
   }
-  return `<div class="product-art tone-${esc(p.tone || 'cream')} ${extraClass}"><div class="product-pack">MS</div></div>`;
+  return `<div class="product-art tone-${esc(p.tone || 'cream')} ${extraClass}"><div class="product-pack" aria-label="Product image unavailable"></div></div>`;
 }
 
 function card(p) {
