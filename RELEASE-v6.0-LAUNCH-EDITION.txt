@@ -1,0 +1,23 @@
+MAYA'S SECRET — PRODUCTION v6.0 LAUNCH EDITION
+
+Included:
+- Standardized production identity: v6.0.0.
+- Hidden launch rewards on Home, Shop, Spa and Contact pages.
+- Checkout reward-code validation and automatic discount calculation.
+- Coupon code, percentage, subtotal and discount saved with each order.
+- Coupon details included in the WhatsApp order handoff.
+- Fixed undefined checkout order-reference bug.
+- Existing cloud catalogue, admin, sales, customer, booking and commission features retained.
+
+LAUNCH REWARD CODES
+Home: GLOW10 (10%)
+Shop: SECRET15 (15%)
+Spa: SPA20 (20%)
+Contact: MAYAVIP25 (25%)
+
+PRODUCTION CHECK
+1. Deploy Code.gs as a new Google Apps Script web-app version.
+2. Confirm js/config.js points to the new deployment URL if it changes.
+3. Test one order with and without a reward code.
+4. Confirm the order appears in Admin and the discount fields are retained.
+5. Test mobile navigation, product modal, cart, checkout and spa booking.

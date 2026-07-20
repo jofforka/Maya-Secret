@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-app="maya-secret-business-os" data-version="5.0.0">
+<html lang="en" data-app="maya-secret-business-os" data-version="6.0.0">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -14,6 +14,7 @@
 
   <link rel="stylesheet" href="css/styles.css?v=5.0.0">
   <link rel="stylesheet" href="css/core-framework.css?v=5.0.0">
+  <link rel="stylesheet" href="css/launch-v6.css?v=6.0.0">
 </head>
 
 <body data-page="checkout">
@@ -270,6 +271,15 @@
 
         <input type="hidden" name="currency" value="NGN">
         <input type="hidden" name="channel" value="WhatsApp">
+        <div class="launch-coupon" data-launch-coupon>
+          <label for="launchCoupon">Found a secret reward code?</label>
+          <div class="launch-coupon__row">
+            <input id="launchCoupon" name="couponCode" type="text" maxlength="20" autocomplete="off" placeholder="Enter reward code">
+            <button class="btn ghost" type="button" data-apply-coupon>Apply code</button>
+          </div>
+          <small class="launch-coupon__status" data-coupon-status>One valid launch reward may be used per order.</small>
+        </div>
+
         <input type="hidden" name="orderStatus" value="Pending">
         <input type="hidden" name="paymentStatus" value="Unconfirmed">
 
@@ -428,5 +438,6 @@
   <!-- Existing catalogue, cart and checkout layers -->
   <script defer src="js/catalog.js?v=5.0.0"></script>
   <script defer src="js/app.js?v=6.7.0"></script>
+  <script defer src="js/launch-v6.js?v=6.0.0"></script>
 </body>
 </html>

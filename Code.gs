@@ -5,7 +5,7 @@
  */
 
 const MAYA_DB_NAME = 'Maya Secret Business Database';
-const MAYA_VERSION = '6.9.0';
+const MAYA_VERSION = '6.0.0';
 const COLLECTIONS = ['Products', 'Orders', 'Bookings', 'Customers', 'Logs'];
 
 function doGet(e) {
