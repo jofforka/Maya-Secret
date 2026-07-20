@@ -1183,3 +1183,234 @@ p,li,a,button,input,select,textarea{font-weight:500}
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* =========================================================
+   RESPONSIVE STOREFRONT GRID + SAFE PRODUCT MODAL — v6.4
+   ========================================================= */
+
+/* Keep catalogue dense and balanced across devices. */
+#shopGrid.product-grid,
+.product-grid,
+#catalogGrid.premium-product-grid,
+.premium-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 28px);
+  align-items: stretch;
+}
+
+.product-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.product-card .product-open,
+.product-card .product-art,
+.product-card .product-photo,
+.product-card .product-image {
+  width: 100%;
+  min-width: 0;
+}
+
+.product-card .product-art,
+.product-card .product-photo,
+.product-card .product-image {
+  aspect-ratio: 1 / 1;
+}
+
+.product-card .product-art img,
+.product-card .product-photo img,
+.product-card .product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 1100px) {
+  #shopGrid.product-grid,
+  .product-grid,
+  #catalogGrid.premium-product-grid,
+  .premium-product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  #shopGrid.product-grid,
+  .product-grid,
+  #catalogGrid.premium-product-grid,
+  .premium-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 10px;
+  }
+
+  .product-card .product-info,
+  .product-card .product-content {
+    padding: 11px 3px 0;
+  }
+
+  .product-card .product-info h3,
+  .product-card .product-name {
+    min-height: 0;
+    font-size: clamp(.96rem, 4.2vw, 1.12rem);
+    line-height: 1.18;
+  }
+
+  .product-card .product-info p,
+  .product-card .product-category {
+    min-height: 0;
+    font-size: .64rem;
+    line-height: 1.25;
+  }
+
+  .product-card .product-info small {
+    min-height: 0;
+    font-size: .72rem;
+  }
+
+  .product-card .product-info strong,
+  .product-card .product-price {
+    font-size: .9rem;
+  }
+
+  .product-card .add-btn,
+  .product-card .product-actions button,
+  .product-card .actions button {
+    min-height: 38px;
+    padding: 8px 5px;
+    font-size: .62rem;
+    letter-spacing: .07em;
+  }
+}
+
+/* Even the narrowest supported phones retain two products per row. */
+@media (max-width: 390px) {
+  #shopGrid.product-grid,
+  .product-grid,
+  #catalogGrid.premium-product-grid,
+  .premium-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 8px;
+  }
+
+  .product-card .product-badge {
+    top: 7px;
+    left: 7px;
+    padding: 5px 6px;
+    font-size: .52rem;
+  }
+
+  .product-view-label {
+    display: none;
+  }
+}
+
+/* Product details must never exceed the viewport. */
+.product-modal {
+  width: min(1040px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.modal-product-media,
+.modal-product-visual,
+.modal-product-copy {
+  min-width: 0;
+}
+
+.modal-product-visual,
+.modal-product-visual .product-art,
+.modal-product-visual .product-photo {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.modal-product-visual img,
+.modal-product-visual .product-art img,
+.modal-product-visual .product-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media (max-width: 700px) {
+  .product-modal {
+    inset: 8px;
+    width: auto;
+    max-width: none;
+    height: auto;
+    max-height: calc(100dvh - 16px);
+    transform: translateY(12px) scale(.98);
+    border-radius: 16px;
+  }
+
+  .product-modal.open {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-product-media {
+    padding: 0;
+  }
+
+  .modal-product-visual,
+  .modal-product-visual .product-art,
+  .modal-product-visual .product-photo {
+    height: min(42dvh, 350px);
+    min-height: 220px;
+    max-height: 350px;
+  }
+
+  .modal-product-copy {
+    padding: 24px 18px calc(22px + env(safe-area-inset-bottom));
+  }
+
+  .modal-product-copy h2 {
+    font-size: clamp(1.8rem, 8vw, 2.45rem);
+    line-height: 1;
+  }
+
+  .modal-description,
+  .modal-use p,
+  .modal-benefits p {
+    font-size: .9rem;
+    line-height: 1.55;
+  }
+
+  .modal-purchase {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .modal-close {
+    position: sticky;
+    float: right;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-modal {
+    inset: 5px;
+    max-height: calc(100dvh - 10px);
+  }
+
+  .modal-product-visual,
+  .modal-product-visual .product-art,
+  .modal-product-visual .product-photo {
+    height: 220px;
+    min-height: 220px;
+  }
+
+  .modal-product-copy {
+    padding: 20px 14px calc(18px + env(safe-area-inset-bottom));
+  }
+}
