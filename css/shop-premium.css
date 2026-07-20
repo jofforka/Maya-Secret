@@ -260,14 +260,14 @@ body[data-page="shop"] .product-art:before{content:none!important;display:none!i
 body[data-page="shop"] .product-pack{font-size:0!important;background:radial-gradient(circle at 38% 20%,rgba(255,255,255,.85),rgba(255,255,255,.2) 20%,transparent 38%),linear-gradient(145deg,#6f244f,#260b1c)!important}
 body[data-page="shop"] .product-pack::after{content:"Beauty Essential";font:600 10px/1.2 'DM Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#fff;text-align:center;padding:8px}
 body[data-page="shop"] .product-grid{perspective:1300px;gap:clamp(12px,2vw,28px)}
-body[data-page="shop"] .product-card{isolation:isolate;background:linear-gradient(155deg,rgba(255,255,255,.98),rgba(248,242,236,.88));border:1px solid rgba(91,23,62,.11);border-radius:28px;overflow:hidden;box-shadow:0 18px 45px rgba(52,17,38,.10),inset 0 1px 0 rgba(255,255,255,.85);transform-style:preserve-3d;transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s ease,border-color .35s ease}
+body[data-page="shop"] .product-card{isolation:isolate;background:linear-gradient(155deg,rgba(255,255,255,.98),rgba(248,242,236,.88));border:1px solid rgba(91,23,62,.11);border-radius:28px;overflow:hidden;box-shadow:0 18px 45px rgba(52,17,38,.10),inset 0 1px 0 rgba(255,255,255,.85);transition:transform .32s cubic-bezier(.2,.8,.2,1),box-shadow .32s ease,border-color .3s ease}
 body[data-page="shop"] .product-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 28%,rgba(255,255,255,.36) 42%,transparent 56%);transform:translateX(-120%);transition:transform .75s ease;z-index:5}
-body[data-page="shop"] .product-card:hover{transform:translateY(-10px) rotateX(2deg) rotateY(-2deg);box-shadow:0 32px 72px rgba(52,17,38,.18);border-color:rgba(195,154,86,.45)}
+body[data-page="shop"] .product-card:hover{transform:translateY(-6px);box-shadow:0 26px 58px rgba(52,17,38,.16);border-color:rgba(195,154,86,.38)}
 body[data-page="shop"] .product-card:hover::after{transform:translateX(120%)}
 body[data-page="shop"] .product-open{display:block;width:100%;padding:0;border:0;background:transparent;cursor:pointer;position:relative;overflow:hidden}
-body[data-page="shop"] .product-art{aspect-ratio:1/1.08;border-radius:0 0 34px 34px;background:radial-gradient(circle at 50% 26%,#fff 0,#f7eee7 43%,#e8d8cc 100%);overflow:hidden;transform:translateZ(18px)}
+body[data-page="shop"] .product-art{aspect-ratio:1/1.08;border-radius:0 0 34px 34px;background:radial-gradient(circle at 50% 26%,#fff 0,#f7eee7 43%,#e8d8cc 100%);overflow:hidden;transform:none}
 body[data-page="shop"] .product-photo img{width:100%;height:100%;object-fit:contain;padding:clamp(10px,2.3vw,28px);filter:drop-shadow(0 24px 20px rgba(50,18,36,.18));transition:transform .5s cubic-bezier(.2,.8,.2,1),filter .5s ease}
-body[data-page="shop"] .product-card:hover .product-photo img{transform:scale(1.07) translateY(-5px);filter:drop-shadow(0 32px 25px rgba(50,18,36,.25))}
+body[data-page="shop"] .product-card:hover .product-photo img{transform:scale(1.035) translateY(-2px);filter:drop-shadow(0 32px 25px rgba(50,18,36,.25))}
 body[data-page="shop"] .product-badge{top:12px;left:12px;max-width:calc(100% - 24px);border:1px solid rgba(255,255,255,.68);border-radius:999px;background:rgba(255,255,255,.78);backdrop-filter:blur(12px);box-shadow:0 8px 20px rgba(52,17,38,.09)}
 body[data-page="shop"] .product-view-label{position:absolute;right:12px;bottom:12px;padding:8px 11px;border-radius:999px;background:rgba(38,11,28,.82);backdrop-filter:blur(10px);color:#fff;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:.3s}
 body[data-page="shop"] .product-card:hover .product-view-label{opacity:1;transform:none}
@@ -276,3 +276,10 @@ body[data-page="shop"] .product-info h3{font-size:clamp(18px,2vw,27px);line-heig
 body[data-page="shop"] .add-btn{margin:0 14px 14px;width:calc(100% - 28px);border:0;border-radius:16px;padding:14px;background:linear-gradient(135deg,#6b1d49,#3a0d29);color:#fff;box-shadow:0 12px 22px rgba(91,23,62,.19);transition:transform .25s,box-shadow .25s}
 body[data-page="shop"] .add-btn:hover{transform:translateY(-2px);box-shadow:0 17px 28px rgba(91,23,62,.28)}
 @media(max-width:600px){body[data-page="shop"] .product-card{border-radius:20px}body[data-page="shop"] .product-art{border-radius:0 0 24px 24px}body[data-page="shop"] .product-info{padding:12px 11px 8px}body[data-page="shop"] .product-info h3{font-size:17px}body[data-page="shop"] .product-info p{font-size:8px}body[data-page="shop"] .product-info strong{font-size:14px;margin-top:8px}body[data-page="shop"] .add-btn{margin:0 8px 9px;width:calc(100% - 16px);padding:11px 6px;border-radius:12px;font-size:9px}body[data-page="shop"] .product-badge{font-size:7px;padding:6px 8px;top:7px;left:7px}body[data-page="shop"] .product-view-label{display:none}}
+
+/* v6.6 final interaction refinement */
+@media (hover:hover) and (pointer:fine){
+  body[data-page="shop"] .product-card:hover .product-open{animation:mayaProductPulse .5s ease both}
+}
+@keyframes mayaProductPulse{0%,100%{transform:translateY(0)}45%{transform:translateY(-2px)}70%{transform:translateY(-1px)}}
+@media (prefers-reduced-motion:reduce){body[data-page="shop"] .product-card,body[data-page="shop"] .product-photo img,body[data-page="shop"] .product-card::after,body[data-page="shop"] .product-open{transition:none!important;animation:none!important;transform:none!important}}
