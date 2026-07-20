@@ -1,5 +1,6 @@
 (function(window, document){
   'use strict';
+  window.MayaTransactionsActive = true;
   const $ = (s,r=document)=>r.querySelector(s);
   const esc = v => String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const num = v => Number.isFinite(Number(v)) ? Number(v) : 0;
@@ -14,11 +15,80 @@
   const isCancelled = r => lower(r.status).includes('cancel');
   const itemText = o => Array.isArray(o.items) ? o.items.map(i=>`${i.name||'Item'} × ${i.qty||i.quantity||1}`).join(', ') : '—';
   const serviceText = b => Array.isArray(b.services) ? b.services.map(s=>typeof s==='string'?s:(s.name||s.service||'Service')).join(', ') : (b.service||b.services||'—');
-  function actionButtons(type, record){
-    const id=record.id||record.orderId||record.bookingId||'';
-    if(type==='order') return `<div class="transaction-actions"><button data-transaction-action="approve-order" data-record-id="${esc(id)}">Approve paid</button><button data-transaction-action="pending-order" data-record-id="${esc(id)}">Pending</button><button data-transaction-action="cancel-order" data-record-id="${esc(id)}">Cancel</button></div>`;
-    return `<div class="transaction-actions"><button data-transaction-action="confirm-booking" data-record-id="${esc(id)}">Confirm</button><button data-transaction-action="complete-booking" data-record-id="${esc(id)}">Complete</button><button data-transaction-action="pending-booking" data-record-id="${esc(id)}">Pending</button><button data-transaction-action="cancel-booking" data-record-id="${esc(id)}">Cancel</button></div>`;
+ function actionButtons(type, record) {
+  const id =
+    record.id ||
+    record.orderId ||
+    record.bookingId ||
+    record.reference ||
+    '';
+
+  if (type === 'order') {
+    return `
+      <div class="transaction-actions">
+        <button
+          type="button"
+          data-transaction-action="approve-order"
+          data-record-id="${esc(id)}"
+        >
+          Approve paid
+        </button>
+
+        <button
+          type="button"
+          data-transaction-action="pending-order"
+          data-record-id="${esc(id)}"
+        >
+          Pending
+        </button>
+
+        <button
+          type="button"
+          data-transaction-action="cancel-order"
+          data-record-id="${esc(id)}"
+        >
+          Cancel
+        </button>
+      </div>
+    `;
   }
+
+  return `
+    <div class="transaction-actions">
+      <button
+        type="button"
+        data-transaction-action="confirm-booking"
+        data-record-id="${esc(id)}"
+      >
+        Confirm
+      </button>
+
+      <button
+        type="button"
+        data-transaction-action="complete-booking"
+        data-record-id="${esc(id)}"
+      >
+        Complete
+      </button>
+
+      <button
+        type="button"
+        data-transaction-action="pending-booking"
+        data-record-id="${esc(id)}"
+      >
+        Pending
+      </button>
+
+      <button
+        type="button"
+        data-transaction-action="cancel-booking"
+        data-record-id="${esc(id)}"
+      >
+        Cancel
+      </button>
+    </div>
+  `;
+}
   function renderOrders(){
     const body=$('[data-order-list]'); if(!body) return;
     const rows=state().orders||[];
