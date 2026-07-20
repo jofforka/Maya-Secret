@@ -416,21 +416,89 @@ function renderAllProductViews(){
   drawCart();
   renderCheckout();
 }
-async function initialiseCloudCatalogue(){
+async function initialiseCloudCatalogue() {
   renderAllProductViews();
-  if(!window.MayaCloud) return;
-  try{
-    const cloudProducts=await window.MayaCloud.getProducts();
-    if(Array.isArray(cloudProducts) && cloudProducts.length){
-      products=cloudProducts.map(p=>({...p,price:Number(p.price||0),gallery:Array.isArray(p.gallery)?p.gallery:[],benefits:Array.isArray(p.benefits)?p.benefits:[]}));
-      renderAllProductViews();
-      document.documentElement.dataset.catalogue='cloud';
-    } else {
-      document.documentElement.dataset.catalogue='fallback';
+
+  if (!window.MayaCloud) {
+    document.documentElement.dataset.catalogue = "offline";
+    return;
+  }
+
+  try {
+    if (typeof window.MayaCloud.init === "function") {
+      await window.MayaCloud.init();
     }
-  }catch(error){
-    console.warn('Cloud catalogue unavailable; using bundled catalogue.',error);
-    document.documentElement.dataset.catalogue='offline';
+
+    const response = await window.MayaCloud.getProducts();
+
+    const cloudProducts = Array.isArray(response)
+      ? response
+      : Array.isArray(response?.products)
+        ? response.products
+        : Array.isArray(response?.data)
+          ? response.data
+          : [];
+
+    if (cloudProducts.length) {
+      products = cloudProducts
+        .filter(product => {
+          const status = String(product.status || "available").toLowerCase();
+
+          return (
+            status !== "deleted" &&
+            status !== "inactive" &&
+            status !== "hidden"
+          );
+        })
+        .map(product => ({
+          ...product,
+          id: String(
+            product.id ||
+            product.productId ||
+            product.name ||
+            Date.now()
+          ),
+          name: String(product.name || "Unnamed Product"),
+          category: String(product.category || "Beauty"),
+          price: Number(product.price || 0),
+          image: String(
+            product.image ||
+            product.imageUrl ||
+            product.photo ||
+            "assets/mayas-logo.png"
+          ),
+          gallery: Array.isArray(product.gallery)
+            ? product.gallery
+            : [],
+          benefits: Array.isArray(product.benefits)
+            ? product.benefits
+            : [],
+          featured:
+            product.featured === true ||
+            String(product.featured).toLowerCase() === "true"
+        }));
+
+      renderAllProductViews();
+
+      document.documentElement.dataset.catalogue = "cloud";
+
+      console.log(
+        `Loaded ${products.length} products from the admin cloud catalogue.`
+      );
+    } else {
+      document.documentElement.dataset.catalogue = "empty";
+
+      console.warn(
+        "The cloud connection worked, but no products were returned."
+      );
+    }
+  } catch (error) {
+    console.warn(
+      "Cloud catalogue unavailable; using bundled catalogue.",
+      error
+    );
+
+    document.documentElement.dataset.catalogue = "offline";
   }
 }
 ensureProductModal();
