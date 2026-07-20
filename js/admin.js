@@ -911,6 +911,7 @@
   }
 
   function renderOrders() {
+    if (window.MayaTransactionsActive) return;
     const body =
       $("[data-order-list]") ||
       $("[data-orders-body]") ||
@@ -978,6 +979,7 @@
   }
 
   function renderBookings() {
+    if (window.MayaTransactionsActive) return;
     const body =
       $("[data-spa-booking-list]") ||
       $("[data-bookings-body]") ||
