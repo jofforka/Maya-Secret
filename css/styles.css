@@ -1414,3 +1414,5 @@ p,li,a,button,input,select,textarea{font-weight:500}
     padding: 20px 14px calc(18px + env(safe-area-inset-bottom));
   }
 }
+/* v6.5 remove storefront MS watermark */
+body[data-page="shop"] .product-art::before,body[data-page="shop"] .product-art:before{content:none!important;display:none!important}
