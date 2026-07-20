@@ -240,10 +240,30 @@ function renderCheckout() {
   if (content) content.hidden = false;
   list.innerHTML = validItems.map(i => `<article class="checkout-item">${productVisual(i.product, 'checkout-thumb')}<div><p>${esc(i.product.category)}</p><h3>${esc(i.product.name)}</h3><span>${esc(i.product.size || '')}</span><div class="qty"><button data-minus="${esc(i.product.id)}" type="button">−</button><span>${i.qty}</span><button data-plus="${esc(i.product.id)}" type="button">+</button></div></div><strong>${money(i.product.price * i.qty)}</strong><button class="remove" data-remove="${esc(i.product.id)}" type="button" aria-label="Remove ${esc(i.product.name)}">×</button></article>`).join('');
   const subtotal = validItems.reduce((sum, i) => sum + i.product.price * i.qty, 0);
-  document.querySelectorAll('[data-checkout-total]').forEach(el => el.textContent = money(subtotal));
+  const discount = calculateLaunchDiscount(subtotal);
+  document.querySelectorAll('[data-checkout-total]').forEach(el => el.textContent = money(Math.max(0,subtotal-discount)));
+  refreshCheckoutReward();
 }
 
+let activeLaunchCoupon = null;
 const checkoutForm = document.querySelector('#checkoutForm');
+const couponInput = document.querySelector('#launchCoupon');
+const couponStatus = document.querySelector('[data-coupon-status]');
+function calculateLaunchDiscount(total){ return activeLaunchCoupon ? Math.round(total * activeLaunchCoupon.percent / 100) : 0; }
+function refreshCheckoutReward(){
+  const rawTotal = cart.map(i=>({...i,product:products.find(p=>p.id===i.id)})).filter(i=>i.product).reduce((sum,i)=>sum+i.product.price*i.qty,0);
+  const discount=calculateLaunchDiscount(rawTotal), finalTotal=Math.max(0,rawTotal-discount);
+  document.querySelectorAll('[data-checkout-total]').forEach(el=>el.textContent=money(finalTotal));
+  let row=document.querySelector('[data-launch-discount-row]');
+  if(discount&&!row){row=document.createElement('div');row.className='checkout-summary-row launch-discount-row';row.dataset.launchDiscountRow='';row.innerHTML='<span>Launch reward</span><strong data-launch-discount></strong>';document.querySelector('.checkout-summary-total')?.before(row);}
+  if(row){row.hidden=!discount;const v=row.querySelector('[data-launch-discount]');if(v)v.textContent='− '+money(discount);}
+}
+document.querySelector('[data-apply-coupon]')?.addEventListener('click',()=>{
+  const code=window.MayaLaunch?.clean(couponInput?.value); const reward=window.MayaLaunch?.find(code);
+  activeLaunchCoupon=reward?{...reward,code}:null;
+  if(couponStatus){couponStatus.classList.toggle('success',!!reward);couponStatus.textContent=reward?`${reward.label} applied.`:'That reward code is not valid.';}
+  refreshCheckoutReward();
+});
 checkoutForm?.addEventListener('submit', async e => {
   e.preventDefault();
   if (!cart.length) { toast('Your bag is empty'); return; }
@@ -263,7 +283,9 @@ checkoutForm?.addEventListener('submit', async e => {
     return;
   }
 
-  const total = validItems.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+  const subtotal = validItems.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+  const discount = calculateLaunchDiscount(subtotal);
+  const total = Math.max(0, subtotal - discount);
   const fulfilment = form.get('fulfilment');
   const orderReference = 'MS-' + Date.now().toString(36).toUpperCase();
   const order = {
@@ -275,6 +297,10 @@ checkoutForm?.addEventListener('submit', async e => {
     address: fulfilment === 'Delivery' ? String(form.get('address') || '').trim() : '',
     notes: String(form.get('notes') || '').trim(),
     items: validItems.map(i => ({ id:i.product.id, name:i.product.name, price:Number(i.product.price), qty:i.qty, quantity:i.qty, subtotal:Number(i.product.price)*i.qty })),
+    subtotal,
+    discount,
+    couponCode: activeLaunchCoupon?.code || '',
+    couponPercent: activeLaunchCoupon?.percent || 0,
     total,
     grandTotal: total,
     status: 'Pending',
@@ -307,10 +333,12 @@ checkoutForm?.addEventListener('submit', async e => {
   const address = fulfilment === 'Delivery' ? `\nDelivery address: ${order.address || 'Not supplied'}` : '';
   const message = `Hello Maya's Secret, I would like to place this order:
 
-Order reference: ${order.orderId}
+Order reference: ${order.reference}
 
 ${lines}
 
+Subtotal: ${money(subtotal)}
+Launch reward: ${discount ? '− ' + money(discount) + ' (' + activeLaunchCoupon.code + ')' : 'None'}
 Estimated total: ${money(total)}
 
 Customer: ${order.customerName}
@@ -338,7 +366,7 @@ Please confirm availability, final delivery fee and payment details.`;
   const reference = document.querySelector('[data-order-reference]');
   if (content) content.hidden = true;
   if (emptyState) emptyState.hidden = true;
-  if (reference) reference.textContent = order.orderId;
+  if (reference) reference.textContent = order.reference;
   if (success) success.hidden = false;
   toast(savedToCloud ? 'Order recorded and opened in WhatsApp' : 'Order opened in WhatsApp and saved on this device');
   if (submitButton) { submitButton.disabled = false; submitButton.textContent = originalLabel; }
