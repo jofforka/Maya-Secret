@@ -967,7 +967,11 @@
         "<td>" +
           escapeHtml(order.status || "Pending") +
         "</td>" +
-        "<td></td>";
+        "<td>" +
+'<button class="btn btn-success" data-admin-action="approve-order" data-id="' + escapeHtml(order.id) + '">Approve</button>' +
+'<button class="btn btn-primary" data-admin-action="mark-order-paid" data-id="' + escapeHtml(order.id) + '">Paid</button>' +
+'<button class="btn btn-danger" data-admin-action="cancel-order" data-id="' + escapeHtml(order.id) + '">Cancel</button>' +
+"</td>";
 
       body.appendChild(row);
     });
@@ -1041,7 +1045,11 @@
         "<td>" +
           escapeHtml(booking.status || "Pending") +
         "</td>" +
-        "<td></td>";
+        "<td>" +
+'<button class="btn btn-success" data-admin-action="confirm-booking" data-id="' + escapeHtml(booking.id) + '">Confirm</button>' +
+'<button class="btn btn-primary" data-admin-action="complete-booking" data-id="' + escapeHtml(booking.id) + '">Complete</button>' +
+'<button class="btn btn-danger" data-admin-action="cancel-booking" data-id="' + escapeHtml(booking.id) + '">Cancel</button>' +
+"</td>";
 
       body.appendChild(row);
     });
@@ -1501,7 +1509,75 @@
       hideLoading();
     }
   }
+async function approveOrder(id) {
+    const order = Admin.state.orders.find(o => o.id === id);
+    if (!order) return;
 
+    order.status = "Approved";
+
+    await callCloud("updateOrder", order);
+
+    await loadOrders();
+    await loadDashboard();
+}
+  async function markOrderPaid(id) {
+    const order = Admin.state.orders.find(o => o.id === id);
+    if (!order) return;
+
+    order.paymentStatus = "Paid";
+    order.status = "Completed";
+
+    await callCloud("updateOrder", order);
+
+    await loadOrders();
+    await loadDashboard();
+}
+  async function cancelOrder(id) {
+    const order = Admin.state.orders.find(o => o.id === id);
+    if (!order) return;
+
+    order.status = "Cancelled";
+
+    await callCloud("updateOrder", order);
+
+    await loadOrders();
+    await loadDashboard();
+}
+  async function confirmBooking(id) {
+    const booking = Admin.state.bookings.find(b => b.id === id);
+    if (!booking) return;
+
+    booking.status = "Confirmed";
+
+    await callCloud("updateBooking", booking);
+
+    await loadBookings();
+    await loadDashboard();
+}
+  async function completeBooking(id) {
+    const booking = Admin.state.bookings.find(b => b.id === id);
+    if (!booking) return;
+
+    booking.status = "Completed";
+    booking.paymentStatus = "Paid";
+
+    await callCloud("updateBooking", booking);
+
+    await loadBookings();
+    await loadDashboard();
+}
+  async function cancelBooking(id) {
+    const booking = Admin.state.bookings.find(b => b.id === id);
+    if (!booking) return;
+
+    booking.status = "Cancelled";
+
+    await callCloud("updateBooking", booking);
+
+    await loadBookings();
+    await loadDashboard();
+}
+  
   function editProduct(productId) {
     productId = String(productId || "").trim();
 
@@ -1731,6 +1807,30 @@
 
               break;
             }
+
+              case "approve-order":
+    approveOrder(id);
+    break;
+
+case "mark-order-paid":
+    markOrderPaid(id);
+    break;
+
+case "cancel-order":
+    cancelOrder(id);
+    break;
+
+case "confirm-booking":
+    confirmBooking(id);
+    break;
+
+case "complete-booking":
+    completeBooking(id);
+    break;
+
+case "cancel-booking":
+    cancelBooking(id);
+    break;
 
             default:
               break;
