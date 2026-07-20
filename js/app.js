@@ -265,9 +265,10 @@ checkoutForm?.addEventListener('submit', async e => {
 
   const total = validItems.reduce((sum, i) => sum + i.product.price * i.qty, 0);
   const fulfilment = form.get('fulfilment');
+  const orderReference = 'MS-' + Date.now().toString(36).toUpperCase();
   const order = {
-    id: 'MS-' + Date.now().toString(36).toUpperCase(),
-    orderId: 'MS-' + Date.now().toString(36).toUpperCase(),
+    id: orderReference,
+    orderId: orderReference,
     customerName: String(form.get('name') || '').trim(),
     customerPhone: String(form.get('phone') || '').trim(),
     customer: { name: String(form.get('name') || '').trim(), phone: String(form.get('phone') || '').trim() },
@@ -287,7 +288,9 @@ checkoutForm?.addEventListener('submit', async e => {
   try {
     const cloud = window.BusinessCloud || window.MayaCloud;
     if (cloud?.saveOrder) {
-      await cloud.saveOrder(order);
+      if (typeof cloud.init === 'function') await cloud.init();
+      const response = await cloud.saveOrder(order);
+      if (response && response.success === false) throw new Error(response.error || response.message || 'Order was rejected by the cloud service');
       savedToCloud = true;
     } else {
       throw new Error('Cloud order service unavailable');

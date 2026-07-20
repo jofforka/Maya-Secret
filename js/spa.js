@@ -216,7 +216,10 @@
       'Please confirm availability. Thank you.'
     ].join('\n');
 
+    const bookingReference = 'SPA-' + Date.now().toString(36).toUpperCase();
     const booking = {
+    id: bookingReference,
+    bookingId: bookingReference,
     customerName: $('#spaName').value.trim(),
     phone: $('#spaPhone').value.trim(),
     bookingDate: rawDate,
@@ -230,6 +233,7 @@
     duration: totalDuration,
 
     status: "Pending",
+    paymentStatus: "Unpaid",
 
     createdAt: new Date().toISOString()
 };
