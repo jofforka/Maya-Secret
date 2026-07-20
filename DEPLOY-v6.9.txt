@@ -1,0 +1,33 @@
+MAYA'S SECRET v6.9 DEPLOYMENT
+
+1. WEBSITE FILES
+Upload the complete website folder. Do not add another report JavaScript file.
+The existing files have been updated:
+- js/admin-transactions.js: sole owner of order/booking/report rendering and approval controls.
+- js/admin-enhancements.js: customers and activity logs only; legacy report renderer removed.
+- admin.html: cache versions updated.
+
+2. GOOGLE APPS SCRIPT
+Open the Apps Script project currently connected to the website.
+Replace the entire contents of the existing Code.gs with the included Code.gs.
+Do not create a second Code.gs file with duplicate doGet/doPost functions.
+
+3. DEPLOY
+Apps Script > Deploy > Manage deployments > Edit existing Web App deployment.
+Select New version, Execute as Me, and access appropriate for the website (normally Anyone).
+Deploy. Updating the existing deployment preserves the current /exec URL.
+
+4. AUTHORIZE
+Run the health or database_ function once in Apps Script if authorization is requested.
+The backend creates a Google Sheet named "Maya Secret Business Database" in the owner's Drive.
+
+5. VERIFY
+- Open cloud-test.html and confirm health success/version 6.9.0.
+- Submit one product order.
+- Refresh Admin > Orders. The order must display with date, reference, customer, items, total, and status.
+- Open Admin > Customers. The customer is created automatically from the order.
+- Open Reports. The same order displays as a detailed transaction and contributes to pending commission.
+- Click Approve paid. It moves from pending commission to earned commission.
+
+IMPORTANT
+If the website is connected to a different Apps Script project or deployment URL, update js/config.js apiUrl to the deployed /exec URL.
