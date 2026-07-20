@@ -1,0 +1,12 @@
+MAYA'S SECRET v6.6 — FINAL STABILIZATION
+
+Targeted fixes:
+- Customer records no longer disappear after delayed cloud loading.
+- Customers are deduplicated from customer records, product orders and spa bookings.
+- Product hover no longer tilts sideways; it uses a subtle lift and restrained pulse.
+- Checkout validates the form and product availability.
+- Orders are saved to Business Cloud before WhatsApp handoff when cloud is available.
+- A local recovery copy is retained if cloud saving is unavailable.
+- Checkout displays the generated order reference and success state.
+- Cart clears only after the order handoff is prepared.
+- JavaScript syntax, duplicate HTML IDs and local asset references were validated.
