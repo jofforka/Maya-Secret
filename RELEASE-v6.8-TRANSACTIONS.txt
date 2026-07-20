@@ -1,0 +1,30 @@
+MAYA'S SECRET v6.8 — ORDER, APPROVAL & COMMISSION FIX
+
+1. PRODUCT ORDERS
+- Checkout now initializes the cloud connection before saving.
+- A single consistent order reference is used for id and orderId.
+- Cloud responses are validated before the site reports that an order was recorded.
+- Failed saves remain preserved locally as recovery records.
+
+2. ADMIN APPROVAL WORKFLOW
+Orders:
+- Approve paid: Status = Completed, Payment = Paid.
+- Pending: Status = Pending, Payment = Unpaid.
+- Cancel: Status = Cancelled.
+
+Spa bookings:
+- Confirm: Status = Confirmed, Payment = Paid.
+- Complete: Status = Completed, Payment = Paid.
+- Pending: Status = Pending, Payment = Unpaid.
+- Cancel: Status = Cancelled.
+
+3. COMMISSION REPORT
+- Combines product orders and spa bookings.
+- Calculates 15% (or the rate saved in Settings) for every active transaction.
+- Pending commission appears immediately when an order or booking is received.
+- Earned commission includes approved paid orders and confirmed/completed spa bookings.
+- Cancelled transactions are excluded.
+- Date filters update the combined report.
+
+IMPORTANT
+The live Google Apps Script deployment must support saveOrder, updateOrder, saveBooking and updateBooking. The website now calls these existing cloud actions correctly. If a production order still fails to appear after publishing this version, the deployed Apps Script itself is missing or rejecting saveOrder and must be redeployed from its source project.

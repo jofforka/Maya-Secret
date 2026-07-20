@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="css/core-framework.css?v=5.0.0">
 <style>
 .admin-settings-reflection{margin:0 0 22px;padding:16px 18px;border:1px solid rgba(91,23,62,.15);border-radius:16px;background:linear-gradient(135deg,#fff,#f8f0f4);color:#55444d;line-height:1.6}.admin-settings-reflection strong{color:#5b173e}.admin-table td{vertical-align:middle}
-</style>
+.transaction-actions{display:flex;gap:6px;flex-wrap:wrap;min-width:190px}.transaction-actions button{border:1px solid rgba(91,23,62,.18);background:#fff;border-radius:8px;padding:7px 9px;font:inherit;font-size:12px;cursor:pointer}.transaction-actions button:first-child{background:#5b173e;color:#fff}.status-pill{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}.status-pill.success{background:#e9f7ef;color:#17643a}.status-pill.pending{background:#fff4db;color:#805a00}.status-pill.danger{background:#fdeaea;color:#912020}.admin-table td small{display:block;margin-top:4px;color:#796b72}</style>
 </head>
 
 <body class="admin-body" data-page="admin">
@@ -860,20 +860,24 @@
 
             <section class="admin-report-summary" aria-label="Report summary">
               <article>
-                <span>Paid sales</span>
-                <strong data-report-metric="paidSales">₦0</strong>
+                <span>Total transaction value</span>
+                <strong data-report-metric="transactionValue">₦0</strong>
               </article>
               <article>
-                <span>Paid orders</span>
-                <strong data-report-metric="paidOrders">0</strong>
+                <span>Approved transactions</span>
+                <strong data-report-metric="approvedTransactions">0</strong>
               </article>
               <article>
                 <span>Commission rate</span>
                 <strong data-report-metric="commissionRate">15%</strong>
               </article>
               <article class="commission-card">
-                <span>Commission due</span>
+                <span>Earned commission</span>
                 <strong data-report-metric="commissionDue">₦0</strong>
+              </article>
+              <article>
+                <span>Pending commission</span>
+                <strong data-report-metric="pendingCommission">₦0</strong>
               </article>
             </section>
 
@@ -888,15 +892,17 @@
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>Order</th>
+                    <th>Type</th>
+                    <th>Reference</th>
                     <th>Customer</th>
-                    <th>Paid total</th>
+                    <th>Value</th>
+                    <th>Commission status</th>
                     <th>Commission</th>
                   </tr>
                 </thead>
                 <tbody data-report-rows>
                   <tr class="admin-table-empty">
-                    <td colspan="5">Generate a report to view commissionable sales.</td>
+                    <td colspan="7">Transactions will calculate automatically.</td>
                   </tr>
                 </tbody>
               </table>
@@ -1115,6 +1121,7 @@
   <!-- Existing catalogue and Admin logic -->
   <script defer src="js/catalog.js?v=5.0.1"></script>
   <script defer src="js/admin.js?v=6.6.0"></script>
-  <script defer src="js/admin-enhancements.js?v=6.6.0"></script>
+  <script defer src="js/admin-enhancements.js?v=6.8.0"></script>
+  <script defer src="js/admin-transactions.js?v=6.8.0"></script>
 </body>
 </html>
