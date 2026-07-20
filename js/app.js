@@ -267,8 +267,7 @@ checkoutForm?.addEventListener('submit', async e => {
   const fulfilment = form.get('fulfilment');
   const orderReference = 'MS-' + Date.now().toString(36).toUpperCase();
   const order = {
-    id: orderReference,
-    orderId: orderReference,
+    reference: orderReference,
     customerName: String(form.get('name') || '').trim(),
     customerPhone: String(form.get('phone') || '').trim(),
     customer: { name: String(form.get('name') || '').trim(), phone: String(form.get('phone') || '').trim() },
