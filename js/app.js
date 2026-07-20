@@ -4,6 +4,7 @@ let products = cloneBundledProducts();
 let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
 let activeProduct = null;
 let modalQty = 1;
+let lastCheckoutWhatsAppUrl = '';
 const money = n => '₦' + Number(n || 0).toLocaleString('en-NG');
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -212,28 +213,106 @@ function renderCheckout() {
 }
 
 const checkoutForm = document.querySelector('#checkoutForm');
-checkoutForm?.addEventListener('submit', e => {
+checkoutForm?.addEventListener('submit', async e => {
   e.preventDefault();
   if (!cart.length) { toast('Your bag is empty'); return; }
+  if (!checkoutForm.reportValidity()) return;
+
+  const submitButton = checkoutForm.querySelector('[data-checkout-submit]');
+  const originalLabel = submitButton?.textContent;
+  if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Preparing order…'; }
+
+  const whatsappWindow = window.open('', '_blank');
   const form = new FormData(checkoutForm);
-  const lines = cart.map(i => { const p = products.find(x => x.id === i.id); return p ? `• ${p.name} × ${i.qty} — ${money(p.price * i.qty)}` : ''; }).filter(Boolean).join('\n');
-  const total = cart.reduce((sum, i) => { const p = products.find(x => x.id === i.id); return sum + (p ? p.price * i.qty : 0); }, 0);
+  const validItems = cart.map(i => ({...i, product: products.find(x => x.id === i.id)})).filter(i => i.product);
+  if (!validItems.length) {
+    whatsappWindow?.close();
+    toast('The products in your bag are no longer available. Please add them again.');
+    if (submitButton) { submitButton.disabled = false; submitButton.textContent = originalLabel; }
+    return;
+  }
+
+  const total = validItems.reduce((sum, i) => sum + i.product.price * i.qty, 0);
   const fulfilment = form.get('fulfilment');
-  const address = fulfilment === 'Delivery' ? `
-Delivery address: ${form.get('address') || 'Not supplied'}` : '';
+  const order = {
+    id: 'MS-' + Date.now().toString(36).toUpperCase(),
+    orderId: 'MS-' + Date.now().toString(36).toUpperCase(),
+    customerName: String(form.get('name') || '').trim(),
+    customerPhone: String(form.get('phone') || '').trim(),
+    customer: { name: String(form.get('name') || '').trim(), phone: String(form.get('phone') || '').trim() },
+    fulfilment,
+    address: fulfilment === 'Delivery' ? String(form.get('address') || '').trim() : '',
+    notes: String(form.get('notes') || '').trim(),
+    items: validItems.map(i => ({ id:i.product.id, name:i.product.name, price:Number(i.product.price), qty:i.qty, quantity:i.qty, subtotal:Number(i.product.price)*i.qty })),
+    total,
+    grandTotal: total,
+    status: 'Pending',
+    paymentStatus: 'Unpaid',
+    source: 'Website checkout',
+    createdAt: new Date().toISOString()
+  };
+
+  let savedToCloud = false;
+  try {
+    const cloud = window.BusinessCloud || window.MayaCloud;
+    if (cloud?.saveOrder) {
+      await cloud.saveOrder(order);
+      savedToCloud = true;
+    } else {
+      throw new Error('Cloud order service unavailable');
+    }
+  } catch (error) {
+    console.warn('Order could not be saved to cloud; preserving a local recovery copy.', error);
+    try {
+      const pending = JSON.parse(localStorage.getItem('mayaPendingOrders') || '[]');
+      pending.push(order);
+      localStorage.setItem('mayaPendingOrders', JSON.stringify(pending.slice(-50)));
+    } catch (_) {}
+  }
+
+  const lines = validItems.map(i => `• ${i.product.name} × ${i.qty} — ${money(i.product.price * i.qty)}`).join('\n');
+  const address = fulfilment === 'Delivery' ? `\nDelivery address: ${order.address || 'Not supplied'}` : '';
   const message = `Hello Maya's Secret, I would like to place this order:
+
+Order reference: ${order.orderId}
 
 ${lines}
 
 Estimated total: ${money(total)}
 
-Customer: ${form.get('name')}
-Phone: ${form.get('phone')}
+Customer: ${order.customerName}
+Phone: ${order.customerPhone}
 Order method: ${fulfilment}${address}
-Notes: ${form.get('notes') || 'None'}
+Notes: ${order.notes || 'None'}
 
 Please confirm availability, final delivery fee and payment details.`;
-  window.open(`https://wa.me/2348109044321?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+  const whatsappUrl = `https://wa.me/2348109044321?text=${encodeURIComponent(message)}`;
+  lastCheckoutWhatsAppUrl = whatsappUrl;
+
+  if (whatsappWindow) {
+    whatsappWindow.opener = null;
+    whatsappWindow.location.href = whatsappUrl;
+  } else {
+    window.location.href = whatsappUrl;
+  }
+
+  cart = [];
+  saveCart();
+  checkoutForm.reset();
+  const success = document.querySelector('[data-checkout-success]');
+  const content = document.querySelector('[data-checkout-content]');
+  const emptyState = document.querySelector('[data-checkout-empty]');
+  const reference = document.querySelector('[data-order-reference]');
+  if (content) content.hidden = true;
+  if (emptyState) emptyState.hidden = true;
+  if (reference) reference.textContent = order.orderId;
+  if (success) success.hidden = false;
+  toast(savedToCloud ? 'Order recorded and opened in WhatsApp' : 'Order opened in WhatsApp and saved on this device');
+  if (submitButton) { submitButton.disabled = false; submitButton.textContent = originalLabel; }
+});
+
+document.querySelector('[data-open-whatsapp]')?.addEventListener('click', () => {
+  if (lastCheckoutWhatsAppUrl) window.open(lastCheckoutWhatsAppUrl, '_blank', 'noopener');
 });
 
 document.querySelectorAll('input[name="fulfilment"]').forEach(input => input.addEventListener('change', () => {

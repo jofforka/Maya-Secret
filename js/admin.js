@@ -289,24 +289,62 @@
   }
 }
 
+  function customerIdentity(record, source) {
+    record = record && typeof record === "object" ? record : {};
+    const nested = record.customer && typeof record.customer === "object" ? record.customer : {};
+    const name = String(record.customerName || record.fullName || record.name || nested.name || nested.fullName || "").trim();
+    const email = String(record.customerEmail || record.email || nested.email || "").trim().toLowerCase();
+    const phone = String(record.customerPhone || record.phone || record.phoneNumber || nested.phone || nested.phoneNumber || "").replace(/\s+/g, "").trim();
+    if (!name && !email && !phone) return null;
+    return {
+      name: name || "Unnamed customer",
+      email: email,
+      phone: phone,
+      createdAt: record.createdAt || record.timestamp || record.date || record.bookingDate || new Date().toISOString(),
+      sources: [source],
+      interactions: 1
+    };
+  }
+
+  function mergeCustomers(cloudCustomers) {
+    const people = [];
+    safeArray(cloudCustomers).forEach(function (record) { people.push(customerIdentity(record, record.source || "Customer record")); });
+    safeArray(Admin.state.orders).forEach(function (record) { people.push(customerIdentity(record, "Product order")); });
+    safeArray(Admin.state.bookings).forEach(function (record) { people.push(customerIdentity(record, "Spa booking")); });
+    const unique = new Map();
+    people.filter(Boolean).forEach(function (person) {
+      const digits = person.phone.replace(/\D/g, "");
+      const key = digits ? "phone:" + digits : person.email ? "email:" + person.email : "name:" + person.name.toLowerCase();
+      const existing = unique.get(key);
+      if (!existing) {
+        unique.set(key, person);
+        return;
+      }
+      existing.name = existing.name === "Unnamed customer" ? person.name : existing.name;
+      existing.email = existing.email || person.email;
+      existing.phone = existing.phone || person.phone;
+      existing.interactions += 1;
+      person.sources.forEach(function (source) { if (existing.sources.indexOf(source) === -1) existing.sources.push(source); });
+      const oldDate = new Date(existing.createdAt || 0);
+      const newDate = new Date(person.createdAt || 0);
+      if (!Number.isNaN(newDate.getTime()) && (Number.isNaN(oldDate.getTime()) || newDate < oldDate)) existing.createdAt = person.createdAt;
+    });
+    return Array.from(unique.values()).sort(function (a, b) { return new Date(b.createdAt || 0) - new Date(a.createdAt || 0); });
+  }
+
  async function loadCustomers() {
+  let cloudCustomers = [];
   try {
     const response = await callCloud("getCustomers");
-
-    Admin.state.customers = getResponseArray(response, "customers");
-
-    renderCustomers();
-
-    updateSidebarCounters();
-
-    return Admin.state.customers;
-
+    cloudCustomers = getResponseArray(response, "customers");
   } catch (error) {
-
-    handleError(error, "loadCustomers");
-
-    return [];
+    console.warn("[Admin] Separate customer endpoint unavailable; deriving customers from orders and bookings.", error);
   }
+
+  Admin.state.customers = mergeCustomers(cloudCustomers);
+  renderCustomers();
+  updateSidebarCounters();
+  return Admin.state.customers;
 }
 
   async function loadSettings() {
@@ -757,18 +795,25 @@ updateSidebarCounters();
 
     body.innerHTML = "";
 
+    const table = body.closest("table");
+    const heading = table && table.querySelector("thead tr");
+    if (heading) heading.innerHTML = "<th>Customer</th><th>Email</th><th>Phone</th><th>Source</th><th>Activity</th><th>First activity</th>";
+
+    if (!Admin.state.customers.length) {
+      body.innerHTML = '<tr class="admin-table-empty"><td colspan="6">No customers yet. Customers appear automatically after a product order or spa booking.</td></tr>';
+    }
+
     Admin.state.customers.forEach(function (customer) {
       const row = document.createElement("tr");
-
       row.innerHTML =
         "<td>" + escapeHtml(customer.name || "Unnamed customer") + "</td>" +
         "<td>" + escapeHtml(customer.email || "—") + "</td>" +
         "<td>" + escapeHtml(customer.phone || "—") + "</td>" +
+        "<td>" + escapeHtml(safeArray(customer.sources).join(" + ") || customer.source || "—") + "</td>" +
+        "<td>" + escapeHtml(customer.interactions || 1) + "</td>" +
         "<td>" + escapeHtml(formatDate(customer.createdAt)) + "</td>";
-
       body.appendChild(row);
-
-        });
+    });
       
       setText(
   "[data-customers-count]",

@@ -63,8 +63,6 @@
 
   function renderCustomers(){
     const customers = deriveCustomers();
-    const s = state();
-    s.customers = customers;
     const body = $('[data-customer-list], [data-customers-body], #customersTableBody');
     if (body) {
       body.innerHTML = customers.length ? customers.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.email || '—')}</td><td>${esc(c.phone || '—')}</td><td>${esc(c.sources.join(' + '))}</td><td>${c.interactions}</td><td>${esc(dateValue(c.createdAt)?.toLocaleString() || '—')}</td></tr>`).join('') : '<tr class="admin-table-empty"><td colspan="6">No customers yet. Customers appear automatically after a product order or spa booking.</td></tr>';
@@ -159,6 +157,7 @@
   });
   document.addEventListener('input', e => { if (e.target.matches('[data-log-search], [data-log-type-filter]')) renderLogs(); });
   document.addEventListener('submit', e => { if (e.target.matches('[data-settings-form], #settingsForm')) setTimeout(() => applySettingsPreview(state().settings), 600); });
-  document.addEventListener('admin:viewChanged', e => setTimeout(() => { const v=e.detail?.view; if(v==='customers') renderCustomers(); if(v==='reports') renderReports(); if(v==='logs') renderLogs(); }, 150));
+  document.addEventListener('admin:viewChanged', e => setTimeout(() => { const v=e.detail?.view; if(v==='customers') renderCustomers(); if(v==='reports') renderReports(); if(v==='logs') renderLogs(); }, 350));
+  document.addEventListener('admin:refreshed', () => setTimeout(sync, 50));
   setTimeout(sync, 1600);
 })(window, document);
