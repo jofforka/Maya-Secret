@@ -1,0 +1,16 @@
+MAYA'S SECRET v6.0 — HIDDEN REWARDS PATCH
+
+Replace only these files in the website root:
+- index.html
+- shop.html
+- spa.html
+- contact.html
+- css/launch-v6.css
+
+No JavaScript, backend, checkout or admin files are changed.
+
+Hidden code placements:
+- Homepage: beneath Personal guidance
+- Shop: beneath 01 Personal Guidance
+- Spa: beneath 01 Professional care
+- Contact: beneath Business Hours
