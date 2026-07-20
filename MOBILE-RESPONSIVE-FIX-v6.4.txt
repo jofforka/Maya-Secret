@@ -1,0 +1,10 @@
+Maya's Secret v6.4 Mobile Responsive Fix
+
+- Product catalogue shows 2 products per row on phones.
+- Small tablets show 2 products per row.
+- Larger tablets show 3 products per row.
+- Desktop shows 4 products per row.
+- Product cards use compact typography and controls on narrow screens.
+- Product modal is constrained to the device viewport.
+- Modal images use contain sizing and cannot extend beyond the phone.
+- Safe-area padding added for modern iPhones.
