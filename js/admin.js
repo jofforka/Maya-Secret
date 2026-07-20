@@ -275,7 +275,7 @@
 
     Admin.state.bookings = getResponseArray(response, "bookings");
 
-    renderBookings();
+    //renderBookings();
 
     updateSidebarCounters();
 
