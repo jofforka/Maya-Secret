@@ -1,0 +1,19 @@
+MAYA'S SECRET v6.5 — TARGETED SHOP + ADMIN UPDATE
+
+Only the files required for the requested changes were updated:
+- shop.html
+- admin.html
+- js/app.js
+- js/admin-enhancements.js
+- js/shop-enhancements.js
+- css/shop-premium.css
+- css/styles.css (shop-only watermark override)
+
+Changes:
+- Removed the MS watermark and MS fallback lettering from product visuals.
+- Added premium dimensional product cards with depth, lighting, shadows and polished interaction.
+- Preserved the responsive 2-column phone, 2/3-column tablet and 4-column desktop grid.
+- Customers are now derived and deduplicated from product orders and spa bookings.
+- Reports calculate confirmed paid sales and commission from real order records.
+- Activity logs combine cloud logs, orders, bookings and catalogue activity.
+- Settings now explain and apply their reflection points; Shop reads saved/cloud business settings.
