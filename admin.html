@@ -423,324 +423,236 @@
             <div class="admin-grid">
               <aside class="admin-editor">
                 <form class="product-form" id="productForm" novalidate>
-  <!-- Existing product ID must remain populated during editing -->
-  <input
-    type="hidden"
-    id="productId"
-    name="id"
-  >
+                  <input type="hidden" id="productId">
 
-  <div class="admin-form-heading">
-    <div>
-      <p class="eyebrow" id="formMode">NEW PRODUCT</p>
-      <h2 id="formTitle">Add product</h2>
-    </div>
+                  <div class="admin-form-heading">
+                    <div>
+                      <p class="eyebrow" id="formMode">NEW PRODUCT</p>
+                      <h2 id="formTitle">Add product</h2>
+                    </div>
 
-    <button
-      class="admin-icon-button"
-      id="cancelEdit"
-      type="button"
-      hidden
-      aria-label="Cancel editing"
-    >
-      ×
-    </button>
-  </div>
+                    <button
+                      class="admin-icon-button"
+                      id="cancelEdit"
+                      type="button"
+                      hidden
+                      aria-label="Cancel editing"
+                    >
+                      ×
+                    </button>
+                  </div>
 
-  <label for="productName">
-    Product name
+                  <label for="productName">
+                    Product name
+                    <input
+                      id="productName"
+                      maxlength="80"
+                      required
+                      placeholder="e.g. Radiance Face Serum"
+                    >
+                    <small class="field-error" id="nameError"></small>
+                  </label>
 
-    <input
-      id="productName"
-      name="name"
-      maxlength="80"
-      required
-      placeholder="e.g. Radiance Face Serum"
-    >
+                  <label for="productCategory">
+                    Category
+                    <select id="productCategory" required>
+                      <option>Face Care</option>
+                      <option>Body Care</option>
+                      <option>Gift Sets</option>
+                    </select>
+                  </label>
 
-    <small class="field-error" id="nameError"></small>
-  </label>
+                  <div class="form-row">
+                    <label for="productPrice">
+                      Price (₦)
+                      <input
+                        id="productPrice"
+                        type="number"
+                        min="1"
+                        step="1"
+                        inputmode="numeric"
+                        required
+                        placeholder="0"
+                      >
+                      <small class="field-error" id="priceError"></small>
+                    </label>
 
-  <label for="productCategory">
-    Category
+                    <label for="productSize">
+                      Size
+                      <input
+                        id="productSize"
+                        maxlength="30"
+                        placeholder="e.g. 150 ml"
+                      >
+                    </label>
+                  </div>
 
-    <select
-      id="productCategory"
-      name="category"
-      required
-    >
-      <option value="Face Care">Face Care</option>
-      <option value="Body Care">Body Care</option>
-      <option value="Gift Sets">Gift Sets</option>
-    </select>
-  </label>
+                  <div class="form-row">
+                    <label for="productBadge">
+                      Badge
+                      <input
+                        id="productBadge"
+                        name="badge"
+                        maxlength="24"
+                        placeholder="e.g. Bestseller"
+                      >
+                    </label>
 
-  <div class="form-row">
-    <label for="productPrice">
-      Price (₦)
+                    <label for="productStatus">
+                      Availability
+                      <select id="productStatus" name="status">
+                        <option value="available">Available</option>
+                        <option value="soldout">Sold out</option>
+                      </select>
+                    </label>
+                  </div>
 
-      <input
-        id="productPrice"
-        name="price"
-        type="number"
-        min="1"
-        step="1"
-        inputmode="numeric"
-        required
-        placeholder="0"
-      >
+                  <label class="admin-check" for="productFeatured">
+                    <input id="productFeatured" name="featured" type="checkbox" value="true">
+                    Show this product in the Home page featured collection
+                  </label>
 
-      <small class="field-error" id="priceError"></small>
-    </label>
+                  <fieldset class="admin-fieldset">
+                    <legend>Product pictures</legend>
+                    <p class="field-help">
+                      Upload a main picture and up to three additional pictures.
+                      Images are compressed before cloud upload.
+                    </p>
 
-    <label for="productSize">
-      Size
+                    <label for="productImageFile">
+                      Main product image
+                      <input
+                        id="productImageFile"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                      >
+                    </label>
 
-      <input
-        id="productSize"
-        name="size"
-        maxlength="30"
-        placeholder="e.g. 150 ml"
-      >
-    </label>
-  </div>
+                    <label for="productImage">
+                      Or paste an image URL
+                      <input
+                        id="productImage"
+                        name="image"
+                        type="url"
+                        placeholder="https://example.com/product.jpg"
+                      >
+                    </label>
 
-  <div class="form-row">
-    <label for="productBadge">
-      Badge
+                    <div class="gallery-upload-grid">
+                      <label for="galleryFile1">
+                        Gallery image 1
+                        <input
+                          id="galleryFile1"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                        >
+                        <input id="gallery1" name="gallery1" type="url" placeholder="Optional image URL">
+                      </label>
 
-      <input
-        id="productBadge"
-        name="badge"
-        maxlength="24"
-        placeholder="e.g. Bestseller"
-      >
-    </label>
+                      <label for="galleryFile2">
+                        Gallery image 2
+                        <input
+                          id="galleryFile2"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                        >
+                        <input id="gallery2" name="gallery2" type="url" placeholder="Optional image URL">
+                      </label>
 
-    <label for="productStatus">
-      Availability
+                      <label for="galleryFile3">
+                        Gallery image 3
+                        <input
+                          id="galleryFile3"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                        >
+                        <input id="gallery3" name="gallery3" type="url" placeholder="Optional image URL">
+                      </label>
+                    </div>
 
-      <select
-        id="productStatus"
-        name="status"
-      >
-        <option value="available">Available</option>
-        <option value="soldout">Sold out</option>
-      </select>
-    </label>
-  </div>
+                    <div class="admin-upload-status" hidden data-image-upload-status></div>
 
-  <label class="admin-check" for="productFeatured">
-    <input
-      id="productFeatured"
-      name="featured"
-      type="checkbox"
-      value="true"
-    >
+                    <button class="admin-text-button" id="clearImages" type="button">
+                      Remove all uploaded images
+                    </button>
+                  </fieldset>
 
-    Show this product in the Home page featured collection
-  </label>
+                  <label for="productDesc">
+                    Description
+                    <textarea
+                      id="productDesc"
+                      name="description"
+                      rows="5"
+                      maxlength="320"
+                      placeholder="Briefly describe the product and its key benefit."
+                    ></textarea>
+                    <small class="character-count">
+                      <span id="descCount">0</span>/320
+                    </small>
+                  </label>
 
-  <fieldset class="admin-fieldset">
-    <legend>Product pictures</legend>
+                  <label for="productBenefits">
+                    Key benefits
+                    <span class="label-note">one benefit per line</span>
+                    <textarea
+                      id="productBenefits"
+                      name="benefits"
+                      rows="4"
+                      maxlength="360"
+                      placeholder="Deeply moisturises&#10;Supports a smoother appearance&#10;Ideal for daily use"
+                    ></textarea>
+                  </label>
 
-    <p class="field-help">
-      Upload a main picture and up to three additional pictures.
-      Images are compressed before cloud upload.
-    </p>
+                  <label for="productUse">
+                    How to use
+                    <textarea
+                      id="productUse"
+                      name="use"
+                      rows="4"
+                      maxlength="360"
+                      placeholder="Explain how and when the customer should use this product."
+                    ></textarea>
+                  </label>
 
-    <label for="productImageFile">
-      Main product image
+                  <label for="productTone">
+                    Visual tone
+                    <select id="productTone" name="tone">
+                      <option value="plum">Plum</option>
+                      <option value="cream">Cream</option>
+                      <option value="amber">Amber</option>
+                      <option value="sage">Sage</option>
+                      <option value="rose">Rose</option>
+                      <option value="sand">Sand</option>
+                      <option value="wine">Wine</option>
+                      <option value="bronze">Bronze</option>
+                    </select>
+                  </label>
 
-      <input
-        id="productImageFile"
-        name="productImageFile"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-      >
-    </label>
+                  <div class="admin-product-preview" aria-label="Product preview">
+                    <div class="product-art tone-plum" id="previewArt">
+                      <span class="product-badge" id="previewBadge">New</span>
+                      <div class="product-pack">MS</div>
+                    </div>
 
-    <label for="productImage">
-      Or paste an image URL
+                    <div>
+                      <p id="previewCategory">Face Care</p>
+                      <h3 id="previewName">Your product</h3>
+                      <small id="previewSize">Size</small>
+                      <strong id="previewPrice">₦0</strong>
+                    </div>
+                  </div>
 
-      <input
-        id="productImage"
-        name="image"
-        type="url"
-        placeholder="https://example.com/product.jpg"
-      >
-    </label>
+                  <div class="form-buttons">
+                    <button class="btn primary" type="submit" id="saveProduct">
+                      <span data-save-product-text>Save product</span>
+                      <span class="button-spinner" aria-hidden="true" hidden data-save-product-spinner></span>
+                    </button>
 
-    <div class="gallery-upload-grid">
-      <label for="galleryFile1">
-        Gallery image 1
-
-        <input
-          id="galleryFile1"
-          name="galleryFile1"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-        >
-
-        <input
-          id="gallery1"
-          name="gallery1"
-          type="url"
-          placeholder="Optional image URL"
-        >
-      </label>
-
-      <label for="galleryFile2">
-        Gallery image 2
-
-        <input
-          id="galleryFile2"
-          name="galleryFile2"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-        >
-
-        <input
-          id="gallery2"
-          name="gallery2"
-          type="url"
-          placeholder="Optional image URL"
-        >
-      </label>
-
-      <label for="galleryFile3">
-        Gallery image 3
-
-        <input
-          id="galleryFile3"
-          name="galleryFile3"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-        >
-
-        <input
-          id="gallery3"
-          name="gallery3"
-          type="url"
-          placeholder="Optional image URL"
-        >
-      </label>
-    </div>
-
-    <div
-      class="admin-upload-status"
-      hidden
-      data-image-upload-status
-    ></div>
-
-    <button
-      class="admin-text-button"
-      id="clearImages"
-      type="button"
-    >
-      Remove all uploaded images
-    </button>
-  </fieldset>
-
-  <label for="productDesc">
-    Description
-
-    <textarea
-      id="productDesc"
-      name="description"
-      rows="5"
-      maxlength="320"
-      placeholder="Briefly describe the product and its key benefit."
-    ></textarea>
-
-    <small class="character-count">
-      <span id="descCount">0</span>/320
-    </small>
-  </label>
-
-  <label for="productBenefits">
-    Key benefits
-
-    <span class="label-note">one benefit per line</span>
-
-    <textarea
-      id="productBenefits"
-      name="benefits"
-      rows="4"
-      maxlength="360"
-      placeholder="Deeply moisturises&#10;Supports a smoother appearance&#10;Ideal for daily use"
-    ></textarea>
-  </label>
-
-  <label for="productUse">
-    How to use
-
-    <textarea
-      id="productUse"
-      name="use"
-      rows="4"
-      maxlength="360"
-      placeholder="Explain how and when the customer should use this product."
-    ></textarea>
-  </label>
-
-  <label for="productTone">
-    Visual tone
-
-    <select
-      id="productTone"
-      name="tone"
-    >
-      <option value="plum">Plum</option>
-      <option value="cream">Cream</option>
-      <option value="amber">Amber</option>
-      <option value="sage">Sage</option>
-      <option value="rose">Rose</option>
-      <option value="sand">Sand</option>
-      <option value="wine">Wine</option>
-      <option value="bronze">Bronze</option>
-    </select>
-  </label>
-
-  <div class="admin-product-preview" aria-label="Product preview">
-    <div class="product-art tone-plum" id="previewArt">
-      <span class="product-badge" id="previewBadge">New</span>
-      <div class="product-pack">MS</div>
-    </div>
-
-    <div>
-      <p id="previewCategory">Face Care</p>
-      <h3 id="previewName">Your product</h3>
-      <small id="previewSize">Size</small>
-      <strong id="previewPrice">₦0</strong>
-    </div>
-  </div>
-
-  <div class="form-buttons">
-    <button
-      class="btn primary"
-      type="submit"
-      id="saveProduct"
-    >
-      <span data-save-product-text>Save product</span>
-
-      <span
-        class="button-spinner"
-        aria-hidden="true"
-        hidden
-        data-save-product-spinner
-      ></span>
-    </button>
-
-    <button
-      class="btn ghost"
-      id="clearForm"
-      type="button"
-    >
-      Clear form
-    </button>
-  </div>
-</form>
+                    <button class="btn ghost" id="clearForm" type="button">
+                      Clear form
+                    </button>
+                  </div>
+                </form>
               </aside>
 
               <section class="admin-products">
@@ -1213,7 +1125,7 @@
 
   <!-- Existing catalogue and Admin logic -->
   <script defer src="js/catalog.js?v=5.0.1"></script>
-  <script defer src="js/admin.js?v=6.6.1"></script>
+  <script defer src="js/admin.js?v=6.6.2"></script>
   <script defer src="js/admin-enhancements.js?v=6.9.0"></script>
   <script defer src="js/admin-transactions.js?v=6.9.0"></script>
 </body>
