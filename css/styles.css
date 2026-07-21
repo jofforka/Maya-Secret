@@ -1457,3 +1457,44 @@ img{max-width:100%;height:auto}
   input,select,textarea{font-size:16px!important}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media (max-width: 768px) {
+  .admin-sidebar,
+  .admin-nav,
+  .sidebar-nav {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .admin-sidebar::-webkit-scrollbar,
+  .admin-nav::-webkit-scrollbar,
+  .sidebar-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-nav-inner,
+  .sidebar-nav-inner,
+  .admin-sidebar nav {
+    display: flex;
+    flex-wrap: nowrap;
+    width: max-content;
+    min-width: 100%;
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  [data-admin-view],
+  .admin-nav button,
+  .sidebar-nav button,
+  .admin-sidebar nav button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: max-content;
+    padding: 14px 18px;
+    white-space: nowrap;
+  }
+}
