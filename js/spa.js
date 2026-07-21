@@ -216,10 +216,11 @@
       'Please confirm availability. Thank you.'
     ].join('\n');
 
-    const bookingReference = 'SPA-' + Date.now().toString(36).toUpperCase();
-    const booking = {
-    id: bookingReference,
-    bookingId: bookingReference,
+    const bookingReference =
+  'SPA-' + Date.now().toString(36).toUpperCase();
+
+const booking = {
+  reference: bookingReference,
     customerName: $('#spaName').value.trim(),
     phone: $('#spaPhone').value.trim(),
     bookingDate: rawDate,
@@ -247,12 +248,19 @@ try {
         await BusinessCloud.saveBooking(booking);
 
         if (typeof BusinessCloud.saveCustomer === "function") {
-            await BusinessCloud.saveCustomer({
-                name: booking.customerName,
-                phone: booking.phone,
-                createdAt: booking.createdAt
-            });
-        }
+  try {
+    await BusinessCloud.saveCustomer({
+      name: booking.customerName,
+      phone: booking.phone,
+      createdAt: booking.createdAt
+    });
+  } catch (customerError) {
+    console.warn(
+      "Booking saved, but customer record was not saved:",
+      customerError
+    );
+  }
+}
 
     }
 
