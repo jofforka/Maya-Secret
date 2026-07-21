@@ -1,0 +1,21 @@
+MAYA'S SECRET BUSINESS OS v7.0.0 — STABILIZATION RELEASE
+
+Implemented:
+- LockService protection for writes and deletes
+- Central product validation and normalized typing
+- Safe product updates that preserve an existing image when the edit form sends a blank image
+- Structured request/error logs with request IDs
+- Daily automatic JSON backup plus manual backup, stored in a dedicated Drive folder
+- Script cache for collections and settings with write invalidation
+- Cloud request timeout handling
+- Product submit Promise error visibility and edit-image preview
+- Mobile admin layout, safe-area handling, larger touch targets and reduced-motion support
+- Consistent v7.0.0 cache-busting/version labels
+
+DEPLOYMENT:
+1. Upload/replace the website files on the web host.
+2. Replace Apps Script Code.gs with this Code.gs.
+3. Deploy Apps Script as a NEW web-app version.
+4. Confirm js/config.js contains the deployed /exec URL.
+5. Open cloud-test.html and run the health check.
+6. Test: edit product, preserve image, create product, delete product, order status, booking status, settings, backup.

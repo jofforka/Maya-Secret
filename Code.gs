@@ -1,11 +1,13 @@
 /**
- * Maya's Secret Cloud Backend v6.9
+ * Maya's Secret Cloud Backend v7.0
  * Replace the contents of the existing Apps Script Code.gs with this file.
  * Then create a new deployment version of the existing Web App deployment.
  */
 
 const MAYA_DB_NAME = 'Maya Secret Business Database';
-const MAYA_VERSION = '6.0.0';
+const MAYA_VERSION = '7.0.0';
+const MAYA_CACHE_SECONDS = 60;
+const MAYA_BACKUP_FOLDER = 'Maya Secret Backups';
 const COLLECTIONS = ['Products', 'Orders', 'Bookings', 'Customers', 'Logs'];
 
 function doGet(e) {
@@ -15,22 +17,28 @@ function doGet(e) {
 function doPost(e) {
   let payload = {};
   try {
-    payload = e && e.postData && e.postData.contents ? JSON.parse(e.postData.contents) : {};
+    const contents = e && e.postData && e.postData.contents;
+    if (!contents) throw new Error('Request body is empty.');
+    payload = JSON.parse(contents);
   } catch (error) {
-    return json_({ success: false, error: 'Invalid JSON payload.' });
+    return json_({ success: false, error: 'Invalid JSON payload.', details: error.message });
   }
   return routeRequest_(payload);
 }
 
 function routeRequest_(request) {
+  const requestId = uniqueId_('REQ');
+  const startedAt = Date.now();
   try {
+    request = request && typeof request === 'object' ? request : {};
     const action = String(request.action || 'health').trim();
+    console.log(JSON.stringify({ level: 'INFO', event: 'request.start', requestId: requestId, action: action }));
     switch (action) {
       case 'health': return json_({ success: true, status: 'ok', version: MAYA_VERSION, timestamp: isoNow_() });
       case 'version': return json_({ success: true, version: MAYA_VERSION });
       case 'getProducts': return json_({ success: true, products: getAll_('Products') });
-      case 'saveProduct': return saveRecordResponse_('Products', request.product, 'product');
-      case 'deleteProduct': return deleteRecordResponse_('Products', request.productId, 'product');
+      case 'saveProduct': return saveProductResponse_(request.product || {});
+      case 'deleteProduct': return deleteRecordResponse_('Products', request.productId || request.id || (request.product && (request.product.id || request.product.productId)), 'product');
       case 'getOrders': return json_({ success: true, orders: getAll_('Orders') });
       case 'saveOrder': return saveOrder_(request.order);
       case 'updateOrder': return updateRecordResponse_('Orders', request.order, 'order');
@@ -48,8 +56,13 @@ function routeRequest_(request) {
       default: return json_({ success: false, error: 'Unknown action: ' + action });
     }
   } catch (error) {
-    console.error(error && error.stack ? error.stack : error);
-    return json_({ success: false, error: error && error.message ? error.message : String(error) });
+    console.error(JSON.stringify({
+      level: 'ERROR', event: 'request.failed', requestId: requestId,
+      durationMs: Date.now() - startedAt,
+      error: error && error.message ? error.message : String(error),
+      stack: error && error.stack ? error.stack : ''
+    }));
+    return json_({ success: false, requestId: requestId, error: error && error.message ? error.message : String(error) });
   }
 }
 
@@ -74,6 +87,67 @@ function saveCustomer_(raw) {
   const saved = upsert_('Customers', customer);
   log_('Customer saved', saved.id, saved.name || 'Customer', saved.phone || saved.email || '');
   return json_({ success: true, customer: saved });
+}
+
+function saveProductResponse_(raw) {
+  const incoming = validateProduct_(raw || {});
+  const id = recordId_(incoming);
+  let product;
+
+  if (id) {
+    const existing = findById_('Products', id);
+    if (!existing) throw new Error('Product not found. ID=' + id);
+    product = mergeDefined_(existing, incoming);
+    product.id = id;
+    product.productId = id;
+    product.createdAt = existing.createdAt || product.createdAt;
+  } else {
+    product = incoming;
+    product.id = uniqueId_('PRD');
+    product.productId = product.id;
+    product.createdAt = isoNow_();
+  }
+
+  product.updatedAt = isoNow_();
+  const saved = upsert_('Products', product);
+  log_(id ? 'Product updated' : 'Product created', saved.id, 'Admin', saved.name || '');
+  return json_({ success: true, product: saved });
+}
+
+function validateProduct_(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Product payload is required.');
+  const product = Object.assign({}, raw);
+  product.id = text_(raw.id || raw.productId);
+  product.productId = product.id;
+  product.name = text_(raw.name || raw.title);
+  product.category = text_(raw.category) || 'Face Care';
+  product.price = number_(raw.price);
+  product.size = text_(raw.size);
+  product.badge = text_(raw.badge);
+  product.description = text_(raw.description || raw.desc || raw.shortDescription);
+  product.use = text_(raw.use || raw.howToUse);
+  product.image = text_(raw.image || raw.imageUrl);
+  product.status = text_(raw.status) || 'Available';
+  product.tone = text_(raw.tone) || 'plum';
+  product.featured = raw.featured === true || raw.featured === 1 || /^(true|on|yes|1)$/i.test(text_(raw.featured));
+  product.gallery = Array.isArray(raw.gallery) ? raw.gallery.map(text_).filter(Boolean).slice(0, 12) : [];
+  product.benefits = Array.isArray(raw.benefits) ? raw.benefits.map(text_).filter(Boolean).slice(0, 30) : text_(raw.benefits).split(/\r?\n/).map(text_).filter(Boolean).slice(0, 30);
+  if (!product.name) throw new Error('Product name is required.');
+  if (!(product.price > 0)) throw new Error('Product price must be greater than zero.');
+  return product;
+}
+
+function mergeDefined_(existing, incoming) {
+  const result = Object.assign({}, existing);
+  Object.keys(incoming || {}).forEach(function (key) {
+    const value = incoming[key];
+    if (value !== undefined && value !== null) {
+      // Preserve an existing image when an edit form submits an empty image field.
+      if (key === 'image' && value === '' && result.image) return;
+      result[key] = value;
+    }
+  });
+  return result;
 }
 
 function saveRecordResponse_(collection, raw, key) {
@@ -103,6 +177,7 @@ function updateRecordResponse_(collection, raw, key) {
 function deleteRecordResponse_(collection, id, key) {
   if (!id) throw new Error('A valid ' + key + ' ID is required.');
   const removed = removeById_(collection, id);
+  if (!removed) throw new Error(capitalize_(key) + ' not found. ID=' + id);
   log_(capitalize_(key) + ' deleted', id, 'Admin', '');
   return json_({ success: true, deleted: removed });
 }
@@ -219,18 +294,26 @@ function findCustomer_(phone, email, name) {
 }
 
 function getSettings_() {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('maya:v7:Settings');
+  if (cached) { try { return JSON.parse(cached); } catch (error) {} }
   const sheet = sheet_('Settings');
   const last = sheet.getLastRow();
   if (last < 2) return { commissionRate: 15, currency: 'NGN' };
-  try { return JSON.parse(String(sheet.getRange(2, 2).getValue() || '{}')); }
-  catch (error) { return { commissionRate: 15, currency: 'NGN' }; }
+  try {
+    const settings = JSON.parse(String(sheet.getRange(2, 2).getValue() || '{}'));
+    cache.put('maya:v7:Settings', JSON.stringify(settings), MAYA_CACHE_SECONDS);
+    return settings;
+  } catch (error) { return { commissionRate: 15, currency: 'NGN' }; }
 }
 
 function saveSettings_(settings) {
+  ensureDailyBackup_();
   const value = Object.assign({ commissionRate: 15, currency: 'NGN' }, settings || {}, { updatedAt: isoNow_() });
   const sheet = sheet_('Settings');
   if (sheet.getLastRow() < 2) sheet.appendRow(['settings', JSON.stringify(value), isoNow_(), isoNow_()]);
   else sheet.getRange(2, 1, 1, 4).setValues([['settings', JSON.stringify(value), sheet.getRange(2, 3).getValue() || isoNow_(), isoNow_()]]);
+  invalidateCache_('Settings');
   log_('Settings updated', 'settings', 'Admin', 'Commission: ' + number_(value.commissionRate || 15) + '%');
   return json_({ success: true, settings: value });
 }
@@ -306,16 +389,28 @@ function transaction_(record, type, approved, rate) {
 }
 
 function getAll_(collection) {
+  const cache = CacheService.getScriptCache();
+  const cacheKey = 'maya:v7:' + collection;
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    try { return JSON.parse(cached); } catch (error) { cache.remove(cacheKey); }
+  }
+
   const sheet = sheet_(collection);
   const last = sheet.getLastRow();
   if (last < 2) return [];
-  return sheet.getRange(2, 1, last - 1, 4).getValues().map(function (row) {
+  const records = sheet.getRange(2, 1, last - 1, 4).getValues().map(function (row) {
     try {
       const value = JSON.parse(String(row[1] || '{}'));
       if (!value.id) value.id = String(row[0] || '');
       return value;
-    } catch (error) { return null; }
+    } catch (error) {
+      console.error('Invalid JSON row in ' + collection + ': ' + error.message);
+      return null;
+    }
   }).filter(Boolean).sort(function (a, b) { return new Date(b.createdAt || 0) - new Date(a.createdAt || 0); });
+  try { cache.put(cacheKey, JSON.stringify(records), MAYA_CACHE_SECONDS); } catch (error) {}
+  return records;
 }
 
 function findById_(collection, id) {
@@ -324,6 +419,7 @@ function findById_(collection, id) {
 }
 
 function upsert_(collection, record) {
+  ensureDailyBackup_();
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
@@ -342,19 +438,29 @@ function upsert_(collection, record) {
     const values = [id, JSON.stringify(record), record.createdAt, record.updatedAt];
     if (rowIndex > 0) sheet.getRange(rowIndex, 1, 1, 4).setValues([values]);
     else sheet.appendRow(values);
+    invalidateCache_(collection);
     return record;
   } finally { lock.releaseLock(); }
 }
 
 function removeById_(collection, id) {
-  const sheet = sheet_(collection);
-  const last = sheet.getLastRow();
-  if (last < 2) return false;
-  const ids = sheet.getRange(2, 1, last - 1, 1).getDisplayValues();
-  for (let i = 0; i < ids.length; i++) {
-    if (String(ids[i][0]) === String(id)) { sheet.deleteRow(i + 2); return true; }
-  }
-  return false;
+  ensureDailyBackup_();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const sheet = sheet_(collection);
+    const last = sheet.getLastRow();
+    if (last < 2) return false;
+    const ids = sheet.getRange(2, 1, last - 1, 1).getDisplayValues();
+    for (let i = 0; i < ids.length; i++) {
+      if (String(ids[i][0]).trim() === String(id).trim()) {
+        sheet.deleteRow(i + 2);
+        invalidateCache_(collection);
+        return true;
+      }
+    }
+    return false;
+  } finally { lock.releaseLock(); }
 }
 
 function sheet_(name) {
@@ -398,10 +504,32 @@ function log_(action, record, user, details) {
   } catch (error) { console.error('Log write failed', error); }
 }
 
-function createBackup_() {
+function invalidateCache_(collection) {
+  CacheService.getScriptCache().remove('maya:v7:' + collection);
+}
+
+function ensureDailyBackup_() {
+  const props = PropertiesService.getScriptProperties();
+  const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  if (props.getProperty('MAYA_LAST_AUTO_BACKUP') === today) return;
+  try {
+    createBackup_('auto');
+    props.setProperty('MAYA_LAST_AUTO_BACKUP', today);
+  } catch (error) {
+    console.error('Automatic backup failed: ' + error.message);
+  }
+}
+
+function backupFolder_() {
+  const folders = DriveApp.getFoldersByName(MAYA_BACKUP_FOLDER);
+  return folders.hasNext() ? folders.next() : DriveApp.createFolder(MAYA_BACKUP_FOLDER);
+}
+
+function createBackup_(reason) {
   const payload = { version: MAYA_VERSION, createdAt: isoNow_(), settings: getSettings_() };
   COLLECTIONS.forEach(function (name) { payload[name.toLowerCase()] = getAll_(name); });
-  const file = DriveApp.createFile('maya-secret-backup-' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd-HHmmss') + '.json', JSON.stringify(payload, null, 2), MimeType.PLAIN_TEXT);
+  payload.reason = reason || 'manual';
+  const file = backupFolder_().createFile('maya-secret-backup-' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd-HHmmss') + '.json', JSON.stringify(payload, null, 2), MimeType.PLAIN_TEXT);
   return { fileId: file.getId(), name: file.getName(), url: file.getUrl() };
 }
 
