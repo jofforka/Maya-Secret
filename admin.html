@@ -423,7 +423,7 @@
             <div class="admin-grid">
               <aside class="admin-editor">
                 <form class="product-form" id="productForm" novalidate>
-                  <input type="hidden" id="productId">
+                  <input type="hidden" id="productId" name="id">
 
                   <div class="admin-form-heading">
                     <div>
@@ -445,17 +445,21 @@
                   <label for="productName">
                     Product name
                     <input
-                      id="productName"
-                      maxlength="80"
-                      required
-                      placeholder="e.g. Radiance Face Serum"
-                    >
+    id="productName"
+    name="name"
+    maxlength="80"
+    required
+    placeholder="e.g. Radiance Face Serum"
+>
                     <small class="field-error" id="nameError"></small>
                   </label>
 
                   <label for="productCategory">
                     Category
-                    <select id="productCategory" required>
+                    <select
+    id="productCategory"
+    name="category"
+    required>
                       <option>Face Care</option>
                       <option>Body Care</option>
                       <option>Gift Sets</option>
@@ -466,24 +470,24 @@
                     <label for="productPrice">
                       Price (₦)
                       <input
-                        id="productPrice"
-                        type="number"
-                        min="1"
-                        step="1"
-                        inputmode="numeric"
-                        required
-                        placeholder="0"
-                      >
+    id="productPrice"
+    name="price"
+    type="number"
+    min="1"
+    step="1"
+    inputmode="numeric"
+    required
+>
                       <small class="field-error" id="priceError"></small>
                     </label>
 
                     <label for="productSize">
                       Size
                       <input
-                        id="productSize"
-                        maxlength="30"
-                        placeholder="e.g. 150 ml"
-                      >
+    id="productSize"
+    name="size"
+    maxlength="30"
+>
                     </label>
                   </div>
 
@@ -522,8 +526,9 @@
                     <label for="productImageFile">
                       Main product image
                       <input
-                        id="productImageFile"
-                        type="file"
+    id="productImageFile"
+    name="imageFile"
+    type="file"
                         accept="image/jpeg,image/png,image/webp"
                       >
                     </label>
@@ -542,7 +547,7 @@
                       <label for="galleryFile1">
                         Gallery image 1
                         <input
-                          id="galleryFile1"
+                          name="galleryFile1"
                           type="file"
                           accept="image/jpeg,image/png,image/webp"
                         >
@@ -552,7 +557,7 @@
                       <label for="galleryFile2">
                         Gallery image 2
                         <input
-                          id="galleryFile2"
+                          name="galleryFile2"
                           type="file"
                           accept="image/jpeg,image/png,image/webp"
                         >
@@ -562,7 +567,7 @@
                       <label for="galleryFile3">
                         Gallery image 3
                         <input
-                          id="galleryFile3"
+                         name="galleryFile3"
                           type="file"
                           accept="image/jpeg,image/png,image/webp"
                         >
@@ -1125,8 +1130,8 @@
 
   <!-- Existing catalogue and Admin logic -->
   <script defer src="js/catalog.js?v=5.0.1"></script>
-  <script defer src="js/admin.js?v=6.6.2"></script>
-  <script defer src="js/admin-enhancements.js?v=6.9.0"></script>
-  <script defer src="js/admin-transactions.js?v=6.9.1"></script>
+  <script defer src="js/admin.js?v=7.0.0"></script>
+  <script defer src="js/admin-enhancements.js?v=7.0.0"></script>
+  <script defer src="js/admin-transactions.js?v=7.0.0"></script>
 </body>
 </html>
