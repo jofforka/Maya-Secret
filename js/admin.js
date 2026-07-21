@@ -1284,7 +1284,9 @@
 
   async function handleProductSubmit(form) {
     const product = serializeForm(form);
-    const hiddenProductId = document.getElementById("productId");
+    const hiddenProductId = form.querySelector(
+  '[name="id"], [name="productId"], #productId'
+);
     console.log("[Admin] Preparing product save");
 console.log(
   "[Admin] Form product ID:",
@@ -1638,14 +1640,35 @@ async function approveOrder(id) {
           : value;
     }
 
-    setValue(
-      "productId",
-      product.id ||
-      product.productId ||
-      product.recordId ||
-      product.rowId ||
-      ""
-    );
+    const productForm = document.getElementById("productForm");
+
+const productIdField = productForm
+  ? productForm.querySelector(
+      '[name="id"], [name="productId"], #productId'
+    )
+  : null;
+
+const editingProductId = String(
+  product.id ||
+  product.productId ||
+  product.recordId ||
+  product.rowId ||
+  productId ||
+  ""
+).trim();
+
+if (!productIdField) {
+  throw new Error(
+    "The product ID field is missing from the product form."
+  );
+}
+
+productIdField.value = editingProductId;
+
+console.log(
+  "[Admin] Product ID placed in form:",
+  productIdField.value
+);
 
     setValue("productName", product.name);
     setValue("productCategory", product.category);
