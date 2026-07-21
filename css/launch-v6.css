@@ -10,7 +10,7 @@
   letter-spacing:.045em;
   text-transform:lowercase;
   color:rgba(91,23,62,.34);
-  opacity:.72;
+  opacity:.40;
 }
 .secret-whisper button{
   appearance:none;
@@ -23,7 +23,7 @@
   font-weight:600;
   letter-spacing:.07em;
   cursor:pointer;
-  opacity:.78;
+  opacity:.40;
 }
 .secret-whisper:hover,
 .secret-whisper:focus-within{
