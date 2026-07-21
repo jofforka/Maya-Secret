@@ -1830,39 +1830,53 @@ console.log(
   });
 
   document.addEventListener("click", function (event) {
-    const saveButton = event.target.closest(
-      "#saveProduct, [data-save-product]"
+  const saveButton = event.target.closest(
+    "#saveProduct, [data-save-product]"
+  );
+
+  if (!saveButton) return;
+
+  const form =
+    document.getElementById("productForm") ||
+    document.querySelector("[data-product-form]");
+
+  if (!form) {
+    console.error(
+      "[Admin] Product form was not found."
     );
 
-    if (!saveButton) return;
+    toast(
+      "Product form was not found.",
+      "error"
+    );
 
-    const form =
-      document.getElementById("productForm") ||
-      document.querySelector("[data-product-form]");
+    return;
+  }
 
-    if (!form) {
-      console.error("[Admin] Product form was not found.");
-      toast("Product form was not found.", "error");
-      return;
+  event.preventDefault();
+  event.stopPropagation();
+
+  console.log(
+    "[Admin] Save button clicked directly"
+  );
+
+  (async function () {
+    try {
+      saveButton.disabled = true;
+
+      await handleProductSubmit(form);
+
+    } catch (error) {
+      console.error(
+        "[Admin] Product save failed:",
+        error
+      );
+
+    } finally {
+      saveButton.disabled = false;
     }
-
-    if (
-      saveButton.type === "submit" &&
-      saveButton.form === form
-    ) {
-      return;
-    }
-
-    event.preventDefault();
-
-    console.log("[Admin] Save button clicked directly");
-
-    if (typeof form.requestSubmit === "function") {
-      form.requestSubmit();
-    } else {
-      handleProductSubmit(form);
-    }
-  });
+  })();
+});
 }
 
   function bindActions() {
