@@ -1,5 +1,5 @@
 /**
- * Maya's Secret Business OS v5.0.3
+ * Maya's Secret Business OS v7.0
  * admin.js
  * Complete replacement file
  */
@@ -8,7 +8,7 @@
   "use strict";
 
   const Admin = {
-    version: "5.0.3",
+    version: "7.0.0",
     initialized: false,
     formsBound: false,
     actionsBound: false,
@@ -1677,6 +1677,20 @@ async function approveOrder(id) {
       product.imageUrl ||
       ""
     );
+
+    const previewArt = document.getElementById("previewArt");
+    const editImage = product.image || product.imageUrl || "";
+    if (previewArt) {
+      previewArt.className = "product-art tone-" + (product.tone || "plum");
+      previewArt.innerHTML = editImage
+        ? '<img src="' + escapeAttribute(editImage) + '" alt="' + escapeAttribute(product.name || "Product") + '">' +
+          '<span class="product-badge" id="previewBadge">' + escapeHtml(product.badge || "New") + '</span>'
+        : '<span class="product-badge" id="previewBadge">' + escapeHtml(product.badge || "New") + '</span><div class="product-pack">MS</div>';
+    }
+    setText("#previewName", product.name || "Your product");
+    setText("#previewCategory", product.category || "Face Care");
+    setText("#previewSize", product.size || "Size");
+    setText("#previewPrice", formatMoney(product.price || 0));
 
     const gallery = Array.isArray(product.gallery)
       ? product.gallery

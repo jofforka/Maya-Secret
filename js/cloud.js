@@ -1,5 +1,5 @@
 /**
- * Maya's Secret Business OS v5.0
+ * Maya's Secret Business OS v7.0
  * cloud.js
  * Complete replacement file
  */
@@ -8,7 +8,7 @@
   "use strict";
 
   const Cloud = {
-    version: "5.0.0",
+    version: "7.0.0",
     initialized: false,
     connected: false,
     endpoint: "",
@@ -182,6 +182,19 @@
     return data;
   }
 
+  async function fetchWithTimeout(url, init, timeoutMs) {
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timer = controller ? window.setTimeout(function () { controller.abort(); }, timeoutMs) : null;
+    try {
+      return await fetch(url, Object.assign({}, init, controller ? { signal: controller.signal } : {}));
+    } catch (error) {
+      if (error && error.name === "AbortError") throw new Error("Cloud request timed out. Please try again.");
+      throw error;
+    } finally {
+      if (timer) window.clearTimeout(timer);
+    }
+  }
+
   async function request(action, options) {
     options = options || {};
 
@@ -194,15 +207,17 @@
     }
 
     let response;
+    const config = getConfig();
+    const timeoutMs = Number(config.requestTimeoutMs || (window.MAYA_CONFIG && window.MAYA_CONFIG.requestTimeoutMs) || 30000);
 
     if (method === "GET") {
-      response = await fetch(buildUrl(action, params), {
+      response = await fetchWithTimeout(buildUrl(action, params), {
         method: "GET",
         cache: "no-store",
         redirect: "follow"
-      });
+      }, timeoutMs);
     } else {
-      response = await fetch(Cloud.endpoint, {
+      response = await fetchWithTimeout(Cloud.endpoint, {
         method: method,
         headers: {
           "Content-Type": "text/plain;charset=utf-8"
@@ -216,7 +231,7 @@
           )
         ),
         redirect: "follow"
-      });
+      }, timeoutMs);
     }
 
     return parseResponse(response);
