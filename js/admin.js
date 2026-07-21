@@ -1285,6 +1285,15 @@
   async function handleProductSubmit(form) {
     const product = serializeForm(form);
     const hiddenProductId = document.getElementById("productId");
+    console.log("[Admin] Preparing product save");
+console.log(
+  "[Admin] Form product ID:",
+  product.id || product.productId || ""
+);
+console.log(
+  "[Admin] Hidden product ID:",
+  hiddenProductId ? hiddenProductId.value : "missing"
+);
 
     product.id = String(
       product.id ||
@@ -1728,38 +1737,82 @@ async function approveOrder(id) {
   }
 
   function bindForms() {
-    if (Admin.formsBound) return;
+  if (Admin.formsBound) return;
 
-    Admin.formsBound = true;
+  Admin.formsBound = true;
 
-    document.addEventListener(
-      "submit",
-      function (event) {
-        const form = event.target;
+  document.addEventListener("submit", function (event) {
+    const form = event.target;
 
-        if (!(form instanceof HTMLFormElement)) {
-          return;
-        }
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
 
-        if (
-          form.matches("#productForm") ||
-          form.matches("[data-product-form]")
-        ) {
-          event.preventDefault();
-          handleProductSubmit(form);
-          return;
-        }
+    if (
+      form.id === "productForm" ||
+      form.hasAttribute("data-product-form")
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
 
-        if (
-          form.matches("#settingsForm") ||
-          form.matches("[data-settings-form]")
-        ) {
-          event.preventDefault();
-          handleSettingsSubmit(form);
-        }
-      }
+      console.log("[Admin] Product form submitted");
+      console.log(
+        "[Admin] Hidden product ID:",
+        document.getElementById("productId")
+          ? document.getElementById("productId").value
+          : "productId field missing"
+      );
+
+      handleProductSubmit(form);
+      return;
+    }
+
+    if (
+      form.id === "settingsForm" ||
+      form.hasAttribute("data-settings-form")
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      handleSettingsSubmit(form);
+    }
+  });
+
+  document.addEventListener("click", function (event) {
+    const saveButton = event.target.closest(
+      "#saveProduct, [data-save-product]"
     );
-  }
+
+    if (!saveButton) return;
+
+    const form =
+      document.getElementById("productForm") ||
+      document.querySelector("[data-product-form]");
+
+    if (!form) {
+      console.error("[Admin] Product form was not found.");
+      toast("Product form was not found.", "error");
+      return;
+    }
+
+    if (
+      saveButton.type === "submit" &&
+      saveButton.form === form
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    console.log("[Admin] Save button clicked directly");
+
+    if (typeof form.requestSubmit === "function") {
+      form.requestSubmit();
+    } else {
+      handleProductSubmit(form);
+    }
+  });
+}
 
   function bindActions() {
     if (Admin.actionsBound) return;
