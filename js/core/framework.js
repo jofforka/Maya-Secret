@@ -1,5 +1,5 @@
 /**
- * Maya's Secret Business OS v5.0
+ * Maya's Secret Business OS v7.0
  * framework.js
  * Complete replacement file
  */
@@ -8,7 +8,7 @@
   "use strict";
 
   const Framework = {
-    version: "5.0.0",
+    version: "7.0.0",
     initialized: false,
     booting: false,
     modules: {},

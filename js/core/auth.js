@@ -126,7 +126,7 @@
       lastActivityAt: createdAt,
       expiresAt: createdAt + duration,
       remember: Boolean(remember),
-      version: "5.0.0"
+      version: "7.0.0"
     };
   }
 
@@ -713,7 +713,7 @@
   }
 
   const Auth = {
-    version: "5.0.0",
+    version: "7.0.0",
 
     init(options = {}) {
       STATE.options = {

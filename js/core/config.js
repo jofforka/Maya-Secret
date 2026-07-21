@@ -1,5 +1,5 @@
 /**
- * Maya's Secret Business OS v5.0
+ * Maya's Secret Business OS v7.0
  * config.js
  * Complete replacement file
  */
@@ -10,7 +10,7 @@
   const CONFIG = {
     app: {
       name: "Maya's Secret Business OS",
-      version: "5.0.1",
+      version: "7.0.0",
       environment:
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"

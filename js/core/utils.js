@@ -1001,7 +1001,7 @@
   }
 
   const Utils = Object.freeze({
-    version: "5.0.0",
+    version: "7.0.0",
 
     isNil,
     isObject,

@@ -1,5 +1,5 @@
 /**
- * Maya's Secret Business OS v5.0
+ * Maya's Secret Business OS v7.0
  * ui.js
  * Complete replacement file
  */
