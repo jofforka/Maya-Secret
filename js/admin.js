@@ -1433,10 +1433,18 @@ console.log(
         }
       }
     } catch (error) {
-      handleError(error, "saveProduct");
-    } finally {
-      hideLoading();
-    }
+
+    console.error("[Admin] Save Product Error:", error);
+
+    handleError(error, "saveProduct");
+
+    throw error;
+
+} finally {
+
+    hideLoading();
+
+}
   }
 
   async function handleSettingsSubmit(form) {
@@ -1763,7 +1771,13 @@ async function approveOrder(id) {
           : "productId field missing"
       );
 
-      handleProductSubmit(form);
+      (async function () {
+    try {
+        await handleProductSubmit(form);
+    } catch (error) {
+        console.error(error);
+    }
+})();
       return;
     }
 
