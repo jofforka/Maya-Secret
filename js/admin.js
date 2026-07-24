@@ -1346,8 +1346,11 @@ console.log(
       product.status || "available"
     ).trim();
 
-    product.image = String(product.image || "").trim();
-
+   product.image = String(
+    product.image ||
+    product.imageUrl ||
+    ""
+).trim();
     product.description = String(
       product.description || ""
     ).trim();
