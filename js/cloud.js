@@ -208,7 +208,15 @@
 
     let response;
     const config = getConfig();
-    const timeoutMs = Number(config.requestTimeoutMs || (window.MAYA_CONFIG && window.MAYA_CONFIG.requestTimeoutMs) || 30000);
+    const timeoutMs =
+  action === "uploadImage"
+    ? 120000
+    : Number(
+        config.requestTimeoutMs ||
+        (window.MAYA_CONFIG &&
+          window.MAYA_CONFIG.requestTimeoutMs) ||
+        30000
+      );
 
     if (method === "GET") {
       response = await fetchWithTimeout(buildUrl(action, params), {
