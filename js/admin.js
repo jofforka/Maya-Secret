@@ -1312,6 +1312,8 @@ const selectedImage =
   imageInput.files.length
     ? imageInput.files[0]
     : null;
+    console.log("STEP 1 - Selected Image:", selectedImage);
+    
     const hiddenProductId = form.querySelector(
   '[name="id"], [name="productId"], #productId'
 );
@@ -1426,7 +1428,8 @@ console.log(
     try {
 
     if (selectedImage) {
-
+console.log("STEP 2 - Uploading new image...");
+      
         const base64 = await fileToBase64(selectedImage);
 
         const upload = await callCloud("uploadImage", {
@@ -1434,6 +1437,7 @@ console.log(
             mimeType: selectedImage.type,
             base64: base64
         });
+      console.log("STEP 3 - Upload Result:", upload);
 
         product.image =
             upload.url ||
@@ -1441,7 +1445,7 @@ console.log(
             upload.fileUrl ||
             "";
     }
-
+console.log("STEP 4 - Saving Product:", product);
     const response = await callCloud(
         "saveProduct",
         product
