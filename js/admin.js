@@ -1238,7 +1238,27 @@
 
     return data;
   }
+function fileToBase64(file) {
 
+    return new Promise(function(resolve, reject){
+
+        const reader = new FileReader();
+
+        reader.onload = function(){
+
+            resolve(
+                reader.result.split(",")[1]
+            );
+
+        };
+
+        reader.onerror = reject;
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
   function resetProductEditor(form) {
     form = form || document.getElementById("productForm");
 
@@ -1284,6 +1304,14 @@
 
   async function handleProductSubmit(form) {
     const product = serializeForm(form);
+    const imageInput = document.getElementById("productImageFile");
+
+const selectedImage =
+  imageInput &&
+  imageInput.files &&
+  imageInput.files.length
+    ? imageInput.files[0]
+    : null;
     const hiddenProductId = form.querySelector(
   '[name="id"], [name="productId"], #productId'
 );
@@ -1393,10 +1421,28 @@ console.log(
     );
 
     try {
-      const response = await callCloud(
+
+    if (selectedImage) {
+
+        const base64 = await fileToBase64(selectedImage);
+
+        const upload = await callCloud("uploadImage", {
+            fileName: selectedImage.name,
+            mimeType: selectedImage.type,
+            base64: base64
+        });
+
+        product.image =
+            upload.url ||
+            upload.imageUrl ||
+            upload.fileUrl ||
+            "";
+    }
+
+    const response = await callCloud(
         "saveProduct",
         product
-      );
+    );
 
       console.log(
         "[Admin] saveProduct response:",
